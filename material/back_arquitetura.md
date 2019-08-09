@@ -10,4 +10,4 @@ As aplicações peer-to-peer (ou P2P ou entre pares) não dividem a tarefa de se
 
 ## Onde executam os servidores
 
-Na última década passamos por transformações na infraestrutura em que os servidores são executados. Atualmente a grande maioria dos novos serviços irão executar em hosts na nuvem.
+Na última década passamos por transformações na infraestrutura em que os servidores são executados. Atualmente a grande maioria dos novos serviços irá executar em hosts na nuvem. Provedores de nuvem públicos (ex. [Amazon](https://aws.amazon.com/), [Microsoft Azure](https://azure.microsoft.com/en-us/) e [Google cloud](https://cloud.google.com/)). Isso reduz custos com manutenção de infraestrutura de serviços (exemplos de custos: pessoal para manter a infraestrutura, energia, resfriamento, local, segurança).
