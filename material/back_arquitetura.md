@@ -26,7 +26,7 @@ Como a maior parte do código de uma aplicação é escrito no backend, ele deve
 
 O backend pode ser organizado basicamenet de 2 formas: seguindo uma arquitetura monolítica ou seguindo uma arquitetura de microsserviços. 
 
-Em uma **aplicação monilítica** temos apenas um único sistema, com todos os módulos da aplicação dentro dele. De forma bem prática e já considerando java como a linguagem de programação, teremos apenas uma runtime rodando e um .jar. Já a aplicação pautada em **microsserviços** terá módulos (.jar) independentes, executando e se comunicando via algum protocolo de comunicação (muito provavelmente usam o protocolo HTTP e trocam informações no formato JSON).
+Em uma **aplicação monolítica** temos apenas um único sistema, com todos os módulos da aplicação dentro dele. De forma bem prática e já considerando java como a linguagem de programação, teremos apenas uma runtime rodando e um .jar. Já a aplicação pautada em **microsserviços** terá módulos (.jar) independentes, executando e se comunicando via algum protocolo de comunicação (muito provavelmente usam o protocolo HTTP e trocam informações no formato JSON).
 
 Exemplos bastante didáticos que diferenciam aplicações monolíticas e de microsserviços pode ser visto [nesse blog da caelum](https://blog.caelum.com.br/arquitetura-de-microservicos-ou-monolitica/). Esta leitura deste artigo do blog caelum é fundamental para solidificar o conhecimento e diferenciação sobre arquiteturas monolíticas e de microsserviços.
 
