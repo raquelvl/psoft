@@ -28,10 +28,23 @@ Para entender mais detalhes leia [este artigo](https://www.devmedia.com.br/geren
 
 ## Organização do backend
 
-O backend expõe serviços geralmente na forma de uma API (_Application Programming Interface_). A API vai definir que "funções" podem ser chamadas naquela aplicação, que informações de entrada são necessárias e como se dão as respostas de cada função dessas. 
+O backend expõe serviços geralmente na forma de uma API (_Application Programming Interface_). A API vai definir que "funções" podem ser chamadas naquela aplicação, que informações de entrada são necessárias e como se dão as respostas de cada função dessas. A API dá acesso aos dados/serviços de forma controlada, expondo apenas o que deve ser exposto e com o cuidado de verificar se o usuário que requisita cada função tem autorização para o fazê-lo. Organizar o backend como uma (ou mais) API(s) permite diferentes “frontends” para a mesma aplicação backend. Além disso também permite criar aplicações a partir de outras aplicações, desde que elas também definam APIs (APIs que são clientes de outras APIs). A API padroniza o acesso aos dados/serviços de forma totalmente controlada e projetada.
 
-Neste curso iremos focar no desenvolvimento de APIs REST - Representational State Transfer. A adoção de APIs REST simplifica nosso trabalho uma vez que REST se usa de tecnologias já bem consilidadas na Web para a comunicação entre cliente e servidor. Exemplos de tecnologias usadas: HTTP para troca de informações, JSON ou XML para representar dados.
+As APIs podem ser bastante simples ou incrivelmente complexas, e existem diferentes maneiras de programar uma API. De forma bastante prática, podemos definir uma API como uma coleção de métodos claramente definidos para comunicação entre diferentes componentes de um software. Claro que ao definir métodos precisamos definir sua visibilidade, seus parâmetros de entrada e seu tipo de retorno. Pensar na API que queremos expor é a parte mais importante do desenvolvimento do backend e será alvo de estudos neste curso.
+
+## API REST
+
+Neste curso iremos focar no desenvolvimento de APIs REST - _Representational State Transfer_. A adoção de APIs REST é universalmente bem aceita e simplifica o entendimento da API uma vez que REST usa tecnologias/padrões já bem consolidados na Web para a comunicação entre cliente e servidor. Exemplos de tecnologias usadas: HTTP para comunicação entre processos, JSON ou XML para representar dados.
+
+A API REST é baseada em URIs (_Uniform Resource Identifier_). Cada função oferecida está associada a uma URI bem definida. As respostas desta API vem em geral em um formato de dados específico chamado JSON (mas também pode ser HTML ou XML). 
+
+Uma API REST segue alguns princípios, um dos mais importantes é que a interação cliente/API é _stateless_ (sem estado). Isto significa que cada requisição traz a informação necessária para que o servidor possa entendê-la e respondê-la. O estado das sessões fica sendo mantido apenas nos clientes, o que é bom para escalabilidade dos servidores. Por outro lado, esse tipo de interação usa mais mais rede já que certos dados precisam estar presentes em todas as requisições (como por exemplo, token de acesso do usuário). Para minimizar este problema alguns requisições podem usar cache no cliente. Estas requisições são  "cacheáveis". Poder ser mantida em cache no cliente pode não ser opção para as requisições que tem conteúdo muito dinâmico e requerem sempre a busca no servidor para receber dados atuais ou personalizados (requisições não "cacheáveis"). Usar cache melhora desempenho, mas pode prejudicar confiabilidade (dados velhos).
+
+Em se tratando de API REST, um **recurso** é uma abstração sobre um determinado tipo de informação que a API gerencia. Por exemplo, no contexto de comércio eletrônico, podemos ter recursos tais como produtos, clientes, vendas, etc. Em REST todo recurso deve possuir uma identificação únicapara diferenciar qual dos recursos deve ser manipulado em uma determinada solicitação. Essa identificação do recurso é feita por URI (Uniform Resource Identifier).
+
+Uma API Web é a interface criada pelo back-end: a coleção de endpoints e recursos que esses endpoints expoem
 
 ### Um exemplo de API REST
 
 A Câmara dos Deputados oferece um serviço para qualquer pessoa interessada obter dados da Câmara. Trata-se de uma API REST chamada [Dados abertos](https://dadosabertos.camara.leg.br/swagger/api.html). Ao abrir a documentação da API neste link é  possível conhecer as chamadas aceitas pela API, que tipo de dado deve vir no corpo das mensagens, como são as respostas de cada chamada, dentre outras informações. 
+
