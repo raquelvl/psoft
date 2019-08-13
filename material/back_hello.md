@@ -1,4 +1,4 @@
-# Criando aplicações Web usando springboot e eclipse
+# Criando aplicações Web usando spring boot e eclipse
 
 1. Certifique-se de que tem Java instalado (SDK)
 2. Certifique-se de que tem o apache maven instalado (usaremos para gerenciar dependências)
@@ -16,7 +16,13 @@ Uma vez criado o projeto spring, salve em seu disco. Vai surgir um arquivo zip n
 
 Vá no eclipse, Import > Maven > existing maven project. A imagem abaixo ilustra esse import.
 
-![Importando o projeto spring criado no eclipse](material/imagens/importaMavenProject.png)
+![Importando o projeto spring criado no eclipse](imagens/importaMavenProject.png)
 
 Vá clicando em next e informando o que é solicitado. Em _root directory_ informe o caminho do diretório do projeto dezipado e deplois clique em Finish/terminar. Pronto, seu projeto spring já está criado.
 
+Siga os passos desde exercício para construir uma API REST bem simples que te oferece uma saudação dependendo da hora do dia.
+
+Para rodar seu projeto abra um terminal, entre no diretório raiz do projeto e execute o comando abaixo:
+````
+mvn spring-boot:run
+````
