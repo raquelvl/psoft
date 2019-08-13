@@ -12,5 +12,11 @@ Thymeleaf deve ser escolhido caso você vá desenvolver backend que retorna pág
 
 JPA deve ser uma dependência marcada quando começarmos a trabalhar com bancos de dados.
 
-Uma vez criado o projeto spring, salve em seu disco. Vai surgir um arquivo zip na pasta de downloads default.
+Uma vez criado o projeto spring, salve em seu disco. Vai surgir um arquivo zip na pasta de downloads default, faça o unzip antes de continuar. 
+
+Vá no eclipse, Import > Maven > existing maven project. A imagem abaixo ilustra esse import.
+
+![Importando o projeto spring criado no eclipse](material/imagens/importaMavenProject.png)
+
+Vá clicando em next e informando o que é solicitado. Em _root directory_ informe o caminho do diretório do projeto dezipado e deplois clique em Finish/terminar. Pronto, seu projeto spring já está criado.
 
