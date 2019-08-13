@@ -1,5 +1,6 @@
 # Bem vindos ao site de material de apoio da disciplina Projeto de Software da UFCG
 ## Foco: backend development 
+## Professora: Raquel Vigolvino Lopes
 
 [Sobre arquiteturas de aplicações Web](material/back_arquitetura.md)
 
