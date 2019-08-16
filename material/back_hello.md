@@ -24,16 +24,6 @@ Vá clicando em next e informando o que é solicitado. Em _root directory_ infor
 
 Este exercício(https://docs.google.com/document/d/e/2PACX-1vTZyXSYJKF4mwscYxnbQ3T7ZF3UY2bH4cB0SL6x_g6eZP--mncyf7QuAKzX1kIxMqjvvT8F_PY5wiRu/pub) (**pule para a Parte 2**) mostra o passo a passo de como criar uma API REST. Se tiver interesse em saber como criar uma API que retorna HTML dinamicamente criado veja a parte 1 também. Vá seguindo o passo a passo e tentando entender o que está sendo feito. É preciso que você entenda o significado de certas anotações e saiba usar algumas classes importantes da API do spring.
 
-Construa uma API REST bem simples que te oferece as seguintes funcionalidades:
-
-* GET /api/v1/greetings - pode receber um parâmetro opcional de nome (URI?nomeParam=valor) e retorna um JSON com dois campos: nome e saudação. O nome será o nome passado no parâmetro (se tiver sido passado) ou algum nome programado como default (para os casos que não é passado o parâmetro). A saudação depende do horário corrente no servidor. Entre 6h da manhã e meio dia, "Bom dia", entre meio dia e 6h da noite "Boa tarde" e depois das 6h da noite e antes das 6h da manhã "Boa noite". Retorna código 200.
-
-* GET /api/v1/time - deve retornar um json com a hora atual no servidor e a time zone default dessa hora e o código 200.
-
-* POST /api/v1/greetings/alternative - deve setar uma nova saudação alternativa. A nova saudação deve ser passada na requisição HTTP por um JSON no corpo da requisição. O servidor mantém apenas a última saudação alternativa configurada. Retorna JSON com a saudação alternativa configurada e código 200.
-
-* GET /api/v1/greetings/alternative - pode receber um parâmetro opcional de nome (URI?nomeParam=valor) e retorna um JSON com dois campos: nome e saudação alternativa. O nome será o nome passado no parâmetro (se tiver sido passado) ou algum nome programado como default (para os casos que não é passado o parâmetro). A saudação alternativa é a saudação configurada na chamada ao POST /api/v1/greetings/alternative. Se nenhuma saudação alternativa foi configurada o servidor deve retornar uma saudação alternativa nula. Retorna código 200.
-
 Para rodar seu projeto abra um terminal, entre no diretório raiz do projeto e execute o comando abaixo:
 ````
 mvn spring-boot:run
