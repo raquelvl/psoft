@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import projsoft.ufcg.entities.Greeting;
+import projsoft.ufcg.entities.ServerTimeInfo;
+import projsoft.ufcg.services.Greet;
 import projsoft.ufcg.services.GreetingService;
 
 @RestController
@@ -18,24 +20,25 @@ public class GreetingController {
 	@Autowired
 	private GreetingService greetingService;
 
-	@RequestMapping("/timegreetings")
-	public ResponseEntity<String> getSaudacao(@RequestParam(value = "nome", defaultValue = "Ser Humano") String nome) {
-		return new ResponseEntity<String>(greetingService.getSaudacao(nome), HttpStatus.OK);
+	@RequestMapping("/v1/greetings")
+	public ResponseEntity<Greeting> getSaudacao(@RequestParam(value = "nome", defaultValue = "Ser Humano") String nome) {
+		return new ResponseEntity<Greeting>(greetingService.getSaudacao(nome), HttpStatus.OK);
 	}
 	
-	@RequestMapping("/timenow")
-	public ResponseEntity<String> getHoraNoServidor() {
-		return new ResponseEntity<String>(greetingService.getHoraNoServidor(), HttpStatus.OK);
+	@RequestMapping("/v1/time")
+	public ResponseEntity<ServerTimeInfo> getHoraNoServidor() {
+		return new ResponseEntity<ServerTimeInfo>(greetingService.getInfoTempoNoServidor(), HttpStatus.OK);
 	}
 	
-	@PostMapping("/newgreetings")
-	public ResponseEntity<Greeting> setNovaSaudacao(@RequestBody Greeting novaSaudacao) {
-		return new ResponseEntity<Greeting>(greetingService.setNovaSaudacao(novaSaudacao), HttpStatus.CREATED);
+	@PostMapping("/v1/greetings/alternative")
+	public ResponseEntity<Greet> setNovaSaudacao(@RequestBody Greet novaSaudacao) {
+		System.out.println(novaSaudacao);
+		return new ResponseEntity<Greet>(greetingService.setNovaSaudacao(novaSaudacao), HttpStatus.CREATED);
 	}
 	
-	@RequestMapping("/newgreetings")
-	public ResponseEntity<String> getNovaSaudacao() {
-		return new ResponseEntity<String>(greetingService.getNovaSaudacao(), HttpStatus.OK);
+	@RequestMapping("/v1/greetings/alternative")
+	public ResponseEntity<Greeting> getNovaSaudacao(@RequestParam(value = "nome", defaultValue = "Ser Humano") String nome) {
+		return new ResponseEntity<Greeting>(greetingService.getNovaSaudacao(nome), HttpStatus.OK);
 	}	
 	
 }

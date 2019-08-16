@@ -2,17 +2,19 @@ package projsoft.ufcg.services;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.GregorianCalendar;
 
 import org.springframework.stereotype.Service;
 
 import projsoft.ufcg.entities.Greeting;
+import projsoft.ufcg.entities.ServerTimeInfo;
 
 @Service
 public class GreetingService {
-	
-	private Greeting novaSaudacao;
 
-	public String getSaudacao(String nome) {
+	private Greet novaSaudacao;
+
+	public Greeting getSaudacao(String nome) {
 		String saudacao = null;
 		LocalTime hora = LocalTime.now();
 
@@ -22,20 +24,21 @@ public class GreetingService {
 			saudacao = "Boa noite";
 		else
 			saudacao = "Boa tarde";
-		return saudacao + ", " + nome;
+		return new Greeting(nome, saudacao);
 	}
 
-	public String getHoraNoServidor() {
-		return LocalTime.now().format(DateTimeFormatter.ofPattern("H:mm:ss")) + " em ServerLand";
+	public ServerTimeInfo getInfoTempoNoServidor() {
+		return new ServerTimeInfo(LocalTime.now().format(DateTimeFormatter.ofPattern("H:mm:ss")),
+				new GregorianCalendar().getTimeZone().getDisplayName());
 	}
 
-	public Greeting setNovaSaudacao(Greeting novaSaudacao2) {
+	public Greet setNovaSaudacao(Greet novaSaudacao2) {
 		this.novaSaudacao = novaSaudacao2;
 		return this.novaSaudacao;
 	}
 
-	public String getNovaSaudacao() {
-		return novaSaudacao.toString();
+	public Greeting getNovaSaudacao(String nome) {
+		return new Greeting(novaSaudacao.getGreet(), nome);
 	}
 
 }
