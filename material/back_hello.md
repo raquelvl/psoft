@@ -34,3 +34,7 @@ Para rodar seu projeto abra um terminal, entre no diretório raiz do projeto e e
 ````
 mvn spring-boot:run
 ````
+Se o maven não estiver instalado de forma apropriada você também pode executar com o seguinte comando (que vem no próprio projeto criado no starter do Spring quando você escolhe maven como seu gerenciador de dependências):
+````
+./mvnw spring-boot:run
+````
