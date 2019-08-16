@@ -6,13 +6,14 @@ import java.util.GregorianCalendar;
 
 import org.springframework.stereotype.Service;
 
+import projsoft.ufcg.entities.Greet;
 import projsoft.ufcg.entities.Greeting;
 import projsoft.ufcg.entities.ServerTimeInfo;
 
 @Service
 public class GreetingService {
 
-	private Greet novaSaudacao;
+	private Greet novaSaudacao = new Greet("");
 
 	public Greeting getSaudacao(String nome) {
 		String saudacao = null;
