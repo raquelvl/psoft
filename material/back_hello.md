@@ -1,4 +1,4 @@
-# Criando aplicações Web usando spring boot e eclipse
+# Criando um Hello World de API REST usando spring boot e eclipse
 
 1. Certifique-se de que tem Java instalado (SDK)
 2. Certifique-se de que tem o apache maven instalado (usaremos para gerenciar dependências)
