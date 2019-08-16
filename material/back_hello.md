@@ -38,3 +38,7 @@ Se o maven não estiver instalado de forma apropriada você também pode executa
 ````
 ./mvnw spring-boot:run
 ````
+
+Você vai precisar criar um controlador Rest que será uma classe marcada com a anotação @RestController, um serviço que será acessado por este controlador. O serviço deve conhecer as regras de negócio para fazer o que foi solicitado, deixando o controlador menos "inteligente", sendo apenas um delegador. Também devem ser criadas classes que chamamos de entidades, são classes Java tradicionais, que irão representar as entidades que serão convertidas para/de arquivos JSON. Essas classes precisam de construtor e de métodos get e set para todos os atributos que devem ir no JSON.
+
+É possível ver o código completo desse exercício no [diretório lab0 desse repositório](https://github.com/raquelvl/projsw.github.io/edit/master/lab0).
