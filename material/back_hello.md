@@ -22,7 +22,21 @@ Vá clicando em next e informando o que é solicitado. Em _root directory_ infor
 
 Vá clicando em next e informando o que é solicitado. Em _root directory_ informe o caminho do diretório do projeto dezipado e deplois clique em Finish/terminar. Pronto, seu projeto spring já está criado.
 
-Este exercício(https://docs.google.com/document/d/e/2PACX-1vTZyXSYJKF4mwscYxnbQ3T7ZF3UY2bH4cB0SL6x_g6eZP--mncyf7QuAKzX1kIxMqjvvT8F_PY5wiRu/pub) (**pule para a Parte 2**) mostra o passo a passo de como criar uma API REST. Se tiver interesse em saber como criar uma API que retorna HTML dinamicamente criado veja a parte 1 também. Vá seguindo o passo a passo e tentando entender o que está sendo feito. É preciso que você entenda o significado de certas anotações e saiba usar algumas classes importantes da API do spring.
+[Este exercício](https://docs.google.com/document/d/e/2PACX-1vTZyXSYJKF4mwscYxnbQ3T7ZF3UY2bH4cB0SL6x_g6eZP--mncyf7QuAKzX1kIxMqjvvT8F_PY5wiRu/pub) (**pule para a Parte 2**) mostra o passo a passo de como criar uma API REST. Se tiver interesse em saber como criar uma API que retorna HTML dinamicamente criado veja a parte 1 também. Vá seguindo o passo a passo e tentando entender o que está sendo feito. É preciso que você entenda o significado de certas anotações e saiba usar algumas classes importantes da API do spring.
+
+Conjunto mínimo de anotações que você precisa entender neste momento:
+@RestController
+@RequestMapping
+@PostMapping
+@DeleteMapping
+@PutMapping
+@Service
+
+Busque em tutoriais e especialmente na documentação do spring boot o que cada uma dessas anotações significa e veja exemplos de como são usadas. Uma forma bem bacana de aprender é ir seguindo os [guias do spring boot](https://spring.io/guides). O guia **Building a RESTful Web Service** é bem interessante para este momento e já vai explicar várias dessas anotações acima. 
+
+As respostas de cada método do controlador vai ser uma resposta HTTP. O framework vai montar essa resposta pra você, mas você deve ajudar indicando o conteúdo do JSON a ser retornado e o código de status. Isso é feito usando um objeto da classe ResponseEntity.
+
+A aplicação spring boot é anotada com @SpringBootApplication e já é criada no starter do spring. Essa aplicação deve (pra facilitar) estar em um pacote "pai" de todos os outros, pois é a partir do pacote dessa aplicação que, por default, o spring vai procurar os controladores. Se, por exemplo, seu controlador está no pacote "projsoft.ufcg.controladores", então a aplicação deveria estar no pacote "projsoft.ufcg". Existem formas de fazer diferente e configurar na mão onde estão os controladores, mas por enquanto melhor ir no mais simples.
 
 Para rodar seu projeto abra um terminal, entre no diretório raiz do projeto e execute o comando abaixo:
 ````
