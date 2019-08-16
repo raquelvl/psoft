@@ -12,7 +12,7 @@ import projsoft.ufcg.entities.ServerTimeInfo;
 @Service
 public class GreetingService {
 
-	private Greet novaSaudacao;
+	private Greet novaSaudacao = new Greet("");
 
 	public Greeting getSaudacao(String nome) {
 		String saudacao = null;
