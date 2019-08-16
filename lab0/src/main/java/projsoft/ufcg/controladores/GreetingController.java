@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import projsoft.ufcg.entities.Greet;
 import projsoft.ufcg.entities.Greeting;
 import projsoft.ufcg.entities.ServerTimeInfo;
-import projsoft.ufcg.services.Greet;
 import projsoft.ufcg.services.GreetingService;
 
 @RestController
