@@ -2,6 +2,8 @@
 ## Foco: backend development 
 ## Professora: Raquel Vigolvino Lopes
 
+[Slides das aulas](aulas/)
+
 [Sobre arquiteturas de aplicações Web](material/back_arquitetura.md)
 
 [Um pouco sobre APIs](material/back_API.md)
