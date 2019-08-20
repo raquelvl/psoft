@@ -4,7 +4,7 @@
 
 [Slides das aulas](aulas/)
 
-[Aulas de laboratório](aulas/labs)
+[Aulas de laboratório](aulas/labs.md)
 
 ## Material para estudo e prática
 
