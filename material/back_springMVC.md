@@ -6,7 +6,7 @@ Neste curso vamos usar o spring boot como framework de desenvolvimento do backen
 
 Antes de começar, vamos entender o que faz nossa aplicação. É uma aplicação sem propósito mesmo, só para apresentar alguns conceitos importantes em nossa primeira experiência com REST e com spring boot.
 
-O código completo da API REST desenvolvida nesta aula está [aqui](https://github.com/raquelvl/projsw.github.io/tree/master/lab0).
+O código completo da API REST desenvolvida nesta aula está [aqui](https://github.com/raquelvl/psoft/tree/master/lab0).
 
 Primeiro crie um projeto spring web seguindo orientações [desta outra aula](back_hello.md).
 
