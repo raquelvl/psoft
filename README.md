@@ -4,6 +4,10 @@
 
 [Slides das aulas](aulas/)
 
+[Aulas de laboratório](aulas/labs)
+
+## Material para estudo e prática
+
 [Sobre arquiteturas de aplicações Web](material/back_arquitetura.md)
 
 [Um pouco sobre APIs](material/back_API.md)
