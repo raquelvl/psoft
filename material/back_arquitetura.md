@@ -2,9 +2,9 @@
 
 Em alto nível e falando de forma muito prática, existem duas organizações diferentes para as aplicações Web: aplicações **cliente/servidor** e aplicações **peer-to-peer**.
 
-As aplicações cliente servidor são bem mais comuns e serão alvo deste curso. O servidor oferece serviços para múltiplos clientes. Em se tratando de aplicações Wen temos um Cliente universal que é o browser. Cliente e servidor conversam seguindo im protocolo que se chama HTTP.
+As aplicações cliente servidor são bem mais comuns e serão alvo deste curso. O servidor oferece serviços para múltiplos clientes. Em se tratando de aplicações Web temos um Cliente universal que é o _browser_. Cliente e servidor conversam seguindo um protocolo que se chama HTTP (Hyper Text Transfer Protocol).
 
-É comum dizermos que o servidor roda/executa um serviço: um processo que ouve uma porta TCP (ou UDP) e atende os pedidos que chegam atraves dela.
+É comum dizermos que o servidor roda/executa um serviço: um processo que ouve uma porta TCP (ou UDP) e atende os pedidos que chegam através dela.
 
 As aplicações peer-to-peer (ou P2P ou entre pares) não dividem a tarefa de servidor e cliente. Todos os processos que participam da aplicação são servidor e cliente ao mesmo tempo. Essa arquitetura permite compartilhamentos de serviços e dados sem a necessidade de um servidor/nó central para coordenar o compartilhamento. Exemplos de aplicações que seguem esta organização são bittorrent e emule. Aplicações P2P não serão alvo de estuido neste curso e portanto todas as informações que seguem são referentes a aplicações cliente/servidor.
 
