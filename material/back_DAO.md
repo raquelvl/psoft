@@ -20,6 +20,56 @@ A **JPA** pode ser vista como o padrão Java para acessar a técnica ORM e entã
 
 Uma dascaracterísticas mais marcantes da JPA é definir tabelas através de classes Java simples persistentes. Os registros dessas tabelas são objetos dessas classes, que comumente são chamados de POJOs (Plain Old Java Objects ou Velho e Simples Objetos Java). Essas classes definem objetos que possuem design simples que não dependem da herança de interfaces, classes ou de frameworks externos. Qualquer objeto com um construtor default pode ser feito persistente sem nenhuma alteração numa linha de código. Mapeamento Objeto-Relacional com JPA é inteiramente dirigido a metadados. Faremos isso através de anotações no código.
 
+Então, para criar uma tabela de Produtos o que precisamos fazer inicialmente é criar uma classe que represente essa tabela. Em uma visão simplificada, se um produto tem um identificador único numérico, uma descrição em String e um preço double, então a nossa classe Produto deve ter esses três atributos: id:int, descricao:String e preco:double. Mas não apenas isso, precisamos de anotações para informar que é uma classe de persistência. Vejamos o exemplo abaixo:
+
+````
+@Entity
+public class Produto {
+  @Id @GeneratedValue
+  private long id;
+  private String descricao;
+  private double preco;
+  
+  public Produto() {
+    super();
+  }
+  
+  //Getters
+  
+  //Setters
+  ...
+}
+````
+
+Neste código, a anotação @Entity indica que objetos dessa classe serão persistidos no banco de dados. @Id indica que o atributo id é a chave primária (você precisa ter uma chave primária em toda entidade) e @GeneratedValue diz que esta chave será criada e gerenciada pelo banco. 
+
+Em que tabela essa classe será gravada? Com quais colunas? Que tipo de coluna? Na ausência de configurações mais específicas, o ORM vai usar convenções: a classe Produto será gravada na tabela de nome também Produto, e cada atributo em uma coluna específica com mesmo nome do atributo. Se você quiser configurações diferentes (não será necessário a essa altura do curso) procure como usar as anotações @Table e @Column, por exemplo.
+
+Em qual banco de dados vamos gravar nossas Tarefass? Qual é o login? Qual é a senha? Isso vai ficar configurado no nosso arquivo application.properties. Um exemplo de configuração para usar JPA com o banco de dados h2 segue:
+
+````
+# H2
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2
+#indicará o path para você acessar a interface do h2, em geral, vá ao browser e coloque localhost:8080/h2 com 8080 ou sua porta
+
+#deixa que hibernate gerencia a criação das bases de dados - permite atualizações nas bases, mas nunca apaga tabelas ou colunas que não estejam em uso pela aplicação - existem outras configurações - essa é só simples e segura na fase de desenvolvimento!
+spring.jpa.hibernate.ddl-auto=update
+
+# Datasource
+spring.datasource.url=jdbc:h2:file:~/<caminhoParaOndeQuerQueOsDadosFiquem>
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.driver-class-name=org.h2.Driver
+
+server.servlet.context-path=/api
+#diz ao spring que coloque /api antes de qualquer url, ou seja, se voce quiser utilizar as rotas /products, precisará adicionar /api =>  /api/v1/products e assim por diante
+
+````
+
+
+
+
 
 
 
