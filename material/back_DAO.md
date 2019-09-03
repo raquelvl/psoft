@@ -68,6 +68,11 @@ server.servlet.context-path=/api
 ````
 
 
+## Data Access Objects
+
+Agora que já vimos um pouco do arcabouço que nos apoiará na função de lidar com bancos de dados, vamos ao assunto mais genérico da aula: como acessar os dados da forma menos acoplada possível? 
+
+Um objeto de acesso a dados (do inglês Data Access Object - DAO) é um objeto que fornece uma interface abstrata para algum tipo de banco de dados ou outro mecanismo de persistência. O DAO mapeia as chamadas dentro do contexto de orientação a objetos para a camada de persistência. Um DAO fornece algumas operações específicas sobre os dados sem expor detalhes do banco de dados. Esse isolamento suporta o princípio de responsabilidade única, uma vez que a única responsabilidade de um DAO é expor de forma segura e facilitada os dados de uma dada tabela da base de dados. Ao usar um DAO estamos isolando o acesso aos dados da manipulação específica dos dados, uma vez que a comunicação do DAO com a camada de persistência é satisfeita pelo framework de persistência (no nosso caso JPA + ORM/hibernate). O DAO define quais dados de acesso a aplicação precisa em termos de objetos e tipos de dados específicos do domínio (a interface pública do DAO), e isola essas abstrações de como esses dados podem ser recuperados de um SGBD específico (ou até uma coleção de arquivos).
 
 
 
