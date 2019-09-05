@@ -66,6 +66,9 @@ Authorization: Bearer <token>
 
 Em geral, este é um mecanismo de autorização stateless. Quando uma rota protegida do servidor for acessada, o serviço (o seu backend) vai checar se o token que vem no authorization header é válido, e se for, deve identificar o usuário "por trás" do token e verificar se este usuário tem autorização para acessar o recurso. Pode ser necessário acessar a base de dados para recuperar alguma informação, como por exemplo, se este usuário existe no sistema. 
 
-O diagrama abaioxo mostra como um JWT é obtido e usado para acessar APIs:
+O diagrama abaixo mostra ilustra o processo de uso do JWT para autorizar acesso a APIs[<sup>1</sup>](https://imasters.com.br/desenvolvimento/json-web-token-conhecendo-o-jwt-na-teoria-e-na-pratica):
 
 ![Diagrama de sequência usando token JWT](imagens/ciclo_JWT.png)
+
+No próximo módulo veremos como usar JWT para autorização em aplicações spring boot.
+
