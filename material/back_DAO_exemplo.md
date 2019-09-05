@@ -72,7 +72,8 @@ package projsoft.ufcg.daos;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProdutosRepository<Produto> extends JpaRepository<Produto, Long> {
+@Repository
+public interface ProdutosRepository<T, ID extends Serializable> extends JpaRepository<Produto, Long> {
 
 }
 ```
@@ -93,7 +94,6 @@ package projsoft.ufcg.servicos;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import projsoft.ufcg.daos.ProdutosRepository;
@@ -102,9 +102,15 @@ import projsoft.ufcg.entidades.Produto;
 @Service
 public class ProdutosService {
 
-	@Autowired
-	private ProdutosRepository<Produto> produtosDAO;
+	private ProdutosRepository<Produto, Long> produtosDAO;
 	
+	//obrigatorio ter esse construtor, caso contrario chama um construtor
+    //default e o DAO fica null
+	public ProdutosService(ProdutosRepository<Produto, Long> produtosDAO) {
+		super();
+		this.produtosDAO = produtosDAO;
+	}
+
 	public Produto adicionaProduto(Produto produto) {
 		return produtosDAO.save(produto);
 	}
@@ -118,5 +124,92 @@ public class ProdutosService {
 	}
 }
 ```
+Agora vamos escrever o controlador de produtos, a classe marcada com @RestController que vai receber as requisições HTTP dos clientes da API e rotea-las para o serviço que saberá realizar as requisições. Abaixo segue o código do controlador de produtos.
 
-Finalmente, vamos escrever 
+```java
+package projsoft.ufcg.controladores;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import projsoft.ufcg.entidades.Produto;
+import projsoft.ufcg.servicos.ProdutosService;
+
+@RestController
+public class ProdutosController {
+
+	private ProdutosService produtosService;
+
+	//obrigatorio ter esse construtor, caso contrario chama um construtor
+	//default e o serviço fica null
+	public ProdutosController(ProdutosService produtosService) {
+		super();
+		this.produtosService = produtosService;
+	}
+
+	@PostMapping("/produtos")
+	public ResponseEntity<Produto> adicionaProduto(@RequestBody Produto produto) {
+		return new ResponseEntity<Produto>(produtosService.adicionaProduto(produto), HttpStatus.CREATED);
+	}
+
+	@GetMapping("/produtos/{id}")
+	public ResponseEntity<Produto> getProduto(@PathVariable Long id) {
+		Optional<Produto> produto = produtosService.getProduto(id);
+		if (produto.isPresent())
+			return new ResponseEntity<Produto>(produto.get(), HttpStatus.OK);
+		return new ResponseEntity<Produto>(HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping("/produtos")
+	public ResponseEntity<List<Produto>> getProdutos() {
+		return new ResponseEntity<List<Produto>>(produtosService.getProdutos(), HttpStatus.OK);
+	}
+
+}
+```
+
+Finalmente, vamos olhar para o arquivo de configuração application.properties (que fica em resources). Este arquivo deve trazer informação para configurar/usar a base de dados.
+
+````
+# H2
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2
+#indicará o path para você acessar a interface do h2, em geral, vá ao browser e coloque localhost:8080/h2 com 8080 ou sua porta
+
+#deixa que hibernate gerencia a criação das bases de dados - permite atualizações nas bases, mas nunca apaga tabelas ou colunas que não estejam em uso pela aplicação - existem outras configurações - essa é só simples e segura na fase de desenvolvimento!
+spring.jpa.hibernate.ddl-auto=update
+
+# Datasource
+spring.datasource.url=jdbc:h2:file:./dados
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.driver-class-name=org.h2.Driver
+
+server.servlet.context-path=/api/v1
+#diz ao spring que coloque /api antes de qualquer url, ou seja, se voce quiser utilizar as rotas /products, precisará adicionar /api =>  /api/v1/products e assim por diante
+````
+
+Execute a aplicação. Perceba que a base de dados foi gerada. Use a API adicionando produtos. Encerre a aplicação (API), em seguida coloque para rodar novamente e veja que todos os produtos inseridos anteriormente estão lá.
+
+Este exemplo, apesar de bastante simples, serve de base para você escrever suas APIs com dados que persistem em bancos de dados relacionais de agora em diante. 
+
+## Exercício
+
+Use Spring boot e JPA para adicionar na API que acabamos de escrever o seguinte:
+
+* POST /api/v1/usuarios (adiciona um usuario com email, nome e senha - o email é o login do usuario e deve ser um identificador único do sistema);
+* GET /api/v1/usuarios/{email} - recupera um usuário com determinado login (email)
+
+Para pensar: 
+* que novas classes você vai precisar desenvolver?
+* será que você pode deixar essa funcionalidade junto com ProdutosController e ProdutosService? 
+** Resposta: não é uma boa prática, são bases de dados (tabelas) diferentes e cada uma deveria idealmente ter não apenas seu DAO específico, mas também seus serviços e controladores. Isso mantém o código menos acoplado e mais fácil de manter.
+
