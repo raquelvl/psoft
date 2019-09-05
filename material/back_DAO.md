@@ -78,6 +78,14 @@ Quando olhamos para a organização interna da nossa API backend será muito com
 
 ![Arquitetura interna padrão da API backend](imagens/camadas.png)
 
+O cliente da API (outra API, um frontend) vai enviar requisições HTTP para o endpoint público da API. A partir do método HTTP associado a esta requisição juntamente com a URI dessa requisição é possível identificar unicamente a rota que deve ser recuperada, ou em outras palavras, o recurso que deve ser acessado. Depois de identificada essa rota, um controlador específico da aplicação receberá a requisição. Lembremos que os controladores são os componentes responsáveis por direcionar os pedidos que chegam dos clientes para o serviço que saberá executá-los. Écomum que vários controladores existam em uma API, em geral, um para cada tabela do banco de dados que a API expõe. 
+
+Os controladores devem manter o mínimo de inteligência e delegar tudo que for possível para os serviços. Cada controlador deve conhecer pelo menos um serviço, mas dependendo da complexidade e do design da aplicação pode ser que um controlador precise conhecer mais de um serviço. A camada de serviços deve manter várias regras de negócio, isto é, é nela que deve haver inteligência para resolver as requisições da API. Sempre que for necessário acessar dados do banco de dados a camada de serviço vai solicitar a um objeto de acesso a dados (DAO). Assim, os componentes de serviço devem conhecer os DAOs adequados para realizar suas tarefas. A camada de serviço **nunca** acessa as bases de dados diretamente, um DAO sempre será usado para isso.
+
+Existem várias vantagens de usar essa arquitetura interna. Uma delas é que se por alguma razão desejarmos mudar a tecnologia de persistência (por exemplo sair de arquivos para bases de dados), apenas os DAOs precisam ser modificados (e a configuração dos drivers de acesso aos dados, claro!). Se os novos DAOs mantiverem exatamente os mesmos métodos de acesso aos dados, os serviços não precisam ser modificados.
+
+Na próxima aula vamos ver como escrever uma aplicação seguindo esta arquitetura usando spring boot e Java Persistence API.
+
 
 
 
