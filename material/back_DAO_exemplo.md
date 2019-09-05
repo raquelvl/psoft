@@ -197,7 +197,7 @@ server.servlet.context-path=/api/v1
 #diz ao spring que coloque /api antes de qualquer url, ou seja, se voce quiser utilizar as rotas /products, precisará adicionar /api =>  /api/v1/products e assim por diante
 ````
 
-Execute a aplicação. Perceba que a base de dados foi gerada. Use a API adicionando produtos. Encerre a aplicação (API), em seguida coloque para rodar novamente e veja que todos os produtos inseridos anteriormente estão lá.
+Execute a aplicação (o códico completo dessa API está [aqui](https://github.com/raquelvl/psoft/tree/master/demojpa)). Perceba que a base de dados foi gerada. Use a API adicionando produtos. Encerre a aplicação (API), em seguida coloque para rodar novamente e veja que todos os produtos inseridos anteriormente estão lá.
 
 Este exemplo, apesar de bastante simples, serve de base para você escrever suas APIs com dados que persistem em bancos de dados relacionais de agora em diante. 
 
