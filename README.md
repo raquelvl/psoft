@@ -18,5 +18,5 @@
 
 [Introdução à persistência de dados usando DAO (com Spring boot e JPA)](material/back_DAO.md)
 
-[Exemplo de API que realiza persistência de dados com Sprong boot e JPA](material/back_DAOexemplo.md)
+[Exemplo de API que realiza persistência de dados com Sprong boot e JPA](material/back_DAO_exemplo.md)
 
