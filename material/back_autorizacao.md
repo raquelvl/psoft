@@ -23,4 +23,4 @@ Portanto, um JWT normalmente se parece com uma string como essa string:
 xxxxx.yyyyy.zzzzz
 ````
 
-[Diagrama de sequência usando token JWT](imagens/sequenciaJWT.png)
+[!Diagrama de sequência usando token JWT](imagens/ciclo_JWT.png)
