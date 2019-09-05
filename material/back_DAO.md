@@ -76,7 +76,7 @@ Um objeto de acesso a dados (do inglês Data Access Object - DAO) é um objeto q
 
 Quando olhamos para a organização interna da nossa API backend será muito comum encontrar algo parecido com o que é mostrado na figura abaixo:
 
-![Arquitetura interna padrão da API backend](/images/logo.png)
+![Arquitetura interna padrão da API backend](imagens/camadas.png)
 
 
 
