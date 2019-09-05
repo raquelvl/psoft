@@ -1,4 +1,4 @@
-# Introdução à autenticação com JSON Web Tokens
+# Introdução à autorização com JSON Web Tokens
 
 Como já comentamos antes, uma API backend expõe dados de forma coordenada e segura. Isto significa que expõe-se apenas o que pode e deve ser exposto e com o cuidado de garantir que apenas usuários autorizados terão acesso aos dados de forma segura.
 
@@ -21,8 +21,6 @@ Em sua forma compacta, os JSON Web Tokens consistem em três partes separadas po
 Portanto, um JWT normalmente se parece com uma string como essa string: 
 ````
 xxxxx.yyyyy.zzzzz
-
-
-Um JWT é uma string 
+````
 
 [Diagrama de sequência usando token JWT](imagens/sequenciaJWT.png)
