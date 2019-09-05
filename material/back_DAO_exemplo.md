@@ -211,5 +211,5 @@ Use Spring boot e JPA para adicionar na API que acabamos de escrever o seguinte:
 Para pensar: 
 * que novas classes você vai precisar desenvolver?
 * será que você pode deixar essa funcionalidade junto com ProdutosController e ProdutosService? 
- * Resposta: não é uma boa prática, são bases de dados (tabelas) diferentes e cada uma deveria idealmente ter não apenas seu DAO específico, mas também seus serviços e controladores. Isso mantém o código menos acoplado e mais fácil de manter.
+	* Resposta: não é uma boa prática, são bases de dados (tabelas) diferentes e cada uma deveria idealmente ter não apenas seu DAO específico, mas também seus serviços e controladores. Isso mantém o código menos acoplado e mais fácil de manter.
 
