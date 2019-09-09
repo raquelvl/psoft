@@ -13,13 +13,13 @@ Semestre: 2019.2**
 * JPA - interface unificada para facilitar mapeamento de objetos para registros de tabelas
 * JWT - tokans para autorização de acesso a dados
 
-Lembrete: use o [spring initizlizr](https://start.spring.io) para criar seu projeto spring. Desas vez marque as dependências "Spring Web Starter", "H2 Database" e "Spring Data JPA" na configuração do seu projeto.
+Lembrete: use o [spring initizlizr](https://start.spring.io) para criar seu projeto spring. Desas vez marque as dependências "_Spring Web Starter_", "_H2 Database_" e "_Spring Data JPA_" na configuração do seu projeto.
 
 Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferência (eclipse, IntelliJ, etc.) importe o projeto criado como um projeto maven. Agora você já pode desenvolver sua primeira aplicação.
 
 Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. 
 
-Continuaremos o desenvolvimento do primeiro lab, trabalharemos no contexto de disciplinas. Mas agora vamos adicionar persistência e um pouco de segurança. No contexto da nossa API uma Disciplina é uma classe que tem os seguintes atributos: id:long, nome:String e nota:double.
+Continuaremos o desenvolvimento do primeiro lab, trabalharemos no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez e vamos adicionar um pouco de segurança. No contexto da nossa API uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String** e **nota:double**.
 
 Temos um arquivo JSON já com todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. Neste documento estão as dicas de como fazer isso usando spring boot.
 
