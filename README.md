@@ -6,6 +6,8 @@
 
 [Aulas de laboratório](aulas/labs.md)
 
+[Notas de minitestes](2019.2/notas.md)
+
 ## Material para estudo e prática
 
 [Sobre arquiteturas de aplicações Web](material/back_arquitetura.md)
