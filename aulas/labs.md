@@ -4,3 +4,8 @@
 * Data de início: 21/08
 * Data de término: 26/08
 * Data do miniteste: 26/08
+
+## [lab 2](lab2_backend.md)
+* Data de início: 16/09/2019
+* Data de término: 
+* Data do miniteste: 
