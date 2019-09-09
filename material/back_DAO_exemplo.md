@@ -1,12 +1,12 @@
 # Como implementar DAO com spring boot e JPA?
 
-Nesta aula vamos ver um exemplo bem simples de como escrever uma API que expõe uma base de dados relacional usando spring boot e JPA (Java Persistence API). Suponha que você está desenvolvendo uma aplicação de comércio eletrônico e portanto precisa armazenas produtos em uma tabela para persistência. Cada produto deve ter um id único, um nome, uma descrição e um preço (double). Por enquanto a API deve ter apenas 2 rotas: 
+Nesta aula vamos ver um exemplo bem simples de como escrever uma API que expõe uma base de dados relacional usando spring boot e JPA (Java Persistence API). Suponha que você está desenvolvendo uma aplicação de comércio eletrônico e portanto precisa armazenar produtos em uma tabela para persistência. Cada produto deve ter um id único, um nome, uma descrição e um preço (double). Por enquanto a API deve ter apenas 2 rotas: 
 
-* POST /api/v1/produtos (para adicionar um prodito), 
-* GET /api/v1/produtos (para recuperar todos os produtos já cadastrados) e 
-* GET /api/v1/produtos/{i} (para recuperar um produto a partir do seu ID). 
+* POST /v1/api/produtos (para adicionar um produto), 
+* GET /v1/api/produtos (para recuperar todos os produtos já cadastrados) e 
+* GET /v1/api/produtos/{i} (para recuperar um produto a partir do seu ID). 
 
-O formato do JSON usado na comunicação (sempre no corpo da requisição ou da resposta HTTP) do POST /api/v1/produtos e do GET /api/v1/produtos/{i} tem os seguintes campos: 
+O formato do JSON usado na comunicação (sempre no corpo da requisição ou da resposta HTTP) do POST /v1/api/produtos e do GET /v1/api/produtos/{i} tem os seguintes campos: 
 
 ```json
 {
@@ -15,7 +15,8 @@ O formato do JSON usado na comunicação (sempre no corpo da requisição ou da 
   "preco":"<preco>"
 }
 ```
-O campo *id* deve ser acrescido como o primeiro campo do JSON usado para representar produtos da chamada GET /api/v1/produtos:
+
+O campo *id* deve ser acrescido como o primeiro campo do JSON retornado para representar produtos da chamada GET /v1/api/produtos:
 
 ```json
 {
@@ -193,11 +194,11 @@ spring.datasource.username=sa
 spring.datasource.password=
 spring.datasource.driver-class-name=org.h2.Driver
 
-server.servlet.context-path=/api/v1
-#diz ao spring que coloque /api antes de qualquer url, ou seja, se voce quiser utilizar as rotas /products, precisará adicionar /api =>  /api/v1/products e assim por diante
+server.servlet.context-path=/v1/api
+#diz ao spring que coloque /api antes de qualquer url, ou seja, se voce quiser utilizar as rotas /products, precisará adicionar /api =>  /v1/api/products e assim por diante
 ````
 
-Execute a aplicação (o códico completo dessa API está [aqui](https://github.com/raquelvl/psoft/tree/master/demojpa)). Perceba que a base de dados foi gerada. Use a API adicionando produtos. Encerre a aplicação (API), em seguida coloque para rodar novamente e veja que todos os produtos inseridos anteriormente estão lá.
+Execute a aplicação (o código completo dessa API está [aqui](https://github.com/raquelvl/psoft/tree/master/demojpa)). Perceba que a base de dados foi gerada. Use a API adicionando produtos. Encerre a aplicação (API), em seguida coloque para rodar novamente e veja que todos os produtos inseridos anteriormente estão lá.
 
 Este exemplo, apesar de bastante simples, serve de base para você escrever suas APIs com dados que persistem em bancos de dados relacionais de agora em diante. 
 
@@ -205,8 +206,8 @@ Este exemplo, apesar de bastante simples, serve de base para você escrever suas
 
 Use Spring boot e JPA para adicionar na API que acabamos de escrever o seguinte:
 
-* POST /api/v1/usuarios (adiciona um usuario com email, nome e senha - o email é o login do usuario e deve ser um identificador único do sistema);
-* GET /api/v1/usuarios/{email} - recupera um usuário com determinado login (email)
+* POST /v1/api/usuarios (adiciona um usuario com email, nome e senha - o email é o login do usuario e deve ser um identificador único do sistema);
+* GET /v1/api/usuarios/{email} - recupera um usuário com determinado login (email)
 
 Para pensar: 
 * que novas classes você vai precisar desenvolver?
