@@ -15,13 +15,11 @@ Semestre: 2019.2**
 
 Lembrete: use o [spring initizlizr](https://start.spring.io) para criar seu projeto spring. Desas vez marque as dependências "_Spring Web Starter_", "_H2 Database_" e "_Spring Data JPA_" na configuração do seu projeto.
 
-Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferência (eclipse, IntelliJ, etc.) importe o projeto criado como um projeto maven. Agora você já pode desenvolver sua primeira aplicação.
+Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferência (eclipse, IntelliJ, etc.) importe o projeto criado como um projeto maven. Agora você já pode desenvolver sua aplicação.
 
-Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. 
+Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. Continuaremos o desenvolvimento do primeiro lab no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez e vamos adicionar um pouco de segurança. Relembrando, por enquanto, no contexto da nossa API, uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String** e **nota:double**.
 
-Continuaremos o desenvolvimento do primeiro lab, trabalharemos no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez e vamos adicionar um pouco de segurança. No contexto da nossa API uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String** e **nota:double**.
-
-Temos um arquivo JSON já com todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. Neste documento estão as dicas de como fazer isso usando spring boot.
+Temos um arquivo [JSON](./disciplinas.json) já com os nomes de todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. Neste documento estão as dicas de como fazer isso usando spring boot.
 
 Use spring boot e java para desenvolver a seguinte API:
 
