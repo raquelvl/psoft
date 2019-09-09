@@ -19,21 +19,23 @@ Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferê
 
 Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. Continuaremos o desenvolvimento do primeiro lab no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez e vamos adicionar um pouco de segurança. Relembrando, por enquanto, no contexto da nossa API, uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String** e **nota:double**.
 
-Temos um arquivo [JSON](./disciplinas.json) já com os nomes de todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. Neste documento estão as dicas de como fazer isso usando spring boot.
+Temos um arquivo [JSON](./disciplinas.json) já com os nomes de todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. [Neste documento](bit.ly/inicia-dados-json) estão as dicas de como fazer isso usando spring boot. Lembrando que a própria API deve se encarregar de gerar os identificadores únicos das disciplinas. Com isso, não precisaremos mais de uma rota na API para adicionar disciplinas.
 
 Use spring boot e java para desenvolver a seguinte API:
 
-POST /v1/api/disciplinas 
-Adiciona a disciplina no sistema. A própria API deve se encarregar de gerar os identificadores únicos das disciplinas. No corpo da requisição HTTP deve estar um JSON com as informações de nome e nota da disciplina a ser adicionada no sistema. 
-Retorna a disciplina que foi adicionada (incluindo o id) e código 200.
+POST /v1/auth/usuarios (adiciona um usuario com email, nome e senha - o email é o login do usuario e deve ser um identificador único do sistema);
 
-POST /api/v1/usuarios (adiciona um usuario com email, nome e senha - o email é o login do usuario e deve ser um identificador único do sistema);
-GET /api/v1/usuarios/{email} - recupera um usuário com determinado login (email)
+GET /v1/auth/usuarios/{email} - recupera um usuário com determinado login (email)
+
+POST /v1/auth/login - recebe email e senha de um usuário, verifica na base de dados de usuários se esse usuário existe, e se a senha está correta (autenticação). Se o usuário for autenticado gerar um JWT que deve ser retornado para o cliente.
+
+DELETE /v1/auth/usuarios/{email}
+Remove o usuário cujo identificador é o email passado na URI. Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e checar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades (ex. requisição sem JWT, requisição com JWT de outro usuário).
 
 GET /v1/api/disciplinas (id numerico, nome, nota)
-Retorna um JSON com todas as disciplinas já inseridas no sistema e código 200.
+Retorna um JSON com todas as disciplinas inseridas no sistema e código 200.
 
-GET /v1/api/disciplinas/:id
+GET /v1/api/disciplinas/{id}
 Retorna um JSON que representa a disciplina cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado.
 
 PUT /v1/api/disciplinas/{id}/nome 
@@ -44,22 +46,18 @@ PUT /v1/api/disciplinas/{id}/nota
 Atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com a nova nota da disciplina a ser atualizada no sistema. 
 Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado.
 
-DELETE /v1/api/disciplinas/{id}
-Remove a disciplina de identificador id do sistema e retorna a disciplina que foi removida (um JSON) e código 200. Ou não retorna JSON e retorna código 404 (para disciplina que não foi encontrada).
-
 GET /v1/api/disciplinas/ranking
 Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
 
 Seguem algumas dicas...
 
-Você irá desenvolver as seguintes classes:
-Classe que será o controlador do recurso /disciplinas e será marcada com @RestController 
-Classe de serviço (@Service) que oferece serviços ao controlador para gerenciar a coleção de disciplinas da API - o repositório das disciplinas pode ser um serviço aqui
-Classe que representa a Disciplina 
-Outras classes auxiliares para transferência, por exemplo, classe um DTO de disciplina sem o id (para quando a disciplina for ser adicionada)...
+* Use o padrão DAO para acesso às bases de dados;
+* Siga boas práticas de design, buscando desacoplamento utilize corretamente controladores, serviços e repositórios;
+* Organize suas classes em packages com nomes significativos (xx.services, xx.controllers, xx.repositories, xx.entities, etc. - pode usar nomes em portugues também, mas mantenha a coerência, ou tudo em portugues ou tudo em ingles);
 
 Execute a sua aplicação no termina, dentro do diretório raiz do seu projeto com o seguinte comando: 
 $ ./mvnw spring-boot:run
 
-Use Curl ou Postman para testar sua API. Desenvolve uma funcionalidade, teste, vá para a próxima…
+Use Curl ou Postman para testar sua API. Para testar chamadas que requerem um JWT você deve copiar o token recebido na respostqa do login no header "Authorization" de uma requisição HTTP futura. 
 
+**Não faça tudo de uma vez**. Desenvolva uma funcionalidade, teste, vá para a próxima…
