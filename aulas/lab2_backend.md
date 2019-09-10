@@ -17,7 +17,9 @@ Lembrete: use o [spring initizlizr](https://start.spring.io) para criar seu proj
 
 Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferência (eclipse, IntelliJ, etc.) importe o projeto criado como um projeto maven. Agora você já pode desenvolver sua aplicação.
 
-Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. Continuaremos o desenvolvimento do primeiro lab no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez e vamos adicionar um pouco de segurança. Relembrando, por enquanto, no contexto da nossa API, uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String** e **nota:double**.
+Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. Continuaremos o desenvolvimento do primeiro lab no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez e vamos adicionar um pouco de segurança. Relembrando, por enquanto, no contexto da nossa API, uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String**, **nota:double**, **comentarios:String** e **likes:int**.
+
+O objetivo desta API é permitir que alunos comentem e deem likes nas disciplinas do curso de Ciência da Computação. Mas essa versão da API ainda é muito reduzida. Quando um like é dado apenas incrementa o contador de likes da aplicação e quando um comentário é feito o novo comentário fica concatenado com os comentários anteriores com um newline entre eles. Qualquer usuário logado pode dar mais um like e comentar na disciplina.
 
 Temos um arquivo [JSON](./disciplinas.json) já com os nomes de todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. [Neste documento](bit.ly/inicia-dados-json) estão as dicas de como fazer isso usando spring boot. Lembrando que a própria API deve se encarregar de gerar os identificadores únicos das disciplinas. Com isso, não precisaremos mais de uma rota na API para adicionar disciplinas.
 
@@ -32,26 +34,30 @@ POST /v1/auth/login - recebe email e senha de um usuário, verifica na base de d
 DELETE /v1/auth/usuarios/{email}
 Remove o usuário cujo identificador é o email passado na URI. Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e checar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades (ex. requisição sem JWT, requisição com JWT de outro usuário).
 
-GET /v1/api/disciplinas (id numerico, nome, nota)
-Retorna um JSON com todas as disciplinas inseridas no sistema e código 200.
+GET /v1/api/disciplinas 
+Retorna um JSON (com campos id, nome) com todas as disciplinas inseridas no sistema e código 200. Precisa estar logado para recuperar esta informação do sistema.
 
 GET /v1/api/disciplinas/{id}
-Retorna um JSON que representa a disciplina cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado.
+Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
 
-PUT /v1/api/disciplinas/{id}/nome 
-Atualiza o nome da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com o novo nome da disciplina a ser atualizado no sistema. 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado.
+PUT /v1/api/disciplinas/{id}/like 
+Incrementa em um o número de likes da disciplina. O usuário deve estar logado para acessar este recurso.
+Retorna a disciplina que foi atualizada (incluindo o id, nome e likes) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
 
 PUT /v1/api/disciplinas/{id}/nota 
 Atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com a nova nota da disciplina a ser atualizada no sistema. 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado.
+Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
 
-GET /v1/api/disciplinas/ranking
+GET /v1/api/disciplinas/ranking/notas
 Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
+
+GET /v1/api/disciplinas/ranking/likes
+Retorna todas as disciplinas inseridas no sistema ordenadas pelo número de likes (da que tem mais likes para a que tem menos likes) e código 200.
 
 Seguem algumas dicas...
 
 * Use o padrão DAO para acesso às bases de dados;
+* Use JWT para autenticação e autorização;
 * Siga boas práticas de design, buscando desacoplamento utilize corretamente controladores, serviços e repositórios;
 * Organize suas classes em packages com nomes significativos (xx.services, xx.controllers, xx.repositories, xx.entities, etc. - pode usar nomes em portugues também, mas mantenha a coerência, ou tudo em portugues ou tudo em ingles);
 
