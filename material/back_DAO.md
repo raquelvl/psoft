@@ -6,7 +6,7 @@ Vamos entender esta frase. Um processo é um "programa em execução". Se durant
 
 Uma API pode ser vista como uma interface para gerenciar dados de forma controlada e segura. Toda API acessa/controla dados que devem persistir. Tipicamente, a API vai acessar uma camada de persistência que conta com um Sistema de Gerenciamento de Banco de Dados (SGBD) — ou do inglês Data Base Management System (DBMS). Um SGBD é o conjunto de pacotes de software responsáveis pelo gerenciamento de um banco de dados. O SGBD disponibiliza uma interface para que seus programas clientes possam incluir, alterar ou consultar dados previamente armazenados. No nosso curso usaremos **bancos de dados relacionais**. De forma simplificada, podemos dizer que um banco de dados relacional modela os dados na forma de tabelas. Nesses bancos de dados  a interface do banco com o usuário é constituída pelos drivers do SGBD, que executam comandos na linguagem SQL (Structured Query Language).
 
-Então vamos entender: estaremos construindo APIs usando a linguagem Java com o suporte do framework spring boot. E deveremos acessar os dados que são armazenados na forma de tabelas (registros em tabelas) usando uma outra linguagem chamada SQL. Esse buraco entre esses dois paradigmas gera bastante trabalho: a todo momento devemos "transformar" objetos em registros e registros em objetos. Como caminhar entre esses dois mundos de forma simples e fácil de entender/manter?
+Então vamos entender: estaremos construindo APIs usando a linguagem Java com o suporte do framework Spring Boot. E deveremos acessar os dados que são armazenados na forma de tabelas (registros em tabelas) usando uma outra linguagem chamada SQL. Esse buraco entre esses dois paradigmas gera bastante trabalho: a todo momento devemos "transformar" objetos em registros e registros em objetos. Como caminhar entre esses dois mundos de forma simples e fácil de entender/manter?
 
 ## Mapeamento objeto relacional e Java Persistence API (ORM e JPA)
 
@@ -18,7 +18,7 @@ A **JPA** pode ser vista como o padrão Java para acessar a técnica ORM e entã
 
 ## Entendendo um pouco mais a JPA
 
-Uma dascaracterísticas mais marcantes da JPA é definir tabelas através de classes Java simples persistentes. Os registros dessas tabelas são objetos dessas classes, que comumente são chamados de POJOs (Plain Old Java Objects ou Velho e Simples Objetos Java). Essas classes definem objetos que possuem design simples que não dependem da herança de interfaces, classes ou de frameworks externos. Qualquer objeto com um construtor default pode ser feito persistente sem nenhuma alteração numa linha de código. Mapeamento Objeto-Relacional com JPA é inteiramente dirigido a metadados. Faremos isso através de anotações no código.
+Uma das características mais marcantes da JPA é definir tabelas através de classes Java simples persistentes. Os registros dessas tabelas são objetos dessas classes, que comumente são chamados de POJOs (Plain Old Java Objects ou Velho e Simples Objetos Java). Essas classes definem objetos que possuem design simples que não dependem da herança de interfaces, classes ou de frameworks externos. Qualquer objeto com um construtor default pode ser feito persistente sem nenhuma alteração numa linha de código. Mapeamento Objeto-Relacional com JPA é inteiramente dirigido a metadados. Faremos isso através de anotações no código.
 
 Então, para criar uma tabela de Produtos o que precisamos fazer inicialmente é criar uma classe que represente essa tabela. Em uma visão simplificada, se um produto tem um identificador único numérico, uma descrição em String e um preço double, então a nossa classe Produto deve ter esses três atributos: id:int, descricao:String e preco:double. Mas não apenas isso, precisamos de anotações para informar que é uma classe de persistência. Vejamos o exemplo abaixo:
 
@@ -45,7 +45,7 @@ Neste código, a anotação @Entity indica que objetos dessa classe serão persi
 
 Em que tabela essa classe será gravada? Com quais colunas? Que tipo de coluna? Na ausência de configurações mais específicas, o ORM vai usar convenções: a classe Produto será gravada na tabela de nome também Produto, e cada atributo em uma coluna específica com mesmo nome do atributo. Se você quiser configurações diferentes (não será necessário a essa altura do curso) procure como usar as anotações @Table e @Column, por exemplo.
 
-Em qual banco de dados vamos gravar nossas Tarefass? Qual é o login? Qual é a senha? Isso vai ficar configurado no nosso arquivo application.properties. Um exemplo de configuração para usar JPA com o banco de dados h2 segue:
+Em qual banco de dados vamos gravar nossas tabelas? Qual é o login? Qual é a senha? Isso vai ficar configurado no nosso arquivo application.properties. Um exemplo de configuração para usar JPA com o banco de dados h2 segue:
 
 ````
 # H2
