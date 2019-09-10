@@ -40,13 +40,17 @@ Retorna um JSON (com campos id, nome) com todas as disciplinas inseridas no sist
 GET /v1/api/disciplinas/{id}
 Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
 
-PUT /v1/api/disciplinas/{id}/like 
+PUT /v1/api/disciplinas/{id}/likes 
 Incrementa em um o número de likes da disciplina. O usuário deve estar logado para acessar este recurso.
 Retorna a disciplina que foi atualizada (incluindo o id, nome e likes) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
 
-PUT /v1/api/disciplinas/{id}/nota 
+PUT /v1/api/disciplinas/{id}/nota
 Atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com a nova nota da disciplina a ser atualizada no sistema. 
 Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
+
+POST /v1/api/disciplinas/{id}/comentarios 
+Insere um novo comentário na disciplina de identificador id. No corpo da requisição HTTP deve estar um JSON com o novo comentário (chave "comentario") a ser adicionado na disciplina a ser atualizada no sistema. 
+Retorna a disciplina que foi atualizada (incluindo o id, nome e os comentarios) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
 
 GET /v1/api/disciplinas/ranking/notas
 Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
@@ -54,7 +58,7 @@ Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior 
 GET /v1/api/disciplinas/ranking/likes
 Retorna todas as disciplinas inseridas no sistema ordenadas pelo número de likes (da que tem mais likes para a que tem menos likes) e código 200.
 
-Seguem algumas dicas...
+Seguem algumas dicas:
 
 * Use o padrão DAO para acesso às bases de dados;
 * Use JWT para autenticação e autorização;
