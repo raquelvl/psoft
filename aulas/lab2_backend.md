@@ -61,6 +61,7 @@ Retorna todas as disciplinas inseridas no sistema ordenadas pelo número de like
 Seguem algumas dicas:
 
 * Use o padrão DAO para acesso às bases de dados;
+* Desenvolva tudo sem a parte de autenticação/autorização, depois que estiver tudo testado adiciona a parte de JWT;
 * Use JWT para autenticação e autorização;
 * Siga boas práticas de design, buscando desacoplamento utilize corretamente controladores, serviços e repositórios;
 * Organize suas classes em packages com nomes significativos (xx.services, xx.controllers, xx.repositories, xx.entities, etc. - pode usar nomes em portugues também, mas mantenha a coerência, ou tudo em portugues ou tudo em ingles);
