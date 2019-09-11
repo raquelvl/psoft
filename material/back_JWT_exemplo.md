@@ -14,3 +14,4 @@ O que precisamos fazer agora é:
 2. configurar as rotas privadas da aplicação (consideraremos a aplicação de produtos que desenvolvemos quando estávamos aprendendo sobre DAO+JPA). O cadastro de novos produtos só pode ser realizado por usuários autenticados;
 3. 
 
+https://www.baeldung.com/spring-boot-add-filter
