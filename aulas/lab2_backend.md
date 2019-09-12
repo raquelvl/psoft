@@ -21,7 +21,7 @@ Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, 
 
 O objetivo desta API é permitir que alunos comentem e deem likes nas disciplinas do curso de Ciência da Computação. Mas essa versão da API ainda é muito reduzida. Quando um like é dado apenas incrementa o contador de likes da disciplina e quando um comentário é feito o novo comentário fica concatenado com os comentários anteriores com um newline entre eles. Qualquer usuário logado pode dar mais um like e comentar na disciplina.
 
-Temos um arquivo [JSON](./disciplinas.json) já com os nomes de todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. [Neste documento](bit.ly/inicia-dados-json) estão as dicas de como fazer isso usando spring boot. Lembrando que a própria API deve se encarregar de gerar os identificadores únicos das disciplinas. Com isso, não precisaremos mais de uma rota na API para adicionar disciplinas.
+Temos um arquivo [JSON](./disciplinas.json) já com os nomes de todas as disciplinas que devem ser criadas. A ideia é programar sua API para povoar o banco de dados com todas as disciplinas já existentes. [Neste documento](http://bit.ly/inicia-dados-json) estão as dicas de como fazer isso usando spring boot. Lembrando que a própria API deve se encarregar de gerar os identificadores únicos das disciplinas. Com isso, não precisaremos mais de uma rota na API para adicionar disciplinas.
 
 Use spring boot e java para desenvolver a seguinte API:
 
