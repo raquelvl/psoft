@@ -25,7 +25,7 @@ Temos um arquivo [JSON](./disciplinas.json) já com os nomes de todas as discipl
 
 Use spring boot e java para desenvolver a seguinte API:
 
-POST /v1/auth/usuarios (adiciona um usuario com email, nome e senha - o email é o login do usuario e deve ser um identificador único do sistema);
+POST /v1/auth/usuarios (adiciona um usuario com email, nome e senha - o email é o login do usuario e deve ser um identificador único na tabela de usuário);
 
 GET /v1/auth/usuarios/{email} - recupera um usuário com determinado login (email)
 
