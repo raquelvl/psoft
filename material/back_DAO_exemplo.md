@@ -204,7 +204,7 @@ Este exemplo, apesar de bastante simples, serve de base para você escrever suas
 
 É possível que a interface CrudRepository não tenha exatamente o método de acesso aos dados desejado. Neste caso, temos duas opções a seguir para adicionar o método e continuar sem implementar a interface explicitamente:
 
-1. Inserir o método desejado na interface seguindo determinadas convenções para o nome do método. Isso informa para o JPA a query a ser realizada no banco pelo método novo sendo definido. Regras para nomear estes métodos extra podem ser encontradas na seção 4.5 e 5.3.2 [deste dofumento](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details).
+1. Inserir o método desejado na interface seguindo determinadas convenções para o nome do método. Isso informa para o JPA a query a ser realizada no banco pelo método novo sendo definido. Regras para nomear estes métodos extra podem ser encontradas na seção 4.5 e 5.3.2 [deste documento](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details).
 
 2. Inserir o método sem seguir a convenção do nome do método e usar a anotação [@Query](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.at-query) para indicar a consulta específica a ser realizada. Esta consulta é realizada usando a linguagem JPQL (Java Persistence Query Language) ou SQL pura ([veja exemplos e mais detalhes aqui].(https://www.baeldung.com/spring-data-jpa-query)).
 
