@@ -31,8 +31,8 @@ GET /v1/auth/usuarios/{email} - recupera um usuário com determinado login (emai
 
 POST /v1/auth/login - recebe email e senha de um usuário, verifica na base de dados de usuários se esse usuário existe, e se a senha está correta (autenticação). Se o usuário for autenticado gerar um JWT que deve ser retornado para o cliente.
 
-DELETE /v1/auth/usuarios/{email}
-Remove o usuário cujo identificador é o email passado na URI. Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e checar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades (ex. requisição sem JWT, requisição com JWT de outro usuário).
+DELETE /v1/auth/usuarios/
+Remove o usuário cujo que está requisitando a deleção (esta identificação é feita através do token passado no authorization header da requisição HTTP). Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e recuperar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades (ex. requisição sem JWT).
 
 GET /v1/api/disciplinas 
 Retorna um JSON (com campos id, nome) com todas as disciplinas inseridas no sistema e código 200. Precisa estar logado para recuperar esta informação do sistema.
