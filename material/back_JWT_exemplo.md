@@ -70,8 +70,127 @@ Para gerar o JWT vamos invocar o método builder() da classe JWTs. A classe JWTs
 
 Temos uma inner classe usada para representar uma resposta de login que contém basicamente o token. Um objeto dessa classe será "convertido" em um JSON que terá a cghave "token" e o o valor do token gerado. Esse JSON vai retornar no corpo da resposta HTTP do login.
 
+## Criação de filtro para verificação de tokens
 
+Um filtro é um objeto usado para interceptar requisições e respostas HTTP da API. Usando o filtro, podemos executar operações em dois momentos difetentes nesse fluxo de comunicação entre cliente servidor: (i) antes de enviar a solicitação ao controlador e (ii) antes de enviar uma resposta ao cliente.
 
+O filtro que precisamos agora deve operar interceptando a requisição HTTP antes de ser entregue ao controlador. A requisição interceptada deve ser avaliada da seguinte forma: recuperar o conteúdo do cabeçalho de autorização (*Authorization header*) e analisar o token para garantir que é um token válido.
+
+Em Spring, criamos um filtro implementando a interface [Filter](https://docs.oracle.com/javaee/7/api/javax/servlet/Filter.html?is-external=true). Para facilitar ainda mais, vamos na verdade estender uma classe de filtro genérica que já implementa um Filter pra gente: GenericFilterBean. No nosso filtro (ver código abaixo) estamos sobrescrevendo o método doFilter e reusando os demais métodos implementados da interface Filter (destroy e init).
+
+```java
+package projsoft.ufcg.filtros;
+
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.filter.GenericFilterBean;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
+
+public class TokenFilter extends GenericFilterBean {
+
+	public final static int TOKEN_INDEX = 7;
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+
+		HttpServletRequest req = (HttpServletRequest) request;
+
+		String header = req.getHeader("Authorization");
+
+		if (header == null || !header.startsWith("Bearer ")) {
+			throw new ServletException("Token inexistente ou mal formatado!");
+		}
+
+		// Extraindo apenas o token do cabecalho.
+		String token = header.substring(TOKEN_INDEX);
+
+		try {
+			Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody();
+		} catch (SignatureException e) {
+			throw new ServletException("Token invalido ou expirado!");
+		}
+
+		chain.doFilter(request, response);
+	}
+
+}
+```
+
+O método doFilter é chamado pelo container toda vez que um par de requisição/resposta HTTP é passado pela cadeia devido a uma requisição do cliente por um recurso. O FilterChain transmitido para esse método permite que o Filter transmita a solicitação e a resposta para a próxima entidade na cadeia (chamando chain.doFilter). 
+
+Na nossa implementação do doFilter a primeira etapa é examinar a requisição e extrair o cabeçalho de interesse (no nosso caso o Authorization). Fazemos a análise desejada com os dados extraídos e em seguida invocamos a próxima entidade na cadeia usando o objeto FilterChain (chain.doFilter()). A análise que realizamos é o *parsing* do token recuperado. Se o token não for válido geramos uma exceção e a requisição nem chega no controlador. Uma resposta já é enviada para o cliente indicando o erro.
+
+Se não ocorrer erro um dos próximos componentes da cadeia a receber esta requisição será o controlador que serve a URI da requisição.
+
+### Configuração do filtro
+
+Já sabemos como criar um filtro para olhar os tokens das requisições, mas isso ainda não é suficiente. Precisamos configurar o filtro como um componente conhecido como @Bean e indicar que rotas devem invocar o filtro (só as rotas que de fato requerem token para acesso). Um bean é um objeto que é criado, gerenciado e destruído pelo container do spring, o framework é totalmente responsável por este objeto, criando, injetando suas propriedades (Injeção de dependência).
+
+A configuração dos beans deve ocorrer dentro de uma classe marcada com @Configuration. Já temos uma classe dessas, apesar de estar transparente pra gente. É a classe da aplicação marcada com @SpringBootApplication. Ao anotar uma classe com @SpringBootApplication estamos na verdade anotando a classe com 3 anotações distintas: @EnableAutoConfiguration (ativa o mecanismo de auto-configuração do Spring boot), @ComponentScan (habilita o *scan* de componentes @Component no pacote e sub-pacotes onde a aplicação está localizada e @Configuration (permite o registro de beans - como por exemplo filtros como esse nosso, filtros para logging, etc. e classes adicionais de configuração. No código abaixo adicionamos na aplicação principal (main) a definição do bean.
+
+```java
+@SpringBootApplication
+public class DemojwtApplication {
+
+	@Bean
+	public FilterRegistrationBean<TokenFilter> filterJwt() {
+		FilterRegistrationBean<TokenFilter> filterRB = new FilterRegistrationBean<TokenFilter>();
+		filterRB.setFilter(new TokenFilter());
+		filterRB.addUrlPatterns("/api/produtos", "/auth/usuarios");
+		return filterRB;
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(DemojwtApplication.class, args);
+	}
+
+}
+```
+
+Quando queremos um filtro que seja aplicável apenas a algumas URLs da API, então definimos um FilterRegistrationBean. Esse bean é um filtro e podemos configurar através do método addUrlPatterns as URLs às quais o filtro deve ser aplicado. Neste caso configuramos duas URLs, quaisquer outras URLs da API não irá invocar o filtro.
+
+### Recuperando o ID do usuário através do JWT
+
+O filtro que criamos verifica se o token é válido. Se quisermos algo além disso, será realizado no controlador. Por exemplo, é possível que certas rotas só possam ser acessadas por um usuário específico. Por exemplo, só o próprio usuário deveria poder deletar sua própria conta; se um usuário inseriu um comentário usando uma API, só este usuário deveria poder editar e deletar este comentário.
+
+Uma forma simples de realizar essa identificação do usuário é recuperar o token no controlador, e fazer o *parsing* do token para recuperar o usuário. Note que quando fomos criar o token nós usamos o seguinte comando:
+
+```java
+Jwts.builder().setSubject(authUsuario.get().getEmail())
+```
+
+Então, ao fazer parsing do token podemos recuperar o subject:
+
+```java
+subject = Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody().getSubject();
+```
+No @RestController podemos ter acesso à requisição HTTP. Vejamos abaixo um método do controlador que recupera o cabeçalho de autoriação da requisição HTTP e passa para o serviço de parsing JWT (chamado aqui de jwtService):
+
+```java
+@DeleteMapping("/auth/usuarios/{email}")
+	public ResponseEntity<Usuario> removeUsuario(@PathVariable String email, @RequestHeader("Authorization") String header) {
+		if(usuariosService.getUsuario(email).isEmpty())
+			return new ResponseEntity<Usuario>(HttpStatus.NOT_FOUND);
+		try {
+			if(jwtService.usuarioTemPermissao(header, email)) {
+				return new ResponseEntity<Usuario>(usuariosService.removeUsuario(email), HttpStatus.OK);
+			}
+		} catch (ServletException e) {
+			//usuario esta com token invalido ou vencido
+			return new ResponseEntity<Usuario>(HttpStatus.FORBIDDEN);
+		}
+		//usuario nao tem permissao
+		return new ResponseEntity<Usuario>(HttpStatus.UNAUTHORIZED);
+	}
+```
 
 
 https://www.baeldung.com/spring-boot-add-filter
