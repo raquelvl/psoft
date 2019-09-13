@@ -34,7 +34,7 @@ O **cabeçalho** consiste geralmente de duas informações: o tipo de token (que
 
 Esse JSON é codificado para formar a primeira parte do JWT (o xxxxx do exemplo acima.)
 
-A **carga útil** traz as declarações a entidade representada pelo JWT (normalmente, o usuário) e dados adicionais. Existem três tipos de declarações: registradas, públicas e privadas. 
+A **carga útil** traz as declarações (do inglês, "claims") a entidade representada pelo JWT (normalmente, o usuário) e dados adicionais. Existem três tipos de declarações: registradas, públicas e privadas. 
 
 Declarações registradas são um conjunto de declarações predefinidas que não são obrigatórias, mas são recomendadas. Algumas delas são: iss (emissor), exp (tempo de expiração), sub (assunto), aud (público). Declarações públicas podem ser definidas à vontade por aqueles que usam JWTs. Mas, para evitar colisões, deve-se tomar certos cuidados ao definí-las. Finalmente, as declarações privadas são personalizadas, especialmente criadas para compartilhar informações entre as partes que concordam em usá-las e não são declarações registradas ou públicas.
 
@@ -58,7 +58,7 @@ A assinatira garante que a mensagem não foi modificada ao longo do caminho entr
 
 ## Como funciona na prática?
 
-Durante a autenticação do usuário, quando o usuário se loga com sucesso passando suas credenciais, um JSON Web Token será retornado. Quando o usuário deseja acessar uma rota/recurso protegido, o software cliente deve enviar o JWT, tipicamente no Authorization header usando o esquema Bearer. O conteúdo do cabeçalho HTTP deve se parecer como abaixo:
+Durante a autenticação do usuário, quando o usuário se loga com sucesso passando suas credenciais, um JSON Web Token será retornado. Quando o usuário deseja acessar uma rota/recurso protegido, o software cliente deve enviar o JWT no Authorization header usando o esquema Bearer. O conteúdo do cabeçalho HTTP deve se parecer como abaixo:
 
 ````
 Authorization: Bearer <token>
@@ -66,9 +66,16 @@ Authorization: Bearer <token>
 
 Em geral, este é um mecanismo de autorização stateless. Quando uma rota protegida do servidor for acessada, o serviço (o seu backend) vai checar se o token que vem no authorization header é válido, e se for, deve identificar o usuário "por trás" do token e verificar se este usuário tem autorização para acessar o recurso. Pode ser necessário acessar a base de dados para recuperar alguma informação, como por exemplo, se este usuário existe no sistema. 
 
-O diagrama abaixo mostra ilustra o processo de uso do JWT para autorizar acesso a APIs[<sup>1</sup>](https://imasters.com.br/desenvolvimento/json-web-token-conhecendo-o-jwt-na-teoria-e-na-pratica):
+O diagrama abaixo ilustra o processo de uso do JWT para autorizar acesso a APIs[<sup>1</sup>](https://imasters.com.br/desenvolvimento/json-web-token-conhecendo-o-jwt-na-teoria-e-na-pratica):
 
 ![Diagrama de sequência usando token JWT](imagens/ciclo_JWT.png)
 
+É comum que usuários possam assumir papéis diferentes na API e portanto ter acesso a recursos diferentes da API. Por exemplo, um usuário com papel de "admin" deve ter mais poderes (ter acesso a mais recursos) que um usuário simples rotulado, por exemplo, por "user". Assim, é comum que um usuário esteja associado a papéis ("roles" em inglês) e estes papéis definem o acesso que o usuário tem na API. Esta abordagem para restringir o acesso do sistema a usuários autorizados pelos seus papéis é chamada de **role based access control** (controle de acesso baseado em papéis - ou funções). 
+
+Dentro de um sistema, os usuários são associados a funções (ou papéis). As permissões para executar determinadas operações são atribuídas a papéis/funções específicos. O gerenciamento dos direitos de acesso dos usuários é realizado ao atribuir funções/papéis apropriados à conta do usuário. O papel que um usuário exerce pode ser atualizado com o tempo, deixando bastante flexível a gerência destas permissões.
+
+Pensando na ferramenta JWT que temos em mãos, nada nos impede de criar declarações (claims) para armazenar informações extras, como por exemplo, os papéis, no próprio token do usuário. No entanto, é mais simples e desacoplado se confiar ao JWT apenas a autenticação (isto é, descobrir quem é o usuário por trás da requisição). Se precisar executar uma autorização em termos de papéis (o que cada usuário está permitido a fazer), é mais interessante gravar estas informações como atributos dos usuários e recuperar da base de dados de usuários o papel (ou papéis) que o usuário exerce no sistema.
+
+Existem muitas formas de implentar esse comportamento. Aqui neste curso vamos seguir a forma mais simples possível
 No próximo módulo veremos como usar JWT para autorização em aplicações spring boot.
 
