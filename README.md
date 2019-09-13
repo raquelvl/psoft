@@ -20,5 +20,9 @@
 
 [Introdução à persistência de dados usando DAO (com Spring boot e JPA)](material/back_DAO.md)
 
-[Exemplo de API que realiza persistência de dados com Sprong boot e JPA](material/back_DAO_exemplo.md)
+[Exemplo de API que realiza persistência de dados com Spring boot e JPA](material/back_DAO_exemplo.md)
+
+[Introdução à autenticação e autorização com JSON Web Tokens - JWT](material/back_autorizacao.md)
+
+[Exemplo de API REST Spring que realiza autenticação/autoriazação com JWT](material/back_JWT_exemplo.md)
 
