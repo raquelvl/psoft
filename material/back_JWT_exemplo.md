@@ -170,6 +170,50 @@ public class DemojwtApplication {
 
 Quando queremos um filtro que seja aplicável apenas a algumas URLs da API, então definimos um FilterRegistrationBean. Esse bean é um filtro e podemos configurar através do método addUrlPatterns as URLs às quais o filtro deve ser aplicado. Neste caso configuramos duas URLs, quaisquer outras URLs da API não irá invocar o filtro.
 
+### Realizando login dos usuários
+
+Agora que temos todas as ferramentas para analisar JWTs, precisamos gerar os tokens. A geração do token deve ser realizada no momento em que o usuário se autentica no sistema, isto é, no momento que o usuário se loga. Para se autenticar o usuário deve informar suas credenciais; em geral email ou outro identificador único do usuário e senha. 
+
+Sugerimos um controlador específico para o login. Esse controlador vai responder apenas pela rota de login. Para tal ele deverá conhecer dois serviços: 
+
+1. o serviço que acessa a base de dados dos usuários. Isso é necessário para que o controlador possa verificar se o usuário que tenta se logar realmente existe e se sua senha está correta;
+2. o serviço JWT que é responsável por gerar tokens e analisar tokens.
+
+Um método de login (dentro do @RestController de login) que funciona é como o apresentado abaixo:
+
+```java
+@PostMapping("/login")
+public LoginResponse authenticate(@RequestBody Usuario usuario) throws ServletException {
+
+	// Recupera o usuario
+	Optional<Usuario> authUsuario = usuariosService.getUsuario(usuario.getEmail());
+
+	// verificacoes
+	if (authUsuario.isEmpty()) {
+		throw new ServletException("Usuario nao encontrado!");
+	}
+
+	verificaSenha(usuario, authUsuario);
+
+	String token = jwtService.geraToken(authUsuario.get().getEmail());
+
+	return new LoginResponse(token);
+
+}
+```
+
+Este método recupera as credenciais do usuário no corpo da requisição HTTP, verifica se o usuário existe e se a senha passada bate com a senha do usuário na base de dados. Isso é feito usando os serviços do UsuariosService. Em seguida, se o usuário existe e a senha está correta, o método solicita ao JWTService a criação do token. Abaixo está o método do JWTService que gera o token:
+
+```java
+public String geraToken(String email) {
+	return Jwts.builder().setSubject(email)
+	.signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
+	.setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)).compact();
+}
+```
+
+Neste código "new Date(System.currentTimeMillis() + 1 * 60 * 1000)" é o tempo de expiração do token.
+
 ### Recuperando o ID do usuário através do JWT
 
 O filtro que criamos verifica se o token é válido. Se quisermos algo além disso, será realizado no controlador. Por exemplo, é possível que certas rotas só possam ser acessadas por um usuário específico. Por exemplo, só o próprio usuário deveria poder deletar sua própria conta; se um usuário inseriu um comentário usando uma API, só este usuário deveria poder editar e deletar este comentário.
