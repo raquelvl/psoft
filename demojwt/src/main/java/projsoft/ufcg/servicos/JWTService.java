@@ -1,5 +1,6 @@
 package projsoft.ufcg.servicos;
 
+import java.util.Date;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
@@ -7,6 +8,7 @@ import javax.servlet.ServletException;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import projsoft.ufcg.entidades.Usuario;
 import projsoft.ufcg.filtros.TokenFilter;
@@ -14,6 +16,8 @@ import projsoft.ufcg.filtros.TokenFilter;
 @Service
 public class JWTService {
 	private UsuariosService usuariosService;
+	private final String TOKEN_KEY = "login do batman";
+
 
 	public JWTService(UsuariosService usuariosService) {
 		super();
@@ -49,5 +53,13 @@ public class JWTService {
 		}
 		return subject;
 	}
+
+	public String geraToken(String email) {
+		return Jwts.builder().setSubject(email)
+		.signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
+		.setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)).compact();
+	}
+	
+	
 
 }

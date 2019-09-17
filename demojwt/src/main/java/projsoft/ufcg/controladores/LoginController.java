@@ -1,6 +1,5 @@
 package projsoft.ufcg.controladores;
 
-import java.util.Date;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
@@ -10,22 +9,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import projsoft.ufcg.entidades.Usuario;
+import projsoft.ufcg.servicos.JWTService;
 import projsoft.ufcg.servicos.UsuariosService;
 
 @RestController
 @RequestMapping("/auth")
 public class LoginController {
 
-	private final String TOKEN_KEY = "login do batman";
-
 	private UsuariosService usuariosService;
+	private JWTService jwtService;
 
-	public LoginController(UsuariosService usuariosService) {
+	public LoginController(UsuariosService usuariosService, JWTService jwtService) {
 		super();
 		this.usuariosService = usuariosService;
+		this.jwtService = jwtService;
 	}
 
 	@PostMapping("/login")
@@ -39,15 +37,18 @@ public class LoginController {
 			throw new ServletException("Usuario nao encontrado!");
 		}
 
-		if (!authUsuario.get().getSenha().equals(usuario.getSenha())) {
-			throw new ServletException("Senha invalida!");
-		}
+		verificaSenha(usuario, authUsuario);
 
-		String token = Jwts.builder().setSubject(authUsuario.get().getEmail()).signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
-				.setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)).compact();
+		String token = jwtService.geraToken(authUsuario.get().getEmail());
 
 		return new LoginResponse(token);
 
+	}
+
+	private void verificaSenha(Usuario usuario, Optional<Usuario> authUsuario) throws ServletException {
+		if (!authUsuario.get().getSenha().equals(usuario.getSenha())) {
+			throw new ServletException("Senha invalida!");
+		}
 	}
 
 	private class LoginResponse {
