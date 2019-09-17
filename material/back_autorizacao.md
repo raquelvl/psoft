@@ -79,3 +79,9 @@ Pensando na ferramenta JWT que temos em mãos, nada nos impede de criar declara�
 Existem muitas formas de implentar esse comportamento. Aqui neste curso vamos seguir a forma mais simples possível
 No próximo módulo veremos como usar JWT para autorização em aplicações spring boot.
 
+### Tempo de expiração do token
+
+O tempo de expiração do token deve ser muito bem pensado e, claro, cada caso é um caso. Pense comigo: o que acontece se vc tiver o seu token roubado? Quem roubou seu token poderia se passar por você, mas só pelo tempo de validade do token. Assim, o tempo de expiração do token não deve ser muito longo. Ao mesmo tempo, se o tempo for muito curto o usuário terá que ficar se (re)logando com muita frequencia. Como sempre, bom senso... Não existe o número perfeito para esta escolha e depende muito do estrago que um usuário pode fazer ao se passar por você usando seu token. Se para mudar a senha ele tiver que saber a senha antiga, então isso não será um problema e tão logo o token expire o "invasor" vai parar de acessar o serviço como você (até que ele roube o seu token novamente, afinal ele já fez isso uma vez e pode fazer de novo). Para aplicativos baseados em navegador, isso significa nunca armazenar seus tokens no armazenamento local HTML5 e, em vez disso, armazenar tokens em cookies do servidor que não são acessíveis ao JavaScript.
+
+Para ler mais: [esse material](https://developer.okta.com/blog/2018/06/20/what-happens-if-your-jwt-is-stolen) é bem legal, inclui informação sobre o que acontece se você tiver seu token roubado.
+
