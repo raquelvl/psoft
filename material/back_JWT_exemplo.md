@@ -124,15 +124,15 @@ public class TokenFilter extends GenericFilterBean {
 }
 ```
 
-O método doFilter é chamado pelo container toda vez que um par de requisição/resposta HTTP é passado pela cadeia devido a uma requisição do cliente por um recurso. O FilterChain transmitido para esse método permite que o Filter transmita a solicitação e a resposta para a próxima entidade na cadeia (chamando chain.doFilter). 
+O método doFilter é chamado pelo container toda vez que um par de requisição/resposta HTTP é passado pela cadeia devido à chegada de uma requisição do cliente por um recurso. O FilterChain transmitido para esse método permite que o Filter transmita a solicitação e a resposta para a próxima entidade na cadeia (chamando chain.doFilter()). 
 
-Na nossa implementação do doFilter a primeira etapa é examinar a requisição e extrair o cabeçalho de interesse (no nosso caso o Authorization). Fazemos a análise desejada com os dados extraídos e em seguida invocamos a próxima entidade na cadeia usando o objeto FilterChain (chain.doFilter()). A análise que realizamos é o *parsing* do token recuperado. Se o token não for válido geramos uma exceção e a requisição nem chega no controlador. Uma resposta já é enviada para o cliente indicando o erro.
+Na nossa implementação do método doFilter() a primeira etapa é examinar a requisição e extrair o cabeçalho de interesse (no nosso caso o Authorization). Para fazer o parsing do token recebido no authorization header nós removemos o prefixo "Bearer " e por isso recuperamos a substring que começa no índice 7. Para fazer o parsing do token temos que usar a mesma chave usada para gerar o token (o que não deve ser problema já que todo esse código pertence à mesma organização). Fazemos a análise desejada com os dados extraídos do header e em seguida invocamos a próxima entidade na cadeia usando o objeto FilterChain (chain.doFilter()). A análise que realizamos é o *parsing* do token recuperado. Se o token não for válido geramos uma exceção e a requisição nem chega no controlador. Uma resposta já é enviada para o cliente indicando o erro de token expirado ou inválido.
 
 Se não ocorrer erro um dos próximos componentes da cadeia a receber esta requisição será o controlador que serve a URI da requisição.
 
 ### Configuração do filtro
 
-Já sabemos como criar um filtro para olhar os tokens das requisições, mas isso ainda não é suficiente. Precisamos configurar o filtro como um componente conhecido como @Bean e indicar que rotas devem invocar o filtro (só as rotas que de fato requerem token para acesso). Um bean é um objeto que é criado, gerenciado e destruído pelo container do spring, o framework é totalmente responsável por este objeto, criando, injetando suas propriedades (Injeção de dependência).
+Já sabemos como criar um filtro para olhar os tokens das requisições, mas isso ainda não é suficiente. Precisamos configurar o filtro como um componente conhecido como @Bean e indicar que rotas devem invocar o filtro (só as rotas que de fato requerem token para acesso). Um bean é um objeto que é criado, gerenciado e destruído pelo container do spring, o framework é totalmente responsável por este objeto, criando, injetando suas propriedades (injeção de dependência).
 
 A configuração dos beans deve ocorrer dentro de uma classe marcada com @Configuration. Já temos uma classe dessas, apesar de estar transparente pra gente. É a classe da aplicação marcada com @SpringBootApplication. Ao anotar uma classe com @SpringBootApplication estamos na verdade anotando a classe com 3 anotações distintas: @EnableAutoConfiguration (ativa o mecanismo de auto-configuração do Spring boot), @ComponentScan (habilita o *scan* de componentes @Component no pacote e sub-pacotes onde a aplicação está localizada e @Configuration (permite o registro de beans - como por exemplo filtros como esse nosso, filtros para logging, etc. e classes adicionais de configuração. No código abaixo adicionamos na aplicação principal (main) a definição do bean.
 
@@ -172,7 +172,7 @@ Então, ao fazer parsing do token podemos recuperar o subject:
 ```java
 subject = Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody().getSubject();
 ```
-No @RestController podemos ter acesso à requisição HTTP. Vejamos abaixo um método do controlador que recupera o cabeçalho de autoriação da requisição HTTP e passa para o serviço de parsing JWT (chamado aqui de jwtService):
+No @RestController podemos ter acesso à requisição HTTP e, consequentemente, seu cabeçalho. Vejamos abaixo um método do controlador que recupera o cabeçalho de autoriação da requisição HTTP e passa para o serviço de parsing JWT (chamado aqui de jwtService):
 
 ```java
 @DeleteMapping("/auth/usuarios/{email}")
@@ -192,5 +192,66 @@ No @RestController podemos ter acesso à requisição HTTP. Vejamos abaixo um m�
 	}
 ```
 
+Na assinatura do método recuperamos o cabeçalho de interesse através da anotação @RequestHeader("Authorization"). Esse cabeçalho é passado para o método através do parâmetro de entrada header do tipo String que é definido logo em seguida à anotação. Este método recebe também o email do usuário a ser removido (isso poderia ser diferente, ao solicitar a deleção o usuário poderia nem passar email e sua própria conta seria deletada. A primeira opção permite mais tarde que a gente tenha um admin que pode remover qualquer conta usando a mesma rota).
 
-https://www.baeldung.com/spring-boot-add-filter
+Continuando: esse método realiza 2 passos. 
+
+* O primeiro passo é verificar se o usuário com o e-mail informado na URI existe. Se o usuário não existe uma resposta HTTP é retornada com código 404 - not found. 
+* O segundo passo é recuperar o subject do token e verificar se o usuário do subject tem um token válido e tem permissão para deletar a conta do e-mail passado. Nesse código usamos um serviço que chamamos de JWTService cujo código está abaixo. Este serviço é especialista em ler/analisar os JWTs e recuperar o subject do token, além de ter acesso à base de dados de usuários. Se o token passado não for válido então retornamos uma resposta HTTP com status FORBIDDEN (403), pois esta rota requer autenticação do usuário e autorização. Se a rota em questão estiver configurada no addUrlPatterns do filtro então os tokens inválidos serão capturados lá. Caso contrário será capturado aqui e o acesso ao recurso será negado. Outra possibilidade é o token ser válido mas o usuário autenticado não ter a autorização para deletar a conta do usuário indicado no e-mail da URI. Neste caso retornamos uma resposta HTTP com código 401 - UNAUTHORIZED.
+
+```java
+package psoft.ufcg.services;
+
+import java.util.Optional;
+
+import javax.servlet.ServletException;
+
+import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
+import psoft.ufcg.model.Usuario;
+
+@Service
+public class JWTService {
+	private UsuariosService usuariosService;
+
+	public JWTService(UsuariosService usuariosService) {
+		super();
+		this.usuariosService = usuariosService;
+	}
+
+	public boolean usuarioExiste(String authorizationHeader) throws ServletException {
+		String subject = getSujeitoDoToken(authorizationHeader);
+
+		return usuariosService.getUsuario(subject).isPresent();
+	}
+	
+	public boolean usuarioTemPermissao(String authorizationHeader, String email) throws ServletException {
+		String subject = getSujeitoDoToken(authorizationHeader);
+
+		Optional<Usuario> optUsuario = usuariosService.getUsuario(subject);
+		return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email);
+	}
+
+	private String getSujeitoDoToken(String authorizationHeader) throws ServletException {
+		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+			throw new ServletException("Token inexistente ou mal formatado!");
+		}
+
+		// Extraindo apenas o token do cabecalho.
+		String token = authorizationHeader.substring(projsoft.ufcg.filtros.TokenFilter.TOKEN_INDEX);
+
+		String subject = null;
+		try {
+			subject = Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody().getSubject();
+		} catch (SignatureException e) {
+			throw new ServletException("Token invalido ou expirado!");
+		}
+		return subject;
+	}
+
+}
+```
+
+Nosso próximo assunto relacionado a autorização será associar papéis (do inglês "roles") aos usuário e fazer uma análise mais fina sobre o que cada usuário pode realizar. Por exemplo, poderíamos deixar usuários com papel de administrador remover outros usuários que não são administradores, ou deixar que apenas usuários com papel de "configurador" pudessem adicionar/remover produtos.
