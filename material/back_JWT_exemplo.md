@@ -267,4 +267,4 @@ public class JWTService {
 }
 ```
 
-Nosso próximo assunto relacionado a autorização será associar papéis (do inglês "roles") aos usuário e fazer uma análise mais fina sobre o que cada usuário pode realizar. Por exemplo, poderíamos deixar usuários com papel de administrador remover outros usuários que não são administradores, ou deixar que apenas usuários com papel de "configurador" pudessem adicionar/remover produtos.
+Nosso próximo assunto relacionado à autorização será associar papéis (do inglês "roles") aos usuário e fazer uma análise mais fina sobre o que cada usuário pode realizar. Por exemplo, poderíamos deixar usuários com papel de administrador remover outros usuários que não são administradores, ou deixar que apenas usuários com papel de "configurador" pudessem adicionar/remover produtos.
