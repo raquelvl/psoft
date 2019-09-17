@@ -15,6 +15,19 @@ O que precisamos fazer agora é:
 3. quando as requisições para rotas seguras chegarem, é preciso recuperar e avaliar o token recebido (se é um token válido e não expirado) para então passar a requisição para um controlador;
 4. no controlador (e nos serviços associados), é possível que chegem requisições a rotas que requerem uma identificação mais fina do usuário. Por exemplo, só quem deveria poder deletar uma conta de usuário deveria ser o próprio usuário dono da conta. Em casos como este é preciso recuperar a identidade do usuário através do token passado para poder deletar a conta apropriada.
 
+### Dependência
+
+Antes de prosseguir é importante lembrar que teremos uma nova dependência em nosso projeto: a dependência da API de JWT. Para configurar esta dependência adicionamos no pom.xm (assumindo que usamos maven) as seguintes linhas dentro de <dependencies></dependencies>:
+
+````
+	<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+	<dependency>
+		<groupId>io.jsonwebtoken</groupId>
+		<artifactId>jjwt</artifactId>
+		<version>0.9.1</version>
+	</dependency>
+````
+
 ### Gerando JWTs
 
 Vamos iniciar pelo ponto 1. O token deve ser gerado no momento em que o usuário faz login na API. Abaixo um exemplo de código do controlador responsável pelo login.
