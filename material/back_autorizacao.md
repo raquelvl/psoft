@@ -42,10 +42,7 @@ Neste exemplo, a declaração "sub" é registrada, a "name" é pública (podemos
 
 Uma vez definidos os pares chave/valor do payload, o JSON é codificado para compor a segunda parte do JWT (a parte yyyyy do exemplo).
 
-Finalmente, a assinatura. Para criar a parte da assinatura usamos o cabeçalho codigficado, o payload codificado, uma chave segreta, e usar o algoritmo de assinatira espscificado no cabeçalho para assinar essa mensagem. 
-
-Finalmente, a assinatura. Para criar a parte da assinatura usamos o cabeçalho codigficado, o payload codificado, uma chave segreta, e usar o algoritmo de assinatira espscificado no cabeçalho para assinar essa mensagem. To create the signature part you have to take the encoded header, the encoded payload, a secret, e usthe algorithm specified in the header, and sign that.
-Se, por exemplo, estivermos usando o algoritmo de assinatura HMAC SHA256 a assinatira será criada como a seguir:
+Finalmente, a assinatura. Para criar a parte da assinatura usamos o cabeçalho codificado, o payload codificado, uma chave secreta, e usar o algoritmo de assinatira especificado no cabeçalho para assinar essa mensagem. Se, por exemplo, estivermos usando o algoritmo de assinatura HMAC SHA256 a assinatira será criada como a seguir:
 
 ````
 HMACSHA256(
@@ -54,7 +51,7 @@ HMACSHA256(
   secret)
 ````
 
-A assinatira garante que a mensagem não foi modificada ao longo do caminho entre o cliente e o servidor. No caso de tokens assinados com uma chave privada, o token também atesta que quem envia a mensagem é quem diz ser. Você pode ler JWTs gerados usando [o JWT debugger](https://jwt.io/).
+A assinatura garante que a mensagem não foi modificada ao longo do caminho entre o cliente e o servidor. No caso de tokens assinados com uma chave privada, o token também atesta que quem envia a mensagem é quem diz ser. Você pode ler JWTs gerados usando [o JWT debugger](https://jwt.io/).
 
 ## Como funciona na prática?
 
