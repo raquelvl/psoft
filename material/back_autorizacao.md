@@ -16,7 +16,7 @@ Em sua forma compacta, os JSON Web Tokens consistem em três partes separadas po
 
 * Cabeçalho (header)
 * Carga útil (payload)
-* Assinatura (signatire)
+* Assinatura (signature)
 
 Portanto, um JWT normalmente se parece com uma string como essa string: 
 ````
