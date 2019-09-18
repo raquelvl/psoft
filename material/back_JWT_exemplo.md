@@ -127,9 +127,9 @@ public class TokenFilter extends GenericFilterBean {
 
 		try {
 			Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody();
-		} catch (SignatureException e) {
-			throw new ServletException("Token invalido ou expirado!");
-		}
+		}  catch(ExpiredJwtException e) {
+            		((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+        	}
 
 		chain.doFilter(request, response);
 	}
