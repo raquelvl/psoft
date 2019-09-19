@@ -30,25 +30,25 @@ POST /usuarios (adiciona um usuario com email, nome e senha - o email é o login
 POST /auth/login - recebe email e senha de um usuário, verifica na base de dados de usuários se esse usuário existe, e se a senha está correta (autenticação). Se o usuário for autenticado gerar um JWT que deve ser retornado para o cliente.
 
 DELETE /auth/usuarios/
-Remove o usuário cujo que está requisitando a deleção (esta identificação é feita através do token passado no authorization header da requisição HTTP). Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e recuperar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades (ex. requisição sem JWT).
+Remove o usuário cujo que está requisitando a deleção (esta identificação é feita através do token passado no authorization header da requisição HTTP). Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e recuperar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades (ex. requisição sem JWT, com JWT inválido, ou com JWT válido mas de outro usuário).
 
 GET /api/disciplinas 
 Retorna um JSON (com campos id, nome) com todas as disciplinas inseridas no sistema e código 200. Precisa estar logado para recuperar esta informação do sistema.
 
 GET /api/disciplinas/{id}
-Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
+Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP UNAUTHORIZED deve ser retornado.
 
 PUT /api/disciplinas/likes/{id}
 Incrementa em um o número de likes da disciplina. O usuário deve estar logado para acessar este recurso.
-Retorna a disciplina que foi atualizada (incluindo o id, nome e likes) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
+Retorna a disciplina que foi atualizada (incluindo o id, nome e likes) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP UNAUTHORIZED deve ser retornado.
 
 PUT /api/disciplinas/nota/{id}
 Atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com a nova nota da disciplina a ser atualizada no sistema. 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
+Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP UNAUTHORIZED deve ser retornado.
 
-POST /api/disciplinas/comentarios/{id}
+PUT /api/disciplinas/comentarios/{id}
 Insere um novo comentário na disciplina de identificador id. No corpo da requisição HTTP deve estar um JSON com o novo comentário (chave "comentario") a ser adicionado na disciplina a ser atualizada no sistema. 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e os comentarios) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP FORBBIDEN deve ser retornado.
+Retorna a disciplina que foi atualizada (incluindo o id, nome e os comentarios atualizados) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP UNAUTHORIZED deve ser retornado.
 
 GET /api/disciplinas/ranking/notas
 Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
