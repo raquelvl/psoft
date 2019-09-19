@@ -127,9 +127,17 @@ public class TokenFilter extends GenericFilterBean {
 
 		try {
 			Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody();
-		}  catch(ExpiredJwtException e) {
-            		((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
-        	}
+		} catch(SignatureException | ExpiredJwtException | MalformedJwtException | PrematureJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+			
+			//aqui optamos por tratar todas as exceções que podem ser lançadas da mesma forma e simplesmente
+			//repassar a mensagem de erro
+			//se quiser enviar mensagens em portugues mais personalizadas teria que capturar exceção
+			//por exceção
+           		((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            		
+			return;//a requisição nem precisa passar adiante, retornar já para o cliente pois não pode prosseguir 
+			//daqui pra frente por falta de autorização
+        }
 
 		chain.doFilter(request, response);
 	}
@@ -139,9 +147,9 @@ public class TokenFilter extends GenericFilterBean {
 
 O método doFilter é chamado pelo container toda vez que um par de requisição/resposta HTTP é passado pela cadeia devido à chegada de uma requisição do cliente por um recurso. O FilterChain transmitido para esse método permite que o Filter transmita a solicitação e a resposta para a próxima entidade na cadeia (chamando chain.doFilter()). 
 
-Na nossa implementação do método doFilter() a primeira etapa é examinar a requisição e extrair o cabeçalho de interesse (no nosso caso o Authorization). Para fazer o parsing do token recebido no authorization header nós removemos o prefixo "Bearer " e por isso recuperamos a substring que começa no índice 7. Para fazer o parsing do token temos que usar a mesma chave usada para gerar o token (o que não deve ser problema já que todo esse código pertence à mesma organização). Fazemos a análise desejada com os dados extraídos do header e em seguida invocamos a próxima entidade na cadeia usando o objeto FilterChain (chain.doFilter()). A análise que realizamos é o *parsing* do token recuperado. Se o token não for válido geramos uma exceção e a requisição nem chega no controlador. Uma resposta já é enviada para o cliente indicando o erro de token expirado ou inválido.
+Na nossa implementação do método doFilter() a primeira etapa é examinar a requisição e extrair o cabeçalho de interesse (no nosso caso o Authorization). Para fazer o parsing do token recebido no authorization header nós removemos o prefixo "Bearer " e por isso recuperamos a substring que começa no índice 7. Para fazer o parsing do token temos que usar a mesma chave usada para gerar o token (o que não deve ser problema já que todo esse código pertence à mesma organização). Fazemos a análise desejada com os dados extraídos do header e em seguida invocamos a próxima entidade na cadeia usando o objeto FilterChain (chain.doFilter()). A análise que realizamos é o *parsing* do token recuperado. Se o token não for válido setamos a resposta para estar associada ao código HTTP UNAUTHORIZED (401) e retornamos. Nesse caso a requisição nem precisa chegar no controlador porque o usuário não tem autorização para acessar a rota desejada. Uma resposta já é enviada para o cliente indicando o erro de token expirado ou inválido e o codigo HTTP 401.
 
-Se não ocorrer erro um dos próximos componentes da cadeia a receber esta requisição será o controlador que serve a URI da requisição.
+Se não ocorrer erro no parsing do token (isto é, o usuário tem um token válido) um dos próximos componentes da cadeia a receber esta requisição será o controlador que serve a URI da requisição.
 
 ### Configuração do filtro
 
