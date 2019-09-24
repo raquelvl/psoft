@@ -53,7 +53,7 @@ Retorna a disciplina que foi atualizada (incluindo o id, nome e os comentarios a
 GET /api/disciplinas/ranking/notas
 Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
 
-GET /v1/api/disciplinas/ranking/likes
+GET /api/disciplinas/ranking/likes
 Retorna todas as disciplinas inseridas no sistema ordenadas pelo número de likes (da que tem mais likes para a que tem menos likes) e código 200.
 
 Seguem algumas dicas:
