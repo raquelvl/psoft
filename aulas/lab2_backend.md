@@ -36,7 +36,7 @@ GET /api/disciplinas
 Retorna um JSON (com campos id, nome) com todas as disciplinas inseridas no sistema e código 200. Precisa estar logado para recuperar esta informação do sistema.
 
 GET /api/disciplinas/{id}
-Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. Se o usuário não estiver logado ou se o token estiver expirado código HTTP UNAUTHORIZED deve ser retornado.
+Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. 
 
 PUT /api/disciplinas/likes/{id}
 Incrementa em um o número de likes da disciplina. O usuário deve estar logado para acessar este recurso.
