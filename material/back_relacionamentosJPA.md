@@ -2,6 +2,9 @@
 
 Já vimos que precisamos criar classes de modelo, conhecidas como entidades, para representar as classes do domínio da aplicação sendo desenvolvida. Se vamos vender bananas em navios, certamente teremos entidades para representar bananas e entidades para representar navios... Estas classes são marcadas com a anotação @Entity. Estas entidades precisam obrigatoriamente ter um atributo que serve como identificador único, que anotamos com @Id.
 
+Entender os relacionamentos entre as entidades é essencial para modelar qualquer aplicação. Como desenvolvedor, na maioria das vezes, você encontrará um relacionamento ManyToOne / OneToMany entre entidades e o quão bem esses relacionamentos são mapeados/configurados determina em grande parte a complexidade da sua aplicação.
+
+
 Em uma API certamente teremos várias classes de entidade. Em se tratando de JPA (Java Persistence API) contamos com um componente chamado EntityManager, que é parte da Java Persistence API. A função do EntityManager é implementar as interfaces  e as regras de ciclo de vida definidas pela especificação JPA 2.0. É esta entidade então que vai lidar com as várias entidades @Entity gerenciando seu ciclo de vida e garantindo sua persistência no banco de dados como tabelas.
 
 Neste módulo vamos entender um pouco melhor sobre relacionamentos entre entidades. É possível relacionar duas entidades através de uma das seguintes anotações:
@@ -68,17 +71,20 @@ Os tipos de cascata JPA são PERSIST, MERGE, REFRESH, REMOVE, DETACH, ALL. Ao re
 
 Em uma relação bidirecional como a que exemplificamos entre CestaDeCompras e Produto, se configurarmos na CestaDeCompras o CascadeType.ALL indicamos que todos os produtos assosicados à cesta sejam removidos da tabela de produtos, o que talvez não seja o que desejamos... No entando em uma relação semelhante entre Post e ComentariosDoPost provavelmente queremos que todos os comentários sejam removidos ao remover um post.
 
-A dica é entender a 
+A dica é entender a relação e definir a melhor configuração para cada caso. Na dúvida faça testes simples que lhe permitam entender sua configuração e como as operações em cascata estão funcionando.
+
+Uma configuração que anda perto da CascadeType.REMOVE é a orphanRemove = true. Esta opção marca a entidade filha a ser removida se ela não tiver mais referências a partir da entidade mãe. Por exemplo, no relacionamento entre Comentarios de um Post e o Post, inserir esta configuração indica que se o Post deixar de existir ou se fizermos um post.setComentarios(null) todos os comentários do post devem ser removidos, pois não existe mais nenhuma referência a estes e eles podem deixar de existir.
 
 ## Modo de busca (FETCH)
 
-Uma outra configuração possível diz respeito à forma como os dados são recuperados do banco de dados. Essa é a configuração *FETCH*. Existem duas estratégias para esta configuração. A estratégia do EAGER indica que em tempo de execução os dados devem ser recuperados em uma consulta. Isto significa que se a estratégia EAGER for usada, o EntityManager vai recuperar os dados da entidade mãe (proprietária) e da entidade filha (não proprietária) de uma só vez por uma consulta. A outra estratégia é a *LAZY*. Ao usar esta estratégia dados serão obtidos de forma preguiçdevem, apenas quando forem acessados pela primeira vez. Isto significa que os dados são recuperados quando necessário através de subconsultas. O EntityManager recupera os dados da entidade pai primeiro e depois os dados da entidade filho sob demanda. No caso do exemplo da relação entre cesta de compras e produto. Em uma relação bidirecional a chave estrangeira que identifica a cesta de compras fica na tabela de produto e portanto Produto é a entidade proprietária. Ao usar a estratégia EAGER ao recuperar um produto a cesta de compras associada também já é recuperada. Já se a estratégia LAZY for usada, ao recuperar um produto apenas os atributos de produto específicos são recuperados. Apenas com um produto.getCesta() que a cesta de compras associada ao produto seria recuperada do banco de dados.
+Uma outra configuração possível diz respeito à forma como os dados são recuperados do banco de dados. Essa é a configuração *FETCH*. Existem duas estratégias para esta configuração:
 
-Sobre a forma de recuperar os dados (fetch) já comentamos. Aqui estamos configurando que ao recuperar a cesta de compras devemos recuperar também seus comentários (EAGER). 
+* A estratégia *EAGER* indica que em tempo de execução os dados devem ser recuperados em uma consulta de uma vez. Isto significa que se a estratégia EAGER for usada, o EntityManager vai recuperar os dados da entidade mãe e da entidade filha de uma só vez por uma consulta. 
+* A estratégia *LAZY* indica que os dados serão obtidos de forma preguiçosa. isto significa que eles devem ser recuperados apenas quando forem acessados pela primeira vez. Neste caso, os dados são recuperados quando necessário através de subconsultas. O EntityManager recupera os dados da entidade mãe primeiro e depois os dados da entidade filha sob demanda. No caso do exemplo da relação entre cesta de compras e produto. Ao usar a estratégia EAGER ao recuperar uma cesta de compras, os produtos associados já são também recuperados. Já se a estratégia LAZY for usada, ao recuperar um produto apenas os atributos de produto específicos são recuperados. Apenas com uma chamada a, por exemplo, cesta.getProdutos() que os produtos associados à cesta de compras seriam recuperados do banco de dados.
 
-O elemento mappedBy é o que define o relacionamento bidirecional. Este atributo permite que você consulte as entidades associadas de ambos os lados.
+## Sobre os repositórios
 
-Ja na entidade 
+Alguns métodos adicionais podem ser úteis quando falamos de relacionamentos OneToMany. Por exemplo, recuperar a partir da tabela de produtos todos os produtos de uma dada cesta de compras (temos que conhecer o ID da cesta). Em se tratando da interface JPARepository, criamos novos métodos seguindo regras estritas apenas na nomeação do método novo. 
 
 ## Documentação de referência
 
@@ -86,4 +92,5 @@ Ja na entidade
 [Tutorial java sobre persistência no backend](https://docs.oracle.com/javaee/5/tutorial/doc/bnbrs.html)
 [javadoc da JPA](https://docs.oracle.com/javaee/7/api/javax/persistence/package-summary.html)
 [JPA mini book](http://enos.itcollege.ee/~jpoial/java/naited/JPA_Mini_Book.pdf)
+[Artigos avançados relacionados a JPA da baeldung](https://github.com/eugenp/tutorials/tree/master/persistence-modules/java-jpa)
 
