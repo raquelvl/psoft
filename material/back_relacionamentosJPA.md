@@ -66,9 +66,9 @@ JPA permite operações em cascata que se propagam da entidade "mãe" para a "fi
 
 Os tipos de cascata JPA são PERSIST, MERGE, REFRESH, REMOVE, DETACH, ALL. Ao realizar estas operações na entidade mãe, a entidade filha também deve ser modificada para refletir as mudanças. Essa configuração é muito específica do tipo de relacionamento e não existe uma configuração default única. Para relacionamentos bidirecionais OneToOne, por exemplo, faz sentido o CascadeType.ALL uma vez que o ciclo de vida de uma entidade está associada ao ciclo de vida da outra. 
 
-Em uma relação bidirecional como a que exemplificamos entre CestaDeCompras e Produto, podemos configurar na CestaDeCompras o CascadeType.ALL indicando que ao adicionar/remover produtos da cesta isso deve ser refletido na tabela de produtos. Cascade só vai ser útil do lado one-to-many apenas.
+Em uma relação bidirecional como a que exemplificamos entre CestaDeCompras e Produto, se configurarmos na CestaDeCompras o CascadeType.ALL indicamos que todos os produtos assosicados à cesta sejam removidos da tabela de produtos, o que talvez não seja o que desejamos... No entando em uma relação semelhante entre Post e ComentariosDoPost provavelmente queremos que todos os comentários sejam removidos ao remover um post.
 
-A dica
+A dica é entender a 
 
 ## Modo de busca (FETCH)
 
