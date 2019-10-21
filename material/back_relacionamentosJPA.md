@@ -23,10 +23,59 @@ Este conceito de entidade proprietária é importante para entender a configura�
 Uma outra configuração possível diz respeito à forma como os dados são recuperados do banco de dados. Essa é a configuração *FETCH*. Existem duas estratégias para esta configuração. A estratégia do EAGER indica que em tempo de execução os dados devem ser recuperados em uma consulta. Isto significa que se a estratégia EAGER for usada, o EntityManager vai recuperar os dados da entidade mãe (proprietária) e da entidade filha (não proprietária) de uma só vez por uma consulta. A outra estratégia é a *LAZY*. Ao usar esta estratégia dados serão obtidos de forma preguiçdevem, apenas quando forem acessados pela primeira vez. Isto significa que os dados são recuperados quando necessário através de subconsultas. O EntityManager recupera os dados da entidade pai primeiro e depois os dados da entidade filho sob demanda. No caso do exemplo da relação entre cesta de compras e produto. Em uma relação bidirecional a chave estrangeira que identifica a cesta de compras fica na tabela de produto e portanto Produto é a entidade proprietária. Ao usar a estratégia EAGER ao recuperar um produto a cesta de compras associada também já é recuperada. Já se a estratégia LAZY for usada, ao recuperar um produto apenas os atributos de produto específicos são recuperados. Apenas com um produto.getCesta() que a cesta de compras associada ao produto seria recuperada do banco de dados.
 
 ## Direção da relação
-Relacionamentos podem ser bidirecionais ou unidirecionais. Em uma relação unidirecional apenas um lado da relação conhece a relação. O outro lado não sabe que a relação existe. Em uma relação unidirecional usamos a anotação de relacionamento (@OneToOne, @OneTOMany, etc.) em apenas uma entidade da relação, a entidade que fica ciente da relação. Ao contrário, na relação bidirecional ambas as entidades sabem da existência da relação.
+Relacionamentos podem ser bidirecionais ou unidirecionais. Em uma relação unidirecional apenas um lado da relação conhece a relação. O outro lado não sabe que a relação existe. Em uma relação unidirecional usamos a anotação de relacionamento (@OneToOne, @OneTOMany, etc.) em apenas uma entidade da relação, a entidade que fica ciente da relação. Ao contrário, na relação bidirecional ambas as entidades sabem da existência da relação. Nas relações bidirecionais podemos navegar nas entidades nas duas direções sem precisar de queries extra.
 
-A direç
-Relacionamentos podem ser bidirecionais ou unidirecionais. Em uma relação unidirecional apenas um lado da relação conhece a relação. O outro lado não sabe que a relação existe. Em uma relação unidirecional usamos a anotação de relacionamento (@OneToOne, @OneTOMany, etc.) em apenas uma entidade da relação, a entidade que fica ciente da relação. 
+Como ilustração, vamos imaginar novamente as entidades CestaDeCompras e Produto. Nos pedaços de código abaixo configuramos uma relação bidirecional entre CestaDeCompras e Produto.
 
-Relationships can be unidirectional or bidirectional. Unidirectional is a relation where one side does not know about the relation. In a Bidirectional relation both sides know about the other side.
-Bidirectional relationship provides navigational access in both directions, so that you can access the other side without explicit queries.
+````java
+@Entity
+public class CestaDeCompras {
+  @Id
+  private Long idCesta;
+  
+  ...
+  
+  @OneToMany(mappedBy = "cesta", fetch = FetchType.EAGER, orphanRemoval = true)
+  private List<Produto> produtos;
+  ...
+}
+````
+
+
+````java
+@Entity
+public class Produto {
+  @Id
+  private Long idProduto;
+  
+  ...
+  
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "idCesta")
+  @JsonIgnore
+  private CestaDeCompras cesta;
+  ...
+}
+````
+
+Ao estabelecer esta relação, o que o JPA realiza no contexto do banco de dados é a criação de duas tabelas: CESTA_DE_COMPRAS e PRODUTO. A tabela CESTA_DE_COMPRAS tem as colunas ID_CESTA, e outras colunas relativas à cesta. Na tabela PRODUTO temos as colunas ID_PRODUTO, outras colunas de produto e a coluna ID_CESTA que é a chave estrangeira da tabela CESTA_DE_COMPRAS. Esta coluna é a que permite o *join* entre a CESTA_DE_COMPRAS e PRODUTO. Como a chave estrangeira está na entidade Produto, dizemos que Produto é a entidade proprietária dessa relação.
+
+Antes de continuar vamos entender um pouco mais a configuração específica deste código. Na entidade CestaDeCompras usamos a seguinte linha de código para definir a relação com Produto:
+
+```java
+@OneToMany(mappedBy = "cesta", fetch = FetchType.EAGER)
+````
+
+Sobre a forma de recuperar os dados (fetch) já comentamos. Aqui estamos configurando que ao recuperar a cesta de compras devemos recuperar também seus comentários (EAGER). 
+
+O elemento mappedBy é o que define o relacionamento bidirecional. Este atributo permite que você consulte as entidades associadas de ambos os lados.
+
+Ja na entidade 
+
+## Documentação de referência
+
+[Repositórios JPA](https://docs.spring.io/spring-data/jpa/docs/1.5.0.RELEASE/reference/html/index.html)
+[Tutorial java sobre persistência no backend](https://docs.oracle.com/javaee/5/tutorial/doc/bnbrs.html)
+[javadoc da JPA](https://docs.oracle.com/javaee/7/api/javax/persistence/package-summary.html)
+[JPA mini book](http://enos.itcollege.ee/~jpoial/java/naited/JPA_Mini_Book.pdf)
+
