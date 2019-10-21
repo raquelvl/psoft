@@ -109,9 +109,14 @@ Nessa mesma configuração damos um nome à coluna que servirá de *join* para e
 ## Documentação de referência
 
 [Repositórios JPA](https://docs.spring.io/spring-data/jpa/docs/1.5.0.RELEASE/reference/html/index.html)
+
 [Tutorial java sobre persistência no backend](https://docs.oracle.com/javaee/5/tutorial/doc/bnbrs.html)
+
 [javadoc da JPA](https://docs.oracle.com/javaee/7/api/javax/persistence/package-summary.html)
+
 [JPA mini book](http://enos.itcollege.ee/~jpoial/java/naited/JPA_Mini_Book.pdf)
+
 [Artigos avançados relacionados a JPA da baeldung](https://github.com/eugenp/tutorials/tree/master/persistence-modules/java-jpa)
+
 [Dicas para criação de queries a partir dos nomes dos métodos](https://www.baeldung.com/spring-data-derived-queries)
 
