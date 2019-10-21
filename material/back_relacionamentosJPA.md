@@ -13,7 +13,44 @@ Neste módulo vamos entender um pouco melhor sobre relacionamentos entre entidad
 
 ## Modo de propagação de mudanças (CASCADE)
 
-Na associação entre entidades vai sempre existir a **entidade proprietária** e a entidade não proprietária. A entidade proprietária da relação é aquela entidade que possui a chave estrangeira da outra entidade. Vejamos um exemplo:
+Na associação entre entidades vai sempre existir a **entidade proprietária** e a entidade não proprietária. A entidade proprietária da relação é aquela entidade que possui a chave estrangeira da outra entidade. Em geral, a entidade que está do lado \*ToOne será a proprietária. Vejamos um exemplo:
+
+Vamos imaginar que estamos escrevendo a API para comércio eletrônico e precisamos modelar produtos (que representam produtos físicos em estoque que podem ser vendidos na loja) e a cesta de compras do usuário. Nos pedaços de código abaixo configuramos uma relação entre CestaDeCompras e Produto.
+
+````java
+@Entity
+public class Produto {
+  @Id
+  private Long idProduto;
+  
+  ...
+  
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "idCesta")
+  @JsonIgnore
+  private CestaDeCompras cesta;
+  ...
+}
+````
+Esse primeiro trecho de código nos informa através da anotação @ManyToOne que aparece antes do atributo cesta que estamos configurando um relacionamento muitos para um que reflete a seguinte regra: muitos produtos podem estar associados à mesma cesta de compras. Faz sentido? Sim, é a regra de negócio comum: um usuário pode colocar quantos produtos desejar em sua cesta de compras. Só com esta associação já temos uma relação identificada, mesmo que nada seja configurado na cesta de compras. Com esta anotação, o que acontece "por trás" no banco de dados é que uma tabela de associação será criada para relacionar IDs de produtos e IDs de cestas. Dizemos que é uma relação unidirecional.
+
+Temos a chance de tornar esta 
+
+````java
+@Entity
+public class CestaDeCompras {
+  @Id
+  private Long idCesta;
+  
+  ...
+  
+  @OneToMany(mappedBy = "cesta", fetch = FetchType.EAGER, orphanRemoval = true)
+  private List<Produto> produtos;
+  ...
+}
+````
+Esse primeiro trecho de código nos informa através da anotação @OneToMany que aparece antes do atributo List<Prodito> proditos que para cada cesta de compras podemos relacionar muitos produtos. Não vamos nos preocupar agora com outros detalhes, eles serão estudados mais adiante. Na classe produto 
+
 
 
 Este conceito de entidade proprietária é importante para entender a configuração de CASCADE na relação.
