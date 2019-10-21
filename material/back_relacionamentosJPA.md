@@ -84,7 +84,27 @@ Uma outra configuração possível diz respeito à forma como os dados são recu
 
 ## Sobre os repositórios
 
-Alguns métodos adicionais podem ser úteis quando falamos de relacionamentos OneToMany. Por exemplo, recuperar a partir da tabela de produtos todos os produtos de uma dada cesta de compras (temos que conhecer o ID da cesta). Em se tratando da interface JPARepository, criamos novos métodos seguindo regras estritas apenas na nomeação do método novo. 
+Alguns métodos adicionais podem ser úteis quando falamos de relacionamentos OneToMany. Por exemplo, recuperar a partir da tabela de produtos todos os produtos de uma dada cesta de compras (temos que conhecer o ID da cesta). Em se tratando da interface JPARepository, criamos novos métodos seguindo regras estritas para nomeação/assinatura do método novo. A consulta ao banco de dados será criada automaticamente ao seguir as regras para nomeação do método. 
+
+O código abaixo para a interface ProdutosDAO adiciona à interface um novo metodo que retorna todos os produtos que estão associados à cesta de compras com o ID passado como parâmetro.
+
+````java
+@Repository
+public interface ProdutosDAO<T, ID extends Serializable> extends JpaRepository<Produto, Long> {
+
+	List<Comentario> findByCestaIdCesta(Long id);
+}
+````
+Este método irá recuperar todos os registros na tabela de produtos cujo atributo idCesta (que vem da associação cesta) seja igual ao ID passado. Para entender melhor: esse nome só funciona porque na classe Produto existe o atributo cesta definido como relação de muitos para um entre a classe Produto e a classe CestaDeCompras:
+
+````java
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "idCesta")
+  @JsonIgnore
+  private CestaDeCompras cesta;
+````
+
+Nessa mesma configuração damos um nome à coluna que servirá de *join* para esta associação, o nome que demos foi idCesta. Então estamos dizendo que recuperamos a cesta de compras associada ao produto através do id da cesta. Em termos de banco de dados, o que acontece é que na tabela de PRODUTO vai haver uma coluna chamada ID_CESTA que é a chave estrangeira de CestaDeCompras na tabela produto. São essas configurações que usamos para gerar o nome do método e derivar a consulta ao banco automaticamente (sem precisar escrever uma @Query explícita). Se o atributo que chamamos cesta fosse chamado cestaDeCompras, então o nome do método na interface mudaria para findByCestaDeComprasIdCesta.
 
 ## Documentação de referência
 
@@ -93,4 +113,5 @@ Alguns métodos adicionais podem ser úteis quando falamos de relacionamentos On
 [javadoc da JPA](https://docs.oracle.com/javaee/7/api/javax/persistence/package-summary.html)
 [JPA mini book](http://enos.itcollege.ee/~jpoial/java/naited/JPA_Mini_Book.pdf)
 [Artigos avançados relacionados a JPA da baeldung](https://github.com/eugenp/tutorials/tree/master/persistence-modules/java-jpa)
+[Dicas para criação de queries a partir dos nomes dos métodos](https://www.baeldung.com/spring-data-derived-queries)
 
