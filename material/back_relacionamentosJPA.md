@@ -4,12 +4,11 @@ Já vimos que precisamos criar classes de modelo, conhecidas como entidades, par
 
 Entender os relacionamentos entre as entidades é essencial para modelar qualquer aplicação. Como desenvolvedor, na maioria das vezes, você encontrará um relacionamento ManyToOne / OneToMany entre entidades e o quão bem esses relacionamentos são mapeados/configurados determina em grande parte a complexidade da sua aplicação.
 
-
 Em uma API certamente teremos várias classes de entidade. Em se tratando de JPA (Java Persistence API) contamos com um componente chamado EntityManager, que é parte da Java Persistence API. A função do EntityManager é implementar as interfaces  e as regras de ciclo de vida definidas pela especificação JPA 2.0. É esta entidade então que vai lidar com as várias entidades @Entity gerenciando seu ciclo de vida e garantindo sua persistência no banco de dados como tabelas.
 
 Neste módulo vamos entender um pouco melhor sobre relacionamentos entre entidades. É possível relacionar duas entidades através de uma das seguintes anotações:
 
-* @OneToOne: é um relacionamento um para um que define que só há uma entidade relacionada com a outra. Um exemplo desse tipo de relacionamento pode ocorrer entre a entidade Loja e a entidade endereço. Suponha que a aplicação comporta uma rede de lojas, cada uma com seu endereço. Ao configrar este relacionamento estamos dizendo que toda loja tem um endereço e todo endereço só pertence a uma loja.
+* @OneToOne: é um relacionamento um para um que define que só há uma entidade relacionada com a outra. Um exemplo desse tipo de relacionamento pode ocorrer entre a entidade Loja e a entidade endereço. Suponha que a aplicação comporta uma rede de lojas, cada uma com seu endereço. Ao configurar este relacionamento estamos dizendo que toda loja tem um endereço e todo endereço só pertence a uma loja.
 * @OneToMany: só deve existir uma entidade da classe onde esta relação é definida, mas esta entidade está associada a muitas entidades da outra classe. Essa relação vai ocorrer sempre que uma classe tem uma coleção de tipos de outra classe. Esta é a associação entre uma cesta de compras e os produtos adicionados nela. Uma cesta de compras deve poder estar associada a muitos produtos, mas um produto específico do estoque só pode estar associado a uma cesta de compras (caso contrario estariamos vendendo o mesmo produto a usuários diferentes).
 * @ManyToOne: é a relação inversa a @OneToMany, deve especificar a entidade que é a parte muitos. Por exemplo, na classe Produto, teriamos uma associação @ManyToOne com a classe CestaDeCompras.
 * @ManyToMany: é uma associação de muitos para muitos. É usada nos casos em que uma entidade de um tipo A pode estar associada a muitas entidades do tipo B e cada entidade do tipo B também pode estar associada a várias entidades do tipo A. Imagine por exemplo, a relação entre livros e autores. Um livro pode ter muitos autores e um autor pode escrever muitos livros.
@@ -42,7 +41,7 @@ Esse primeiro trecho de código nos informa através da anotação @ManyToOne qu
 
 Dizemos que é uma relação **unidirecional**, pois só a entidade Produto sabe da existência dessa relação. Através desta relação conseguimos recuperar, apenas a partir da entidade produto, a cesta de compras relacionada. Isto significa que ao recuperar o ID de uma cesta de compras precisaremos de uma query extra para recuperar os produtos da cesta a partir da tabela de produtos. Para recuperar os produtos da cesta de compras teremos que pesquisar todos os produtos associados ao ID da cesta de interesse.
 
-Para que isso seja realizado de forma simples é preciso acrescentar no repositório de Produto um método que retorne todos os produtos assocuados a um dado ID de cesta de compras. Mais adiante, quando entendermos melhor toda a configuração específica desta relação, mostramos como ficaria o DAO.
+Para que isso seja realizado de forma simples é preciso acrescentar no repositório de Produto um método que retorne todos os produtos associados a um dado ID de cesta de compras. Mais adiante, quando entendermos melhor toda a configuração específica desta relação, mostramos como ficaria o DAO.
 
 Temos a chance de tornar esta relação **bidirecional** informando na entidade CestaDeCompras sobre a relação. Nesse caso será possível acessar, a partir da cesta de compras, os produtos relacionados a ela. A configuração da classe CestaDeCompras está apresentada no trecho de código abaixo.
 
@@ -54,7 +53,7 @@ public class CestaDeCompras {
   
   ...
   
-  @OneToMany(mappedBy = "cesta", fetch = FetchType.EAGER, orphanRemoval = true)
+  @OneToMany(mappedBy = "cesta", fetch = FetchType.EAGER)
   private List<Produto> produtos;
   ...
 }
@@ -68,7 +67,7 @@ Em resumo: relacionamentos podem ser bidirecionais ou unidirecionais. Em uma rel
 
 ## Configuração de Cascata (Cascade)
 
-JPA permite operações em cascata que se propagam da entidade "mãe" para a "filha". Tipicamente, a entidade mãe é a não proprietária. As operações SELECT, INSERT, UPDATE, DELETE podem ser propagadas para a base de dados da entidade filha.
+JPA permite operações em cascata que se propagam da entidade "mãe" para a "filha". Tipicamente, a entidade mãe é a não proprietária. No nosso exemplo, a entidade mãe é a CestaDeCompras, que tem a associação com a entidade filha Produto. As operações SELECT, INSERT, UPDATE, DELETE podem ser propagadas para a base de dados da entidade filha.
 
 Os tipos de cascata JPA são PERSIST, MERGE, REFRESH, REMOVE, DETACH, ALL. Ao realizar estas operações na entidade mãe, a entidade filha também deve ser modificada para refletir as mudanças. Essa configuração é muito específica do tipo de relacionamento e não existe uma configuração default única. Para relacionamentos bidirecionais OneToOne, por exemplo, faz sentido o CascadeType.ALL uma vez que o ciclo de vida de uma entidade está associada ao ciclo de vida da outra. 
 
@@ -76,7 +75,7 @@ Em uma relação bidirecional como a que exemplificamos entre CestaDeCompras e P
 
 A dica é entender a relação e definir a melhor configuração para cada caso. Na dúvida faça testes simples que lhe permitam entender sua configuração e como as operações em cascata estão funcionando.
 
-Uma configuração que anda perto da CascadeType.REMOVE é a orphanRemove = true. Esta opção marca a entidade filha a ser removida se ela não tiver mais referências a partir da entidade mãe. Por exemplo, no relacionamento entre Comentarios de um Post e o Post, inserir esta configuração indica que se o Post deixar de existir ou se fizermos um post.setComentarios(null) todos os comentários do post devem ser removidos, pois não existe mais nenhuma referência a estes e eles podem deixar de existir.
+Uma configuração que anda perto da CascadeType.REMOVE é a orphanRemove = true. Esta opção marca a entidade filha a ser removida se ela não tiver mais referências a partir da entidade mãe. Por exemplo, no relacionamento entre Comentarios de um Post e o Post, inserir esta configuração indica que se o Post deixar de existir ou se fizermos um post.setComentarios(null) todos os comentários do post devem ser removidos, pois não existe mais nenhuma referência a estes e eles podem deixar de existir. No nosso exemplo de produto e cesta de compras, será que queremos que os produtos sejam removidos quando fizermos cesta.setProdutos(null)?
 
 ## Modo de busca (FETCH)
 
@@ -108,6 +107,8 @@ Este método irá recuperar todos os registros na tabela de produtos cujo atribu
 ````
 
 Nessa mesma configuração damos um nome à coluna que servirá de *join* para esta associação, o nome que demos foi idCesta. Então estamos dizendo que recuperamos a cesta de compras associada ao produto através do id da cesta. Em termos de banco de dados, o que acontece é que na tabela de PRODUTO vai haver uma coluna chamada ID_CESTA que é a chave estrangeira de CestaDeCompras na tabela PRODUTO. São essas configurações que usamos para gerar o nome do método e derivar a consulta ao banco automaticamente (sem precisar escrever uma @Query explícita). Se o atributo que chamamos cesta fosse chamado cestaDeCompras, então o nome do método na interface mudaria para findByCestaDeComprasIdCesta.
+
+Mais detalhes de como gerar os nomes dos métodos para derivar as consutas podem ser vistos [aqui](https://www.baeldung.com/spring-data-derived-queries), [aqui](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-creation) e [aqui](https://www.baeldung.com/spring-data-sorting).
 
 ## Documentação de referência
 
