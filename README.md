@@ -7,6 +7,8 @@
 
 - [Slides das aulas](aulas/)
 
+- [Notas de minitestes](https://docs.google.com/spreadsheets/d/e/2PACX-1vRDxs5WfLVcCE8Kjxc0laU25YORJti2Yk0ezUZhS65QrCpulWClD-uRWY-BFzdCIuaPgKUeyHvIm37y/pubhtml?gid=1849612040&single=true)
+
 - [Aulas de laboratório](aulas/labs.md)
 
 - [Notas de minitestes](2019.2/notas.md)
@@ -28,4 +30,6 @@
 - [Introdução à autenticação e autorização com JSON Web Tokens - JWT](material/back_autorizacao.md)
 
 - [Exemplo de API REST Spring que realiza autenticação/autoriazação com JWT](material/back_JWT_exemplo.md)
+
+- [Introdução a relacionamentos JPA](material/back_relacionamentosJPA.md)
 
