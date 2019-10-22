@@ -14,6 +14,9 @@ Neste módulo vamos entender um pouco melhor sobre relacionamentos entre entidad
 * @ManyToOne: é a relação inversa a @OneToMany, deve especificar a entidade que é a parte muitos. Por exemplo, na classe Produto, teriamos uma associação @ManyToOne com a classe CestaDeCompras.
 * @ManyToMany: é uma associação de muitos para muitos. É usada nos casos em que uma entidade de um tipo A pode estar associada a muitas entidades do tipo B e cada entidade do tipo B também pode estar associada a várias entidades do tipo A. Imagine por exemplo, a relação entre livros e autores. Um livro pode ter muitos autores e um autor pode escrever muitos livros.
 
+![Relações entre entidades](https://port.sas.ac.uk/pluginfile.php/233/mod_book/chapter/140/10%20Image%20D3.jpg)
+> Fonte: https://port.sas.ac.uk/mod/book/view.php?id=75&chapterid=140
+
 ## Configurando relações
 
 Na associação entre entidades vai sempre existir a **entidade proprietária** e a entidade não proprietária. A entidade proprietária da relação é aquela entidade que possui a chave estrangeira da outra entidade. Em geral, a entidade que está do lado \*ToOne será a proprietária. Vejamos um exemplo:
@@ -35,7 +38,7 @@ public class Produto {
   ...
 }
 ````
-Esse primeiro trecho de código nos informa através da anotação @ManyToOne que aparece antes do atributo cesta que estamos configurando um relacionamento muitos para um que reflete a seguinte regra: muitos produtos podem estar associados à mesma cesta de compras. Faz sentido? Sim, é a regra de negócio comum: um usuário pode colocar quantos produtos desejar em sua cesta de compras. Só com esta associação já temos uma relação definida, mesmo que nada seja configurado na cesta de compras. Com esta anotação, o que acontece "por trás" no banco de dados é que na tabela PRODUTO vai existir uma chave extrangeira que será o ID da cesta de compras associada ao produto. A entidade Produto será a entidade proprietária da relação, uma vez que é em sua tabela que está a chave extrangeira. 
+Esse primeiro trecho de código nos informa através da anotação @ManyToOne que aparece antes do atributo cesta que estamos configurando um relacionamento muitos para um que reflete a seguinte regra: muitos produtos podem estar associados à mesma cesta de compras. Faz sentido? Sim, é a regra de negócio comum: um usuário pode colocar quantos produtos desejar em sua cesta de compras. Só com esta associação já temos uma relação definida, mesmo que nada seja configurado na cesta de compras. Com esta anotação, o que acontece "por trás" no banco de dados é que na tabela PRODUTO vai existir uma chave estrangeira que será o ID da cesta de compras associada ao produto. A entidade Produto será a entidade proprietária da relação, uma vez que é em sua tabela que está a chave estrangeira. 
 
 Dizemos que é uma relação **unidirecional**, pois só a entidade Produto sabe da existência dessa relação. Através desta relação conseguimos recuperar, apenas a partir da entidade produto, a cesta de compras relacionada. Isto significa que ao recuperar o ID de uma cesta de compras precisaremos de uma query extra para recuperar os produtos da cesta a partir da tabela de produtos. Para recuperar os produtos da cesta de compras teremos que pesquisar todos os produtos associados ao ID da cesta de interesse.
 
@@ -61,15 +64,15 @@ Nesse trecho de código usamos a anotação @OneToMany no atributo List<Produto>
   
 Ao estabelecer esta relação bidirecional, o que o JPA realiza no contexto do banco de dados é muito parecido com o que já tínhamos no contexto da relação unidirecional. São duas tabelas: CESTA_DE_COMPRAS e PRODUTO. A tabela CESTA_DE_COMPRAS tem as colunas ID_CESTA, e outras colunas relativas à cesta. Na tabela PRODUTO temos as colunas ID_PRODUTO, outras colunas de produto e a coluna ID_CESTA que é a chave estrangeira da tabela CESTA_DE_COMPRAS. Esta coluna é a que permite o *join* entre a CESTA_DE_COMPRAS e PRODUTO. Como a chave estrangeira está na entidade Produto, dizemos que Produto é a entidade proprietária dessa relação. Até aqui nenhuma novidade em relação ao que já tínhamos. O que muda é o seguinte: com a relação bidirecional, ao recuperar uma cesta de compras, a coleção de produtos associada a ela já vem no objeto da classe CestaDeCompras. Ao contrário, quando a relação era unidirecional, a lista de produtos não vinha na cesta. Era preciso identificar o ID da cesta e realizar nova query para recuperar todos os produtos associados ao ID_CESTA de interesse.
 
-Em resumo: relacionamentos podem ser bidirecionais ou unidirecionais. Em uma relação unidirecional apenas um lado da relação conhece a relação. O outro lado não sabe que a relação existe. Em uma relação unidirecional usamos a anotação de relacionamento (@OneToOne, @OneToMany, etc.) em apenas uma entidade da relação, a entidade que fica ciente da relação. Ao contrário, na relação bidirecional ambas as entidades sabem da existência da relação. Nas relações bidirecionais podemos navegar nas entidades nas duas direções sem precisar de queries extra.
+Em resumo: relacionamentos podem ser bidirecionais ou unidirecionais. Em uma relação unidirecional apenas um lado da relação conhece a relação. O outro lado não sabe que a relação existe. Sendo assim, usamos a anotação de relacionamento (@OneToOne, @OneToMany, etc.) em apenas uma entidade da relação, a entidade que fica ciente da relação. Ao contrário, na relação bidirecional ambas as entidades sabem da existência da relação. Nas relações bidirecionais podemos navegar nas entidades nas duas direções sem precisar de queries extra.
 
-## Configuraçao de Cascata (Cascade)
+## Configuração de Cascata (Cascade)
 
 JPA permite operações em cascata que se propagam da entidade "mãe" para a "filha". Tipicamente, a entidade mãe é a não proprietária. As operações SELECT, INSERT, UPDATE, DELETE podem ser propagadas para a base de dados da entidade filha.
 
 Os tipos de cascata JPA são PERSIST, MERGE, REFRESH, REMOVE, DETACH, ALL. Ao realizar estas operações na entidade mãe, a entidade filha também deve ser modificada para refletir as mudanças. Essa configuração é muito específica do tipo de relacionamento e não existe uma configuração default única. Para relacionamentos bidirecionais OneToOne, por exemplo, faz sentido o CascadeType.ALL uma vez que o ciclo de vida de uma entidade está associada ao ciclo de vida da outra. 
 
-Em uma relação bidirecional como a que exemplificamos entre CestaDeCompras e Produto, se configurarmos na CestaDeCompras o CascadeType.ALL indicamos que todos os produtos assosicados à cesta sejam removidos da tabela de produtos, o que talvez não seja o que desejamos... No entando em uma relação semelhante entre Post e ComentariosDoPost provavelmente queremos que todos os comentários sejam removidos ao remover um post.
+Em uma relação bidirecional como a que exemplificamos entre CestaDeCompras e Produto, se configurarmos na CestaDeCompras o CascadeType.ALL indicamos que todos os produtos associados à cesta sejam removidos da tabela de produtos, o que talvez não seja o que desejamos... No entando em uma relação semelhante entre Post e ComentariosDoPost provavelmente queremos que todos os comentários sejam removidos ao remover um post.
 
 A dica é entender a relação e definir a melhor configuração para cada caso. Na dúvida faça testes simples que lhe permitam entender sua configuração e como as operações em cascata estão funcionando.
 
@@ -104,7 +107,7 @@ Este método irá recuperar todos os registros na tabela de produtos cujo atribu
   private CestaDeCompras cesta;
 ````
 
-Nessa mesma configuração damos um nome à coluna que servirá de *join* para esta associação, o nome que demos foi idCesta. Então estamos dizendo que recuperamos a cesta de compras associada ao produto através do id da cesta. Em termos de banco de dados, o que acontece é que na tabela de PRODUTO vai haver uma coluna chamada ID_CESTA que é a chave estrangeira de CestaDeCompras na tabela produto. São essas configurações que usamos para gerar o nome do método e derivar a consulta ao banco automaticamente (sem precisar escrever uma @Query explícita). Se o atributo que chamamos cesta fosse chamado cestaDeCompras, então o nome do método na interface mudaria para findByCestaDeComprasIdCesta.
+Nessa mesma configuração damos um nome à coluna que servirá de *join* para esta associação, o nome que demos foi idCesta. Então estamos dizendo que recuperamos a cesta de compras associada ao produto através do id da cesta. Em termos de banco de dados, o que acontece é que na tabela de PRODUTO vai haver uma coluna chamada ID_CESTA que é a chave estrangeira de CestaDeCompras na tabela PRODUTO. São essas configurações que usamos para gerar o nome do método e derivar a consulta ao banco automaticamente (sem precisar escrever uma @Query explícita). Se o atributo que chamamos cesta fosse chamado cestaDeCompras, então o nome do método na interface mudaria para findByCestaDeComprasIdCesta.
 
 ## Documentação de referência
 
