@@ -46,7 +46,7 @@ Como devidir entre estas duas opções arquiteturais? Deve ser levada em conta a
 
 ## Padrão MVC 
 
-Praticamente todas as aplicações Web da atualidade seguem um padrão arquitetural chamado **MVC - Model, View, Controller**. Considere que o backend é a API. Em se tratando de uma aplicação Web monolítica, o cliente dessa API é o frontend. Esse padrão é importante porque mantém desacoplados os códigos do frontend (que é a parte View do padrão) e da API/backend que é a parte Model. A comunicação entre essas partes se dá através do uso de um componente que chamamos de controlador. Esse componente é desenvolvido pelos desenvolvedores do backend e executa junto da API.
+Praticamente todas as aplicações Web da atualidade seguem um padrão de projeto chamado **MVC - Model, View, Controller**. Considere que o backend é a API. Em se tratando de uma aplicação Web monolítica, que é nosso foco aqui, o cliente dessa API é o frontend. Esse padrão é importante porque mantém desacoplados os códigos do frontend (que é a parte View do padrão) e da API/backend que é a parte Model. Este padrão define claramente as responsabilidades do backend e do frontend e permite que um controlador seja capaz de orquestrar a comunicação entre estas partes. O controlador é desenvolvido pelos desenvolvedores do backend e executa junto da API. O controlador recebe as requisições dos usuários e sabe exatamente para que serviço delegar esta requisição.
 
 Em resumo: 
 * O que é o modelo? É quem sabe fazer o que precisa ser feito (backend - regras de negócio e dados)
