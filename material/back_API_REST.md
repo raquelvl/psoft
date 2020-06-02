@@ -6,7 +6,7 @@ O backend expõe serviços geralmente na forma de uma API (_Application Programm
 
 A API dá acesso aos dados/serviços de forma controlada, expondo apenas o que deve ser exposto e com o cuidado de verificar se o usuário que requisita cada função tem autorização para o fazê-lo. Organizar o backend como uma (ou mais) API(s) permite diferentes “frontends” para a mesma aplicação backend. Além disso também permite criar aplicações a partir de outras aplicações, desde que elas também definam APIs (APIs que são clientes de outras APIs). A API padroniza o acesso aos dados/serviços de forma totalmente controlada e projetada.
 
-As APIs podem ser bastante simples ou incrivelmente complexas, e existem diferentes maneiras de programar uma API. De forma bastante prática, podemos definir uma API como uma coleção de métodos claramente definidos para comunicação entre diferentes componentes de um software. Claro que ao definir métodos precisamos definir sua visibilidade, seus parâmetros de entrada e seu tipo de retorno. Pensar na API que queremos expor é a parte mais importante do desenvolvimento do backend e será alvo de estudos neste curso.
+As APIs podem ser bastante simples ou incrivelmente complexas, e existem diferentes maneiras de programar uma API. De forma bastante prática, podemos definir uma API como uma coleção de métodos claramente especificados para comunicação entre diferentes componentes de um software. Claro que ao definir métodos precisamos definir sua visibilidade, seus parâmetros de entrada e seu tipo de retorno. Pensar na API que queremos expor é a parte mais importante do desenvolvimento do backend e será alvo de estudos neste curso.
 
 ## API REST
 
