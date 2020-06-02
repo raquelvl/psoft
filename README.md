@@ -1,20 +1,24 @@
-# Bem vindos ao site de material de apoio da disciplina Projeto de Software da UFCG
+# Material de apoio sobre desenvolvimento de backend de aplicações Web com APIs REST, Java e Spring Boot
 ## Foco: backend development 
 ## Professora: Raquel Vigolvino Lopes
 
-[Slides das aulas](aulas/)
+[Slides de algumas aulas](aulas/)
 
-[Aulas de laboratório](aulas/labs.md)
-
-[Notas de minitestes](https://docs.google.com/spreadsheets/d/e/2PACX-1vRDxs5WfLVcCE8Kjxc0laU25YORJti2Yk0ezUZhS65QrCpulWClD-uRWY-BFzdCIuaPgKUeyHvIm37y/pubhtml?gid=1849612040&single=true)
+[Aulas de laboratório para praticar](aulas/labs.md)
 
 ## Material para estudo e prática
 
+[Sobre APIs](material/back_API.md)
+
+[Sobre aplicações Web, backend/frontend](material/aplicacoes_web.md)
+
 [Sobre arquiteturas de aplicações Web](material/back_arquitetura.md)
 
-[Um pouco sobre APIs](material/back_API.md)
+[Sobre framework de desenvolvimento](material/back_framework.md)
 
-[Criando uma API Web simples com spring](material/back_hello.md)
+[Sobre APIs REST](material/back_API_REST.md)
+
+[comment]: <> ([Criando uma API Web simples com spring](material/back_hello.md))
 
 [Criando uma API REST simples com spring](material/back_springMVC.md)
 
