@@ -16,4 +16,6 @@ Já deve estar claro aqui nesse ponto que o backend expõe os serviços em forma
 
 Como a indústria de aplicações Web só tem crescido nas últimas décadas, é possível que você vá trabalhar nela depois que se graduar. Nas chamadas de emprego é comum a procura por backend developer, frontend developer e full stack developer, que é o desenvolvedor que tem habilidades de desenvolver tanto o front quanto o backend da aplicação.
 
-Antes de continuar, teste seus conhecimentos.
+Antes de continuar, teste seus conhecimentos. 
+
+Nosso próximo assunto vai tratar um pouco sobre as diversas arquiteturas que aplicações Web podem seguir e em qual focaremos neste curso.
