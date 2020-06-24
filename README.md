@@ -20,13 +20,13 @@
 
 [Sobre APIs REST](material/back_API_REST.md)
 
-[Criando uma API Web simples com spring](material/back_hello.md)
+[Criando uma API Web simples com spring Web](material/back_hello.md)
 
-[Criando uma API REST simples com spring](material/back_springMVC.md)
+[Criando uma API REST simples com spring MVC](material/back_springMVC.md)
 
-[Introdução à persistência de dados usando DAO (com Spring boot e JPA)](material/back_DAO.md)
+[Introdução à persistência de dados usando DAO](material/back_DAO.md)
 
-[Exemplo de API que realiza persistência de dados com Spring boot e JPA](material/back_DAO_exemplo.md)
+[Exemplo de API que realiza persistência de dados com Spring Data JPA](material/back_DAO_exemplo.md)
 
 [Introdução à autenticação e autorização com JSON Web Tokens - JWT](material/back_autorizacao.md)
 
