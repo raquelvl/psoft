@@ -14,13 +14,6 @@ public class ProdutosService {
 
 	@Autowired
 	private ProdutosRepository<Produto, Long> produtosDAO;
-	
-	//obrigatorio ter esse construtor, caso contrario chama um construtor
-    //default e o DAO fica null
-//	public ProdutosService(ProdutosRepository<Produto, Long> produtosDAO) {
-//		super();
-//		this.produtosDAO = produtosDAO;
-//	}
 
 	public Produto adicionaProduto(Produto produto) {
 		return produtosDAO.save(produto);
