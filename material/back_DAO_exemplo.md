@@ -1,4 +1,4 @@
-# Como implementar DAO com spring boot e JPA?
+# Como implementar DAO com Spring Data JPA?
 
 Nesta aula vamos ver um exemplo bem simples de como escrever uma API que expõe uma base de dados relacional usando spring boot e JPA (Java Persistence API). Suponha que você está desenvolvendo uma aplicação de comércio eletrônico e portanto precisa armazenar produtos em uma tabela para persistência. Cada produto deve ter um id único, um nome, uma descrição e um preço (double). Por enquanto a API deve ter apenas 3 rotas: 
 
@@ -209,7 +209,7 @@ Uma possibilidade é se conectar ao BD para ver como estão as tabelas. Para iss
 
 2. Inserir o método sem seguir a convenção do nome do método e usar a anotação [@Query](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.at-query) para indicar a consulta específica a ser realizada. Esta consulta é realizada usando a linguagem JPQL (Java Persistence Query Language) ou SQL pura ([veja exemplos e mais detalhes aqui].(https://www.baeldung.com/spring-data-jpa-query)).
 
-Um outro exemplo de uso de Spring Data JPA continuando nossa API de saudações está aqui.
+Um outro exemplo de uso de Spring Data JPA continuando nossa API de saudações está [aqui](https://github.com/raquelvl/psoft/tree/master/exemplo2).
 
 ## Exercício
 
