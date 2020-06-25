@@ -1,18 +1,18 @@
 # Como implementar DAO com spring boot e JPA?
 
-Nesta aula vamos ver um exemplo bem simples de como escrever uma API que expõe uma base de dados relacional usando spring boot e JPA (Java Persistence API). Suponha que você está desenvolvendo uma aplicação de comércio eletrônico e portanto precisa armazenar produtos em uma tabela para persistência. Cada produto deve ter um id único, um nome, uma descrição e um preço (double). Por enquanto a API deve ter apenas 2 rotas: 
+Nesta aula vamos ver um exemplo bem simples de como escrever uma API que expõe uma base de dados relacional usando spring boot e JPA (Java Persistence API). Suponha que você está desenvolvendo uma aplicação de comércio eletrônico e portanto precisa armazenar produtos em uma tabela para persistência. Cada produto deve ter um id único, um nome, uma descrição e um preço (double). Por enquanto a API deve ter apenas 3 rotas: 
 
 * POST /v1/api/produtos (para adicionar um produto), 
 * GET /v1/api/produtos (para recuperar todos os produtos já cadastrados) e 
-* GET /v1/api/produtos/{i} (para recuperar um produto a partir do seu ID). 
+* GET /v1/api/produtos/{id} (para recuperar um produto a partir do seu ID). 
 
-O formato do JSON usado na comunicação (sempre no corpo da requisição ou da resposta HTTP) do POST /v1/api/produtos e do GET /v1/api/produtos/{i} tem os seguintes campos: 
+O formato do JSON usado na comunicação (sempre no corpo da requisição ou da resposta HTTP) do POST /v1/api/produtos e do GET /v1/api/produtos/{id} tem os seguintes campos: 
 
 ```json
 {
   "nome":"<nome>",
   "descricao":"<descricao>",
-  "preco":"<preco>"
+  "preco":<preco>
 }
 ```
 
@@ -20,7 +20,7 @@ O campo *id* deve ser acrescido como o primeiro campo do JSON retornado para rep
 
 ```json
 {
-  "id":"<id>",
+  "id":<id>,
   "nome":"<nome>",
   "descricao":"<descricao>",
   "preco":"<preco>"
@@ -66,7 +66,9 @@ public class Produto {
 }
 ```
 
-Seguindo o fluxo, vamos agora escrever a classe de acesso aos dados, o DAO. Na verdade, ao usar o Spring boot, esta classe não é bem uma classe, iremos escrever uma interface que estende outra interface chamada [JPARepository](https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/JpaRepository.html). O DAO pode ser visto como a classe que representa o repositório de dados. Os métodos da JPARepository são métodos comuns para realizar CRUD (Create, Read, Update e Delete). Ao escrever esta interface precisamos informar o tipo de objeto que representa registros deste repositório e o tipo da chave primária deste repositório. Segue abaixo o código desta interface. Perceba que todos os métodos foram herdados da interface "mãe" e, na verdade, nem precisamos definir novos métodos. Isso só precisará ser feito quando quisermos métodos mais específicos e falaremos disso mais adiante. Vejamos abaixo o código da interface ProdutosRepository:
+Note que Entity, Id e GeneratedValue são todos pertencentes ao pacote javax.persistence. Esse é o pacote da JPA. Outras anotações com mesmo nome existem em outros pacotes (ex. do Hibernate) então cuidado ao importar esses elementos de javax.persistence.
+
+Seguindo o fluxo, vamos agora escrever a classe de acesso aos dados, o DAO. Na verdade, ao usar o Spring Data JPA, esta classe não é bem uma classe, iremos escrever uma interface que estende outra interface chamada [JPARepository](https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/JpaRepository.html). O DAO pode ser visto como a classe que representa o repositório de dados e que se comunica com ele para acessar os dados. Os métodos da JPARepository são métodos comuns para realizar CRUD (Create, Read, Update e Delete). Ao escrever esta interface precisamos informar o tipo de objeto que representa os registros deste repositório e o tipo da chave primária deste repositório. Segue abaixo o código desta interface. Perceba que todos os métodos foram herdados da interface "mãe" e, na verdade, nem precisamos definir novos métodos. Isso só precisará ser feito quando quisermos métodos mais específicos e falaremos disso mais adiante. Vejamos abaixo o código da interface ProdutosRepository:
 
 ```java
 package projsoft.ufcg.daos;
@@ -79,9 +81,11 @@ public interface ProdutosRepository<T, ID extends Serializable> extends JpaRepos
 }
 ```
 
-Não precisaremos criar uma implementação dessa interface. O Spring boot vai fazer isso pra gente de forma transparente.
+Não precisaremos criar uma implementação dessa interface. O Spring Data JPA vai fazer isso pra gente de forma transparente. 
 
-Agora chegou o momento de escrever o serviço. É uma classe marcada com @Service e esta classe deve conhecer o DAO (isto é, o repositório) de Produtos. Esta classe deve ter 3 responsabilidades por enquanto: 
+Agora chegou o momento de escrever o serviço. É uma classe marcada com @Service e esta classe deve conhecer o DAO (isto é, o repositório) de Produtos. Apenas os serviços conhecem os DAOs e as entidades. Aos controladores fica restrito acesso apenas aos serviços. Por que isso é interessante? Em um ambiente real a API REST pública não deve ser modificada, pois isso quebraria diversos outros programas que chamam essa API, concordam? Claro que novos recursos podem ser adicionados à API e em casos de extrema necessidade ela vai ser modificada, mas é algo mais raro de ocorrer. Já as classes do modelo podem mudar muito com o passar do tempo, com a adição de novas funcionalidades e o refactoring natural que ocorre ao longo do tempo em software _vivo_. Ao separar completamente os controladores do modelo, será raro precisar mexer nos controladores, isso diminui o acoplamento e deixa o código muito mais fácil de manter, com menos propensão à inserção de erros durante a manutenção. Os refactorings também ficam restritos apenas às classes de serviço e entidades.
+
+Voltemos ao desenvolvimento do nosso programa. A classe de serviço deve ter 3 responsabilidades por enquanto (equivalentes aos 3 recursos expostos pela API): 
 
 * inserir um produto na base de dados de produto;
 * recuperar uma lista de todos os produtos já cadastrados na base de dados;
@@ -103,15 +107,9 @@ import projsoft.ufcg.entidades.Produto;
 @Service
 public class ProdutosService {
 
+	@Autowired
 	private ProdutosRepository<Produto, Long> produtosDAO;
 	
-	//obrigatorio ter esse construtor, caso contrario chama um construtor
-    //default e o DAO fica null
-	public ProdutosService(ProdutosRepository<Produto, Long> produtosDAO) {
-		super();
-		this.produtosDAO = produtosDAO;
-	}
-
 	public Produto adicionaProduto(Produto produto) {
 		return produtosDAO.save(produto);
 	}
@@ -125,6 +123,7 @@ public class ProdutosService {
 	}
 }
 ```
+
 Agora vamos escrever o controlador de produtos, a classe marcada com @RestController que vai receber as requisições HTTP dos clientes da API e rotea-las para o serviço que saberá realizar as requisições. Abaixo segue o código do controlador de produtos.
 
 ```java
@@ -194,19 +193,23 @@ spring.datasource.username=sa
 spring.datasource.password=
 spring.datasource.driver-class-name=org.h2.Driver
 
-server.servlet.context-path=/v1/api
-#diz ao spring que coloque /api antes de qualquer url, ou seja, se voce quiser utilizar as rotas /products, precisará adicionar /api =>  /v1/api/products e assim por diante
+server.servlet.context-path=/v1
+#diz ao spring que coloque /v1 antes de qualquer rota, assim se no controlador tem /api/produtos e esta configuração está habilitada, na verdade sua rota é /v1/api/produtos
 ````
 
 Execute a aplicação (o código completo dessa API está [aqui](https://github.com/raquelvl/psoft/tree/master/demojpa)). Perceba que a base de dados foi gerada. Use a API adicionando produtos. Encerre a aplicação (API), em seguida coloque para rodar novamente e veja que todos os produtos inseridos anteriormente estão lá.
 
 Este exemplo, apesar de bastante simples, serve de base para você escrever suas APIs com dados que persistem em bancos de dados relacionais de agora em diante. 
 
+Uma possibilidade é se conectar ao BD para ver como estão as tabelas. Para isso você vai usar as credenciais indicadas na configuração do banco no arquivo application.properties para se conectar ao banco. Na configuração passada neste artigo o link para se conectar ao banco vai ser [http://localhost:8080/v1/api/h2](http://localhost:8080/v1/api/h2). Ao entrar na console do banco você vai poder ver todas as tabelas criadas, e se rodar o select * from <tabela> você consegue ver o conteúdo da tabela indicada.
+
 É possível que a interface CrudRepository não tenha exatamente o método de acesso aos dados desejado. Neste caso, temos duas opções a seguir para adicionar o método e continuar sem implementar a interface explicitamente:
 
 1. Inserir o método desejado na interface seguindo determinadas convenções para o nome do método. Isso informa para o JPA a query a ser realizada no banco pelo método novo sendo definido. Regras para nomear estes métodos extra podem ser encontradas na seção 4.5 e 5.3.2 [deste documento](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details).
 
 2. Inserir o método sem seguir a convenção do nome do método e usar a anotação [@Query](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.at-query) para indicar a consulta específica a ser realizada. Esta consulta é realizada usando a linguagem JPQL (Java Persistence Query Language) ou SQL pura ([veja exemplos e mais detalhes aqui].(https://www.baeldung.com/spring-data-jpa-query)).
+
+Um outro exemplo de uso de Spring Data JPA continuando nossa API de saudações está aqui.
 
 ## Exercício
 
