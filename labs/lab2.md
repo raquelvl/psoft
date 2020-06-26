@@ -1,4 +1,4 @@
-# Laboratório 2: persistência de dados usando Spring Data JPA e padrão DAO
+# Laboratório - roteiro 1
 
 
 ### Objetivos:
