@@ -1,4 +1,4 @@
-# Laboratório - roteiro 1
+# Laboratório - roteiro 2
 
 
 ### Objetivos:
