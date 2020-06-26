@@ -2,7 +2,7 @@
 
 
 ### Objetivos:
-* Aprender a escrever APIs com dados persistentes usando um esquema de dados relacional 
+* Aprender a escrever APIs com dados persistentes usando um esquema de dados relacional muito simples
 
 ### Tecnologias envolvidas:
 * ORM - Mapeamento objeto relacional (Hibernate é a impementação por trás do que usaremos)
@@ -52,11 +52,11 @@ Seguem algumas dicas:
 * Use JWT para autenticação e autorização;
 * Siga boas práticas de design, buscando desacoplamento utilize corretamente controladores, serviços e repositórios;
 * Organize suas classes em packages com nomes significativos (xx.services, xx.controllers, xx.repositories, xx.entities, etc. - pode usar nomes em portugues também, mas mantenha a coerência, ou tudo em portugues ou tudo em ingles);
-* Para ordenaç
+* Para ordenação aprenda a definir um novo método no repositório de disciplina seguindo o padrão de nomes do método. Mais dicas [aqui](https://www.baeldung.com/spring-data-sorting).
 
 Execute a sua aplicação no termina, dentro do diretório raiz do seu projeto com o seguinte comando: 
 $ ./mvnw spring-boot:run
 
-Use Curl ou Postman para testar sua API. Para testar chamadas que requerem um JWT você deve copiar o token recebido na respostqa do login no header "Authorization" de uma requisição HTTP futura. 
+Use Curl ou Postman para testar sua API. 
 
 **Não faça tudo de uma vez**. Desenvolva uma funcionalidade, teste, vá para a próxima…
