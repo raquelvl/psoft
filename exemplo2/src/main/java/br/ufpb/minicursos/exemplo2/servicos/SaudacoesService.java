@@ -1,5 +1,6 @@
 package br.ufpb.minicursos.exemplo2.servicos;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -63,5 +64,18 @@ public class SaudacoesService {
 		saudacoesDAO.save(saudacao);
 		return saudacoesDAO.findById(id).get();
 	}
+
+	public List<Saudacao> getSaudacoesAlternativas() {
+		return saudacoesDAO.findAll();
+	}
+
+	public List<Saudacao> getSaudacoesAlternativas(String expressao) {
+		return saudacoesDAO.findBySaudacaoContaining(expressao);
+	}
+	
+	public List<Saudacao> getSaudacoesAlternativasComQuery(String expressao) {
+		return saudacoesDAO.searchBySaudacaoContaining(expressao);
+	}
+	
 
 }

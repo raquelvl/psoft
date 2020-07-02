@@ -1,5 +1,6 @@
 package br.ufpb.minicursos.exemplo2.controladores;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,23 @@ import br.ufpb.minicursos.exemplo2.servicos.SaudacoesService;
  *  retorna um nome. O nome retornado pode ser o padrão "Ser Humano" ou o 
  *  nome recebido no parâmetro da requisição.
  *  
+ *  GET /v1/api/saudacoes/alternativa/ultima
+ *  retorna última saudação cadastrada. O nome retornado pode ser 
+ *  o padrão "Ser Humano" ou o nome recebido no parâmetro da requisição.
+ *  
  *  GET /v1/api/saudacoes/alternativa/{id}
  *  retorna idésima saudação cadastrada e um nome. O nome retornado pode ser 
  *  o padrão "Ser Humano" ou o nome recebido no parâmetro da requisição. Se 
  *  o id passado não corresponder a uma saudação válida o código de resposta
  *  HTTP 403 é retornado junto com uma saudação nula.
+ *  
+ *  GET /v1/api/saudacoes/alternativa
+ *  retorna todas as saudacoes cadastradas. O nome associado a cada saudação 
+ *  retornada pode ser nulo.
+ *  
+ *  GET /v1/api/saudacoes/alternativa/{expressao}
+ *  retorna todas as saudacoes cadastradas que contem a expressao passada. O nome 
+ *  associado a cada saudação retornada pode ser nulo.
  */
 
 @RestController
@@ -69,7 +82,7 @@ public class SaudacoesController {
 		return new ResponseEntity<Saudacao>(saudacoesService.setNovaSaudacao(novaSaudacao), HttpStatus.CREATED);
 	}
 
-	@GetMapping("/saudacoes/alternativa")
+	@GetMapping("/saudacoes/alternativa/ultima")
 	public ResponseEntity<Saudacao> getNovaSaudacao(
 			@RequestParam(value = "nome", defaultValue = "Ser Humano") String nome) {
 		try {
@@ -88,5 +101,21 @@ public class SaudacoesController {
 			return new ResponseEntity<Saudacao>(new Saudacao(null, null), HttpStatus.NOT_FOUND);
 		}
 	}
+
+	@GetMapping("/saudacoes/alternativa")
+	public ResponseEntity<List<Saudacao>> getTodasAsSaudacoesAlternativas() {
+		return new ResponseEntity<List<Saudacao>>(saudacoesService.getSaudacoesAlternativas(), HttpStatus.OK);
+	}
+
+	@GetMapping("/saudacoes/alternativa/{expressao}")
+	public ResponseEntity<List<Saudacao>> getTodasAsSaudacoesAlternativas(@PathVariable String expressao) {
+		return new ResponseEntity<List<Saudacao>>(saudacoesService.getSaudacoesAlternativas(expressao), HttpStatus.OK);
+	}
+	
+	@GetMapping("/saudacoes/alternativa2/{expressao}")
+	public ResponseEntity<List<Saudacao>> getTodasAsSaudacoesAlternativasComQuery(@PathVariable String expressao) {
+		return new ResponseEntity<List<Saudacao>>(saudacoesService.getSaudacoesAlternativasComQuery(expressao), HttpStatus.OK);
+	}
+
 
 }
