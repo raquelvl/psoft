@@ -18,7 +18,6 @@ public class JWTService {
 	private UsuariosService usuariosService;
 	private final String TOKEN_KEY = "login do batman";
 
-
 	public JWTService(UsuariosService usuariosService) {
 		super();
 		this.usuariosService = usuariosService;
@@ -29,7 +28,7 @@ public class JWTService {
 
 		return usuariosService.getUsuario(subject).isPresent();
 	}
-	
+
 	public boolean usuarioTemPermissao(String authorizationHeader, String email) throws ServletException {
 		String subject = getSujeitoDoToken(authorizationHeader);
 
@@ -55,11 +54,18 @@ public class JWTService {
 	}
 
 	public String geraToken(String email) {
-		return Jwts.builder().setSubject(email)
-		.signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
-		.setExpiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000)).compact();//3 min
+		return Jwts.builder().setSubject(email).signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
+				.setExpiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000)).compact();// 3 min
 	}
-	
-	
+
+	public RespostaDeLogin autentica(Usuario usuario) {
+
+		if (!usuariosService.validaUsuarioSenha(usuario)) {
+			return new RespostaDeLogin("Usuario ou senha invalidos. Nao foi realizado o login.");
+		}
+
+		String token = geraToken(usuario.getEmail());
+		return new RespostaDeLogin(token);
+	}
 
 }

@@ -11,29 +11,36 @@ import projsoft.ufcg.repositories.UsuariosRepository;
 
 @Service
 public class UsuariosService {
-	
-	private UsuariosRepository<Usuario, String > usuariosDAO;
+
+	private UsuariosRepository<Usuario, String> usuariosDAO;
 
 	public UsuariosService(UsuariosRepository<Usuario, String> usuariosDAO) {
 		super();
 		this.usuariosDAO = usuariosDAO;
 	}
-	
+
 	public Usuario adicionaUsuario(Usuario usuario) {
 		return this.usuariosDAO.save(usuario);
 	}
-	
+
 	public Optional<Usuario> getUsuario(String email) {
 		return this.usuariosDAO.findByEmail(email);
 	}
 
 	public Usuario removeUsuario(String email) throws ServletException {
 		Optional<Usuario> usuario = usuariosDAO.findByEmail(email);
-		if(usuario.isPresent()) {
+		if (usuario.isPresent()) {
 			usuariosDAO.delete(usuario.get());
 			return usuario.get();
 		}
 		throw new ServletException("Usuario nao encontrado");
+	}
+
+	public boolean validaUsuarioSenha(Usuario usuario) {
+		Optional<Usuario> optUsuario = usuariosDAO.findByEmail(usuario.getEmail());
+		if (optUsuario.isPresent() && optUsuario.get().getSenha().equals(usuario.getSenha()))
+			return true;
+		return false;
 	}
 
 }
