@@ -192,35 +192,43 @@ O filtro que criamos verifica se o token é válido. Se quisermos algo além dis
 Uma forma simples de realizar essa identificação do usuário é recuperar o token no controlador, e fazer o *parsing* do token para recuperar o usuário. Note que quando fomos criar o token nós usamos o seguinte comando:
 
 ```java
-Jwts.builder().setSubject(authUsuario.get().getEmail())
+Jwts.builder().setSubject(email)
 ```
 
 Então, ao fazer parsing do token podemos recuperar o subject:
 
 ```java
-subject = Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody().getSubject();
+subject = Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody().getSubject();
 ```
-No @RestController podemos ter acesso à requisição HTTP e, consequentemente, seu cabeçalho. Vejamos abaixo um método do controlador que recupera o cabeçalho de autoriação da requisição HTTP e passa para o serviço de parsing JWT (chamado aqui de jwtService):
+No @RestController temo acesso à requisição HTTP e, consequentemente, seu cabeçalho. A anotação @RequestHeader("Authorization") nos dá acesso ao conteúdo do cabeçalho de autorização da requisição HTTP onde está o token. Vejamos abaixo um método do controlador que recupera o cabeçalho de autoriação da requisição HTTP e passa para o serviço de parsing JWT (chamado aqui de jwtService):
 
 ```java
-@DeleteMapping("/auth/usuarios/{email}")
-	public ResponseEntity<Usuario> removeUsuario(@PathVariable String email, @RequestHeader("Authorization") String header) {
-		if(usuariosService.getUsuario(email).isEmpty())
-			return new ResponseEntity<Usuario>(HttpStatus.NOT_FOUND);
+@RestController
+public class UsuariosController {
+
+	@Autowired
+	private UsuariosService usuariosService;
+
+	...
+
+	@DeleteMapping("/auth/usuarios/{email}")
+	public ResponseEntity<Usuario> removeUsuario(@PathVariable String email,
+			@RequestHeader("Authorization") String header) {
 		try {
-			if(jwtService.usuarioTemPermissao(header, email)) {
-				return new ResponseEntity<Usuario>(usuariosService.removeUsuario(email), HttpStatus.OK);
-			}
+			return new ResponseEntity<Usuario>(usuariosService.removeUsuario(email, header), HttpStatus.OK);
+
+		} catch (IllegalArgumentException iae) {
+			return new ResponseEntity<Usuario>(HttpStatus.NOT_FOUND);
 		} catch (ServletException e) {
-			//usuario esta com token invalido ou vencido
 			return new ResponseEntity<Usuario>(HttpStatus.FORBIDDEN);
 		}
-		//usuario nao tem permissao
-		return new ResponseEntity<Usuario>(HttpStatus.UNAUTHORIZED);
 	}
+}
 ```
 
-Na assinatura do método recuperamos o cabeçalho de interesse através da anotação @RequestHeader("Authorization"). Esse cabeçalho é passado para o método através do parâmetro de entrada header do tipo String que é definido logo em seguida à anotação. Este método recebe também o email do usuário a ser removido (isso poderia ser diferente, ao solicitar a deleção o usuário poderia nem passar email e sua própria conta seria deletada. A primeira opção permite mais tarde que a gente tenha um admin que pode remover qualquer conta usando a mesma rota).
+Na assinatura do método recuperamos o cabeçalho de interesse através da anotação @RequestHeader("Authorization"). Esse cabeçalho é passado para o método através do parâmetro de entrada header do tipo String que é definido logo em seguida à anotação. Este método recebe também o email do usuário a ser removido (isso poderia ser diferente, ao solicitar a deleção o usuário poderia nem passar email e sua própria conta seria deletada. A primeira opção permite mais tarde que a gente tenha um admin que pode remover qualquer conta usando a mesma rota). Como sempre, o controlador delega para o serviço (nesse caso o serviço de usuários) a responsabilidade de realizar a ação necessária. 
+
+<_a partir daqui falta revisão!_>
 
 Continuando: esse método realiza 2 passos. 
 
