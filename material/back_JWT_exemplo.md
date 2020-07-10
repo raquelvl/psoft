@@ -30,62 +30,68 @@ Antes de prosseguir é importante lembrar que teremos uma nova dependência em n
 
 ### Gerando JWTs
 
-Vamos iniciar pelo ponto **1**. O token deve ser gerado no momento em que o usuário faz login na API. Abaixo um exemplo de código do controlador responsável pelo login.
+Vamos iniciar pelo ponto **1**. A geração do token deve ser realizada no momento em que o usuário se autentica no sistema, isto é, no momento que o usuário se loga. Para se autenticar o usuário deve informar suas credenciais; em geral email ou outro identificador único do usuário e senha. 
+
+Sugerimos um controlador específico para o login. Esse controlador vai responder apenas pela rota de login. Conforme já comentamos antes, o controlador não deve ser responsável por muita inteligência. Toda a lógica da aplicação deve ser deixada para os serviços e entidades. Assim, a única coisa que o controlador faz é solicitar ao serviço de JWT que realize a autenticação do usuário. Neste caso optamos por separar o serviço que lida com o recurso "usuarios" do serviço que lida com a autenticação/autorização, sendo este último o responsável por entender sobre os Java Web Tokens. A cadeia formada é a seguinte: o controlador de login conhece apenas o serviço JWT e este conhece o serviço de usuários. Isso é necessário para que o serviço JWT possa verificar se o usuário que tenta se logar realmente existe e se sua senha está correta.
+
+O método de login (dentro do @RestController de login) apenas delega para o serviço JWT a autenticação do usuário e geração do token. Abaixo um exemplo de código do controlador responsável pelo login.
 
 ```java
 @RestController
 @RequestMapping("/auth")
 public class LoginController {
 
-	private final String TOKEN_KEY = "login do batman";
-
-	private UsuariosService usuariosService;
-
-	public LoginController(UsuariosService usuariosService) {
-		super();
-		this.usuariosService = usuariosService;
-	}
+	@Autowired
+	private JWTService jwtService;
 
 	@PostMapping("/login")
-	public LoginResponse authenticate(@RequestBody Usuario usuario) throws ServletException {
-
-		// Recupera o usuario
-		Optional<Usuario> authUsuario = usuariosService.getUsuario(usuario.getEmail());
-
-		// verificacoes
-		if (authUsuario.isEmpty()) {
-			throw new ServletException("Usuario nao encontrado!");
-		}
-
-		if (!authUsuario.get().getSenha().equals(usuario.getSenha())) {
-			throw new ServletException("Senha invalida!");
-		}
-
-		String token = Jwts.builder().setSubject(authUsuario.get().getEmail()).signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
-				.setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)).compact();
-
-		return new LoginResponse(token);
-
-	}
-
-	private class LoginResponse {
-		public String token;
-
-		public LoginResponse(String token) {
-			this.token = token;
-		}
+	public ResponseEntity<RespostaDeLogin> autentica(@RequestBody Usuario usuario) throws ServletException {
+		return new ResponseEntity<RespostaDeLogin>(jwtService.autentica(usuario), HttpStatus.OK);
 	}
 
 }
 ```
 
-Para gerar o JWT vamos invocar o método builder() da classe JWTs. A classe JWTs é uma fábrica de tokens, o que facilita a criação dos tokens sem estar acoplado a uma implementação específica. No momento da criação do token estamos adicionando ao token a declaração registrada pública "sub" que é o identificador único do usuário. Perceba também que o token gerado é assinado e criptografado.
+O serviço JWT que é chamado pelo controlador de login, por sua vez, terá que chamar o serviço de usuários para validar o usuário e a senha. Validar usuário e senha significam verificar se o usuário existe na base de dados de usuários e se a senha passada bate com a senha do usuário nesta base de dados. Isso é feito invocando o serviço UsuariosService.
 
-Temos uma inner classe usada para representar uma resposta de login que contém basicamente o token. Um objeto dessa classe será "convertido" em um JSON que terá a cghave "token" e o o valor do token gerado. Esse JSON vai retornar no corpo da resposta HTTP do login.
+Em seguida, com usuário e senha validados, o serviço JWT gera o token.
+
+Vejamos abaixo o código do serviço responsável pela autenticação dos usuários e geração do token.
+
+```java
+@Service
+public class JWTService {
+	@Autowired
+	private UsuariosService usuariosService;
+	private final String TOKEN_KEY = "login do batman";
+
+	public RespostaDeLogin autentica(Usuario usuario) {
+
+		if (!usuariosService.validaUsuarioSenha(usuario)) {
+			return new RespostaDeLogin("Usuario ou senha invalidos. Nao foi realizado o login.");
+		}
+
+		String token = geraToken(usuario.getEmail());
+		return new RespostaDeLogin(token);
+	}
+
+	private String geraToken(String email) {
+		return Jwts.builder().setSubject(email)
+				.signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
+				.setExpiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000)).compact();// 3 min
+	}
+...
+}
+```
+Para gerar o JWT nós invocamos o método builder() da classe JWTs. A classe JWTs é uma fábrica de tokens, o que facilita a criação dos tokens sem estar acoplado a uma implementação específica. No momento da criação do token estamos adicionando ao token a declaração registrada pública "sub" que é o identificador único do usuário (neste caso, o email). Perceba também que o token gerado é assinado e criptografado. No futuro, quando esse token for lido, será possível identificar que usuário está por trás do token. Neste código "new Date(System.currentTimeMillis() + 3 * 60 * 1000)" é o tempo de expiração do token, que nesse caso é de 3 minutos.
+
+A classe RespostaDeLogin é uma classe simples com uma string (token) pública, criada apenas para deixar o código mais limpo. Um objeto dessa classe será "convertido" em um JSON que terá a chave "token" e o o valor do token gerado (ou uma mensagem de erro caso o login não tenha sido bem sucedido). Esse JSON vai retornar no corpo da resposta HTTP do pedido de login. 
+
+Uma discussão interessante aqui diz respeito ao código de resposta HTTP para quando o login não é bem sucedido. Não existe um código claro que indica exatamente isso e não há um consenso na comunidade. É comum que um login mal sucedido por conta de email/senha erradas retornem comdigo 200 (OK) já que a operação foi realizada com sucesso. Nesse caso retornamos uma mensagem de erro que indique que o login foi executado, porém não realizado por conta do email ou senha estarem incorretos.
 
 ## Criação de filtro para verificação de tokens
 
-Um filtro é um objeto usado para interceptar requisições e respostas HTTP da API. Usando o filtro, podemos executar operações em dois momentos difetentes nesse fluxo de comunicação entre cliente servidor: (i) antes de enviar a solicitação ao controlador e (ii) antes de enviar uma resposta ao cliente.
+Para garantir que algumas rotas só podem ser acessadas por usuáiros autorizados, um dos passos é criar um filtro e configurar estas rotas. Um filtro é um objeto usado para interceptar requisições e respostas HTTP da API. Usando o filtro, podemos executar operações em dois momentos difetentes nesse fluxo de comunicação entre cliente servidor: (i) antes de enviar a solicitação ao controlador e (ii) antes de enviar uma resposta ao cliente.
 
 O filtro que precisamos agora deve operar interceptando a requisição HTTP antes de ser entregue ao controlador. A requisição interceptada deve ser avaliada da seguinte forma: recuperar o conteúdo do cabeçalho de autorização (*Authorization header*) e analisar o token para garantir que é um token válido.
 
@@ -145,7 +151,7 @@ public class TokenFilter extends GenericFilterBean {
 }
 ```
 
-O método doFilter é chamado pelo container toda vez que um par de requisição/resposta HTTP é passado pela cadeia devido à chegada de uma requisição do cliente por um recurso. O FilterChain transmitido para esse método permite que o Filter transmita a solicitação e a resposta para a próxima entidade na cadeia (chamando chain.doFilter()). 
+O método doFilter é chamado pelo container toda vez que um par de requisição/resposta HTTP é passado pela cadeia devido à chegada de uma requisição do cliente por um recurso. O FilterChain transmitido para esse método permite que o Filter transmita a solicitação e a resposta para a próxima entidade na cadeia (chamando chain.doFilter() no fim do método). 
 
 Na nossa implementação do método doFilter() a primeira etapa é examinar a requisição e extrair o cabeçalho de interesse (no nosso caso o Authorization). Para fazer o parsing do token recebido no authorization header nós removemos o prefixo "Bearer " e por isso recuperamos a substring que começa no índice 7. Para fazer o parsing do token temos que usar a mesma chave usada para gerar o token (o que não deve ser problema já que todo esse código pertence à mesma organização). Fazemos a análise desejada com os dados extraídos do header e em seguida invocamos a próxima entidade na cadeia usando o objeto FilterChain (chain.doFilter()). A análise que realizamos é o *parsing* do token recuperado. Se o token não for válido setamos a resposta para estar associada ao código HTTP UNAUTHORIZED (401) e retornamos. Nesse caso a requisição nem precisa chegar no controlador porque o usuário não tem autorização para acessar a rota desejada. Uma resposta já é enviada para o cliente indicando o erro de token expirado ou inválido e o codigo HTTP 401.
 
@@ -153,9 +159,9 @@ Se não ocorrer erro no parsing do token (isto é, o usuário tem um token váli
 
 ### Configuração do filtro
 
-Já sabemos como criar um filtro para olhar os tokens das requisições, mas isso ainda não é suficiente. Precisamos configurar o filtro como um componente conhecido como @Bean e indicar que rotas devem invocar o filtro (só as rotas que de fato requerem token para acesso). Um bean é um objeto que é criado, gerenciado e destruído pelo container do spring, o framework é totalmente responsável por este objeto, criando, injetando suas propriedades (injeção de dependência).
+Já sabemos como criar um filtro para olhar os tokens das requisições, mas isso ainda não é suficiente. Precisamos configurar o filtro como um componente conhecido como @Bean e indicar que rotas devem invocar o filtro (só as rotas que de fato requerem token para acesso). Um bean é um objeto que é criado, gerenciado e destruído pelo container do spring, o framework é totalmente responsável por este objeto, criando e injetando suas propriedades (injeção de dependência).
 
-A configuração dos beans deve ocorrer dentro de uma classe marcada com @Configuration. Já temos uma classe dessas, apesar de estar transparente pra gente. É a classe da aplicação marcada com @SpringBootApplication. Ao anotar uma classe com @SpringBootApplication estamos na verdade anotando a classe com 3 anotações distintas: @EnableAutoConfiguration (ativa o mecanismo de auto-configuração do Spring boot), @ComponentScan (habilita o *scan* de componentes @Component no pacote e sub-pacotes onde a aplicação está localizada e @Configuration (permite o registro de beans - como por exemplo filtros como esse nosso, filtros para logging, etc. e classes adicionais de configuração. No código abaixo adicionamos na aplicação principal (main) a definição do bean.
+A configuração dos beans deve ocorrer dentro de uma classe marcada com @Configuration. Já temos uma classe dessas, apesar de estar transparente pra gente. É a classe da aplicação marcada com @SpringBootApplication. Ao anotar uma classe com @SpringBootApplication estamos na verdade anotando a classe com 3 anotações distintas: @EnableAutoConfiguration (ativa o mecanismo de auto-configuração do Spring boot - é isso que tornou o Spring Boot tão popular), @ComponentScan (habilita o *scan* de componentes @Component no pacote e sub-pacotes onde a aplicação está localizada e @Configuration (permite o registro de beans - como por exemplo filtros como esse nosso, filtros para logging, etc. e classes adicionais de configuração. No código abaixo adicionamos na aplicação principal (main) a definição do bean.
 
 ```java
 @SpringBootApplication
@@ -176,51 +182,8 @@ public class DemojwtApplication {
 }
 ```
 
-Quando queremos um filtro que seja aplicável apenas a algumas URLs da API, então definimos um FilterRegistrationBean. Esse bean é um filtro e podemos configurar através do método addUrlPatterns as URLs às quais o filtro deve ser aplicado. Neste caso configuramos duas URLs, quaisquer outras URLs da API não irá invocar o filtro.
+Quando queremos um filtro que seja aplicável apenas a algumas URLs da API, então definimos um FilterRegistrationBean. Esse bean é um filtro e podemos configurar através do método addUrlPatterns as URLs às quais o filtro deve ser aplicado. Neste caso configuramos duas URLs ("/api/produtos", "/auth/usuarios"), quaisquer outras URLs da API não irão invocar o filtro. Dessa forma, quando estas URLs indicadas na configuração do filtro forem acessadas, o filtro será executado automaticamente, realizando a validação do token. Tokens válidos permitem a continuação do pedido, que deve em seguida chegar no controlador. Tokens inválidos já devem ser respondidos para o usuário com um código de resposta 401/Unauthorized.
 
-### Realizando login dos usuários
-
-Agora que temos todas as ferramentas para analisar JWTs, precisamos gerar os tokens. A geração do token deve ser realizada no momento em que o usuário se autentica no sistema, isto é, no momento que o usuário se loga. Para se autenticar o usuário deve informar suas credenciais; em geral email ou outro identificador único do usuário e senha. 
-
-Sugerimos um controlador específico para o login. Esse controlador vai responder apenas pela rota de login. Para tal ele deverá conhecer dois serviços: 
-
-1. o serviço que acessa a base de dados dos usuários. Isso é necessário para que o controlador possa verificar se o usuário que tenta se logar realmente existe e se sua senha está correta;
-2. o serviço JWT que é responsável por gerar tokens e analisar tokens.
-
-Um método de login (dentro do @RestController de login) que funciona é como o apresentado abaixo:
-
-```java
-@PostMapping("/login")
-public LoginResponse authenticate(@RequestBody Usuario usuario) throws ServletException {
-
-	// Recupera o usuario
-	Optional<Usuario> authUsuario = usuariosService.getUsuario(usuario.getEmail());
-
-	// verificacoes
-	if (authUsuario.isEmpty()) {
-		throw new ServletException("Usuario nao encontrado!");
-	}
-
-	verificaSenha(usuario, authUsuario);
-
-	String token = jwtService.geraToken(authUsuario.get().getEmail());
-
-	return new LoginResponse(token);
-
-}
-```
-
-Este método recupera as credenciais do usuário no corpo da requisição HTTP, verifica se o usuário existe e se a senha passada bate com a senha do usuário na base de dados. Isso é feito usando os serviços do UsuariosService. Em seguida, se o usuário existe e a senha está correta, o método solicita ao JWTService a criação do token. Abaixo está o método do JWTService que gera o token:
-
-```java
-public String geraToken(String email) {
-	return Jwts.builder().setSubject(email)
-	.signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
-	.setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)).compact();
-}
-```
-
-Neste código "new Date(System.currentTimeMillis() + 1 * 60 * 1000)" é o tempo de expiração do token.
 
 ### Recuperando o ID do usuário através do JWT
 
