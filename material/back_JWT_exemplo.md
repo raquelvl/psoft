@@ -11,7 +11,7 @@ Suponha que já temos a gerência de usuários em nossa API:
 O que precisamos fazer agora é:
 
 1. gerar o JWT do usuário quando ele se autenticar e enviar o token na resposta HTTP do login do usuário (se o login for bem sucedido, claro!);
-2. configurar as rotas privadas da aplicação (consideraremos a aplicação de produtos que desenvolvemos quando estávamos aprendendo sobre DAO+JPA). O cadastro e a recuperação de novos produtos só pode ser realizado por usuários autenticados;
+2. configurar as rotas privadas da aplicação (consideraremos a aplicação de produtos que desenvolvemos quando estávamos aprendendo sobre DAO+JPA). O cadastro e a recuperação de novos produtos só pode ser realizado por usuários autenticados (isto é, usuários com token válido);
 3. quando as requisições para rotas seguras chegarem, é preciso recuperar e avaliar o token recebido (se é um token válido e não expirado) para então passar a requisição para um controlador;
 4. no controlador (e nos serviços associados), é possível que chegem requisições a rotas que requerem uma identificação mais fina do usuário. Por exemplo, só quem deveria poder deletar uma conta de usuário deveria ser o próprio usuário dono da conta. Em casos como este é preciso recuperar a identidade do usuário através do token passado para poder deletar a conta apropriada.
 
@@ -30,7 +30,7 @@ Antes de prosseguir é importante lembrar que teremos uma nova dependência em n
 
 ### Gerando JWTs
 
-Vamos iniciar pelo ponto 1. O token deve ser gerado no momento em que o usuário faz login na API. Abaixo um exemplo de código do controlador responsável pelo login.
+Vamos iniciar pelo ponto **1**. O token deve ser gerado no momento em que o usuário faz login na API. Abaixo um exemplo de código do controlador responsável pelo login.
 
 ```java
 @RestController
@@ -79,7 +79,7 @@ public class LoginController {
 }
 ```
 
-Para gerar o JWT vamos invocar o método builder() da classe JWTs. A classe JWTs é uma fábrica de tokens, o que facilita a criação dos tokens sem estar acoplado a uma implementação específica. No momento da criação do token estamos adicionando ao token a declaração registrada "sub" que é o identificador único do usuário. Perceba também que o token gerado é assinado e criptografado.
+Para gerar o JWT vamos invocar o método builder() da classe JWTs. A classe JWTs é uma fábrica de tokens, o que facilita a criação dos tokens sem estar acoplado a uma implementação específica. No momento da criação do token estamos adicionando ao token a declaração registrada pública "sub" que é o identificador único do usuário. Perceba também que o token gerado é assinado e criptografado.
 
 Temos uma inner classe usada para representar uma resposta de login que contém basicamente o token. Um objeto dessa classe será "convertido" em um JSON que terá a cghave "token" e o o valor do token gerado. Esse JSON vai retornar no corpo da resposta HTTP do login.
 
