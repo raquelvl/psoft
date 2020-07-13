@@ -228,16 +228,34 @@ public class UsuariosController {
 
 Na assinatura do método no controlador nós recuperamos o cabeçalho de interesse (authorization) através da anotação @RequestHeader("Authorization"). A identificação do cabeçalho é passado pela String recebida pela anotação @RequestHeader. Esta é a forma de recuperar qualquer cabeçalho, bastando mudar o nome do cabeçalho de interesse. Este método no controlador recebe também o email do usuário a ser removido (isso poderia ser diferente, ao solicitar a deleção o usuário poderia nem passar email e sua própria conta seria deletada. A primeira opção permite mais tarde mudanças no código para que tenhamos um usuário com papel de _admin_ que pode remover qualquer conta usando a mesma rota). Como sempre, o controlador delega para o serviço (nesse caso o serviço de usuários) a responsabilidade de realizar a ação necessária. 
 
-Vejamos abaixo o método removeUsuario do serivço:
+Vejamos abaixo o serviço de usuário. Veja o método removeUsuario neste serviço:
 
 ```java
-	public Usuario removeUsuario(String email, String authHeader) throws ServletException {
+@Service
+public class UsuariosService {
+
+	@Autowired
+	private UsuariosRepository<Usuario, String> usuariosDAO;
+	@Autowired
+	private JWTService jwtService;
+
+	public Usuario adicionaUsuario(Usuario usuario) {
+		return this.usuariosDAO.save(usuario);
+	}
+
+	public Usuario getUsuario(String email) {
 		Optional<Usuario> optUsuario = usuariosDAO.findByEmail(email);
 		if(optUsuario.isEmpty())
 			throw new IllegalArgumentException();//usuario nao existe
+		return optUsuario.get();
+	}
+
+
+	public Usuario removeUsuario(String email, String authHeader) throws ServletException {
+		Usuario usuario = getUsuario(email);
 		if (usuarioTemPermissao(authHeader, email)) {
-			usuariosDAO.delete(optUsuario.get());
-			return optUsuario.get();
+			usuariosDAO.delete(usuario);
+			return usuario;
 		}
 		throw new ServletException("Usuario nao tem permissao");
 	}
@@ -247,12 +265,21 @@ Vejamos abaixo o método removeUsuario do serivço:
 		Optional<Usuario> optUsuario = usuariosDAO.findByEmail(subject);
 		return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email);
 	}
+
+	public boolean validaUsuarioSenha(Usuario usuario) {
+		Optional<Usuario> optUsuario = usuariosDAO.findByEmail(usuario.getEmail());
+		if (optUsuario.isPresent() && optUsuario.get().getSenha().equals(usuario.getSenha()))
+			return true;
+		return false;
+	}
+
+}
 ```
 
 Continuando: esse método realiza 2 passos. 
 
 * O primeiro passo é verificar se o usuário com o e-mail informado na URI existe. Se o usuário não existe o serviço vai lançar uma exceção que vai subir para o controlador (nesse caso foi escolhida a exceção IllegalArgumentException). No controlador essa exceção deve gerar uma resposta HTTP que é retornada para o cliente da API com código 404 - not found. 
-* O segundo passo só ocorre se o usuário existir. Neste caso o passo é recuperar o _subject_ (declaração sub) do token e verificar se o usuário do subject tem um token válido e tem permissão para deletar a conta do e-mail passado. Neste exemplo, se o usuário por trás do token for o mesmo usuário a ter sua conta removida, então o usuário tem autorização para tal. Nesse código o serviço de usuários acessa o serviço de JWT (que chamamos de JWTService). Veja código do método usuarioTemPermissao(...). Neste método um método do serviço JWT é invocado: getSujeitoDoToken. Veja abaixo o código do serviço de JWT. O JWTService é especialista em ler/analisar os JWTs e recuperar o subject do token, além de ter acesso à base de dados de usuários. Ao executar o método getSujeitoDoToken é possível que a exceção ServletException seja lançada, com mensagens que indicam os erros. Uma possibilidade é lançar esta exceção para o caso do token não existir ou não iniciar com "Bearer " (que é o tipo de token indicado). Esta exceção chegará primeiro no serviço de usuários, que não a irá tratar, e depois de algumas exceções sejam lançadas: Se o token passado não for válido então retornamos uma resposta HTTP com status FORBIDDEN (403), pois esta rota requer autenticação do usuário e autorização. Se a rota em questão estiver configurada no addUrlPatterns do filtro então os tokens inválidos serão capturados lá. Caso contrário será capturado aqui e o acesso ao recurso será negado. Outra possibilidade é o token ser válido mas o usuário autenticado não ter a autorização para deletar a conta do usuário indicado no e-mail da URI. Neste caso retornamos uma resposta HTTP com código 401 - UNAUTHORIZED.
+* O segundo passo só ocorre se o usuário existir. Neste caso o passo é recuperar o _subject_ (declaração sub) do token e verificar se o usuário do subject tem um token válido e tem permissão para deletar a conta do e-mail passado. Neste exemplo, se o usuário por trás do token for o mesmo usuário a ter sua conta removida, então o usuário tem autorização para tal. Nesse código o serviço de usuários acessa o serviço de JWT (que chamamos de JWTService). Veja código do método usuarioTemPermissao(...). Neste método um método do serviço JWT é invocado: getSujeitoDoToken. Veja abaixo o código do serviço de JWT. O JWTService é especialista em ler/analisar os JWTs e recuperar o subject do token, além de ter acesso à base de dados de usuários. Ao executar o método getSujeitoDoToken é possível que a exceção ServletException seja lançada, com mensagens que indicam os erros. Uma possibilidade é lançar esta exceção para o caso do token não existir ou não iniciar com "Bearer " (que é o tipo de mecanismo de segurança associado ao JWT). Esta exceção chegará primeiro no serviço de usuários, que não a irá tratar, e ela será então relançada para o controlador. No controlador, esta exceção será entendida como token inválido e então retornamos uma resposta HTTP com status FORBIDDEN (403), pois esta rota requer autenticação do usuário e autorização. Esse tipo de erro, na verdade, será capturado já pelo filtro, se ele estiver configurado para esta rota no addUrlPatterns do filtro, mas não custa sermos cautelosos... Dado que o token é válido e não expirado, será possível usar o parser do Jwts para recuperar o usuário autenticado. Voltando ao método removeUsuario do serviço de usuários. Após recuperar o usuário por trás do token, este método verifica se este usuário tem permissão para realizar esta operação. Caso este usuário não tenha a autorização para deletar a conta do usuário indicado no e-mail da URI (são usuários diferentes), então uma exceção ServletException("Usuario nao tem permissao") será lançada para o controlador. No controlador, esta exceção é traduzida para uma resposta HTTP com código 401 - UNAUTHORIZED.
 
 ```java
 @Service
@@ -297,4 +324,4 @@ public class JWTService {
 }
 ```
 
-Nosso próximo assunto relacionado à autorização será associar papéis (do inglês "roles") aos usuário e fazer uma análise mais fina sobre o que cada usuário pode realizar. Por exemplo, poderíamos deixar usuários com papel de administrador remover outros usuários que não são administradores, ou deixar que apenas usuários com papel de "configurador" pudessem adicionar/remover produtos.
+Para os que querem praticar mais, uma boa ideia é pensar em um papel para o usuário. Pode ser algo bem simples como um boolean para indicar quem é admin ou algo mais elaborado, com vários papéis diferentes em uma Enum, por exemplo. Ao associar papéis (do inglês "roles") aos usuário dá pra fazer uma análise mais fina sobre o que cada usuário pode realizar. Por exemplo, poderíamos deixar usuários com papel de administrador remover outros usuários que não são administradores, ou deixar que apenas usuários com papel de "gerente" pudessem adicionar/remover produtos.
