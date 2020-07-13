@@ -226,9 +226,7 @@ public class UsuariosController {
 }
 ```
 
-Na assinatura do método recuperamos o cabeçalho de interesse através da anotação @RequestHeader("Authorization"). Esse cabeçalho é passado para o método através do parâmetro de entrada header do tipo String que é definido logo em seguida à anotação. Este método recebe também o email do usuário a ser removido (isso poderia ser diferente, ao solicitar a deleção o usuário poderia nem passar email e sua própria conta seria deletada. A primeira opção permite mais tarde que a gente tenha um admin que pode remover qualquer conta usando a mesma rota). Como sempre, o controlador delega para o serviço (nesse caso o serviço de usuários) a responsabilidade de realizar a ação necessária. 
-
-<_a partir daqui falta revisão!_>
+Na assinatura do método no controlador nós recuperamos o cabeçalho de interesse (authorization) através da anotação @RequestHeader("Authorization"). A identificação do cabeçalho é passado pela String recebida pela anotação @RequestHeader. Esta é a forma de recuperar qualquer cabeçalho, bastando mudar o nome do cabeçalho de interesse. Este método no controlador recebe também o email do usuário a ser removido (isso poderia ser diferente, ao solicitar a deleção o usuário poderia nem passar email e sua própria conta seria deletada. A primeira opção permite mais tarde mudanças no código para que tenhamos um usuário com papel de _admin_ que pode remover qualquer conta usando a mesma rota). Como sempre, o controlador delega para o serviço (nesse caso o serviço de usuários) a responsabilidade de realizar a ação necessária. 
 
 Continuando: esse método realiza 2 passos. 
 
