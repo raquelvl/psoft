@@ -69,7 +69,9 @@ Quando o usuário passa suas credenciais e se loga com sucesso na API (passo de 
 Authorization: Bearer <token>
 ````
 
-Em geral, este é um mecanismo de autorização _stateless_ (que não guarda estado). Quando uma rota protegida do servidor for acessada, o serviço (o seu backend) vai checar se o token que vem no authorization header é válido, e se for, deve identificar o usuário "por trás" do token e verificar se este usuário tem autorização para acessar o recurso em questão. Pode ser necessário acessar a base de dados para recuperar alguma informação, como por exemplo, o papel do usuário, se não vier no token.
+O esquema Bearer é um mecanismo de autenticação em geral _stateless_ (que não guarda estado) baseado nas regras de segurança do OAuth2. Não vamos entrar em detalhes aqui. Vamos apenas lembrar que a autorização Bearer funciona através de tokens, sendo um esquema pensado para autorização HTTP [RFC6750](https://tools.ietf.org/html/rfc6750). O <token> deve ser um string que representa uma autorização da API (servidor) emitida pelo servidor para o cliente. Por sua vez, o cliente deve re-enviar para o servidor o token em todas as requisições que exijam autorização.
+
+Quando uma rota protegida do servidor for acessada, o serviço (o seu backend) vai checar se o token que vem no cabeçalho de autorização é válido, e se for, deve identificar o usuário "por trás" do token e verificar se este usuário tem autorização para acessar o recurso em questão. Pode ser necessário acessar a base de dados para recuperar alguma informação, como por exemplo, o papel do usuário, se não vier no token.
 
 O diagrama abaixo ilustra o processo de uso do JWT para autorizar acesso a APIs[<sup>1</sup>](https://imasters.com.br/desenvolvimento/json-web-token-conhecendo-o-jwt-na-teoria-e-na-pratica):
 
