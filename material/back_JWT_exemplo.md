@@ -228,57 +228,66 @@ public class UsuariosController {
 
 Na assinatura do método no controlador nós recuperamos o cabeçalho de interesse (authorization) através da anotação @RequestHeader("Authorization"). A identificação do cabeçalho é passado pela String recebida pela anotação @RequestHeader. Esta é a forma de recuperar qualquer cabeçalho, bastando mudar o nome do cabeçalho de interesse. Este método no controlador recebe também o email do usuário a ser removido (isso poderia ser diferente, ao solicitar a deleção o usuário poderia nem passar email e sua própria conta seria deletada. A primeira opção permite mais tarde mudanças no código para que tenhamos um usuário com papel de _admin_ que pode remover qualquer conta usando a mesma rota). Como sempre, o controlador delega para o serviço (nesse caso o serviço de usuários) a responsabilidade de realizar a ação necessária. 
 
-Continuando: esse método realiza 2 passos. 
-
-* O primeiro passo é verificar se o usuário com o e-mail informado na URI existe. Se o usuário não existe uma resposta HTTP é retornada com código 404 - not found. 
-* O segundo passo é recuperar o subject do token e verificar se o usuário do subject tem um token válido e tem permissão para deletar a conta do e-mail passado. Nesse código usamos um serviço que chamamos de JWTService cujo código está abaixo. Este serviço é especialista em ler/analisar os JWTs e recuperar o subject do token, além de ter acesso à base de dados de usuários. Se o token passado não for válido então retornamos uma resposta HTTP com status FORBIDDEN (403), pois esta rota requer autenticação do usuário e autorização. Se a rota em questão estiver configurada no addUrlPatterns do filtro então os tokens inválidos serão capturados lá. Caso contrário será capturado aqui e o acesso ao recurso será negado. Outra possibilidade é o token ser válido mas o usuário autenticado não ter a autorização para deletar a conta do usuário indicado no e-mail da URI. Neste caso retornamos uma resposta HTTP com código 401 - UNAUTHORIZED.
+Vejamos abaixo o método removeUsuario do serivço:
 
 ```java
-package psoft.ufcg.services;
-
-import java.util.Optional;
-
-import javax.servlet.ServletException;
-
-import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
-import psoft.ufcg.model.Usuario;
-
-@Service
-public class JWTService {
-	private UsuariosService usuariosService;
-
-	public JWTService(UsuariosService usuariosService) {
-		super();
-		this.usuariosService = usuariosService;
-	}
-
-	public boolean usuarioExiste(String authorizationHeader) throws ServletException {
-		String subject = getSujeitoDoToken(authorizationHeader);
-
-		return usuariosService.getUsuario(subject).isPresent();
+	public Usuario removeUsuario(String email, String authHeader) throws ServletException {
+		Optional<Usuario> optUsuario = usuariosDAO.findByEmail(email);
+		if(optUsuario.isEmpty())
+			throw new IllegalArgumentException();//usuario nao existe
+		if (usuarioTemPermissao(authHeader, email)) {
+			usuariosDAO.delete(optUsuario.get());
+			return optUsuario.get();
+		}
+		throw new ServletException("Usuario nao tem permissao");
 	}
 	
-	public boolean usuarioTemPermissao(String authorizationHeader, String email) throws ServletException {
-		String subject = getSujeitoDoToken(authorizationHeader);
-
-		Optional<Usuario> optUsuario = usuariosService.getUsuario(subject);
+	private boolean usuarioTemPermissao(String authorizationHeader, String email) throws ServletException {
+		String subject = jwtService.getSujeitoDoToken(authorizationHeader);
+		Optional<Usuario> optUsuario = usuariosDAO.findByEmail(subject);
 		return optUsuario.isPresent() && optUsuario.get().getEmail().equals(email);
 	}
+```
 
-	private String getSujeitoDoToken(String authorizationHeader) throws ServletException {
+Continuando: esse método realiza 2 passos. 
+
+* O primeiro passo é verificar se o usuário com o e-mail informado na URI existe. Se o usuário não existe o serviço vai lançar uma exceção que vai subir para o controlador (nesse caso foi escolhida a exceção IllegalArgumentException). No controlador essa exceção deve gerar uma resposta HTTP que é retornada para o cliente da API com código 404 - not found. 
+* O segundo passo só ocorre se o usuário existir. Neste caso o passo é recuperar o _subject_ (declaração sub) do token e verificar se o usuário do subject tem um token válido e tem permissão para deletar a conta do e-mail passado. Neste exemplo, se o usuário por trás do token for o mesmo usuário a ter sua conta removida, então o usuário tem autorização para tal. Nesse código o serviço de usuários acessa o serviço de JWT (que chamamos de JWTService). Veja código do método usuarioTemPermissao(...). Neste método um método do serviço JWT é invocado: getSujeitoDoToken. Veja abaixo o código do serviço de JWT. O JWTService é especialista em ler/analisar os JWTs e recuperar o subject do token, além de ter acesso à base de dados de usuários. Ao executar o método getSujeitoDoToken é possível que a exceção ServletException seja lançada, com mensagens que indicam os erros. Uma possibilidade é lançar esta exceção para o caso do token não existir ou não iniciar com "Bearer " (que é o tipo de token indicado). Esta exceção chegará primeiro no serviço de usuários, que não a irá tratar, e depois de algumas exceções sejam lançadas: Se o token passado não for válido então retornamos uma resposta HTTP com status FORBIDDEN (403), pois esta rota requer autenticação do usuário e autorização. Se a rota em questão estiver configurada no addUrlPatterns do filtro então os tokens inválidos serão capturados lá. Caso contrário será capturado aqui e o acesso ao recurso será negado. Outra possibilidade é o token ser válido mas o usuário autenticado não ter a autorização para deletar a conta do usuário indicado no e-mail da URI. Neste caso retornamos uma resposta HTTP com código 401 - UNAUTHORIZED.
+
+```java
+@Service
+public class JWTService {
+	@Autowired
+	private UsuariosService usuariosService;
+	private final String TOKEN_KEY = "login do batman";
+
+	public RespostaDeLogin autentica(Usuario usuario) {
+
+		if (!usuariosService.validaUsuarioSenha(usuario)) {
+			return new RespostaDeLogin("Usuario ou senha invalidos. Nao foi realizado o login.");
+		}
+
+		String token = geraToken(usuario.getEmail());
+		return new RespostaDeLogin(token);
+	}
+
+	private String geraToken(String email) {
+		return Jwts.builder().setSubject(email)
+				.signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
+				.setExpiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000)).compact();// 3 min
+	}
+
+	public String getSujeitoDoToken(String authorizationHeader) throws ServletException {
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 			throw new ServletException("Token inexistente ou mal formatado!");
 		}
 
 		// Extraindo apenas o token do cabecalho.
-		String token = authorizationHeader.substring(projsoft.ufcg.filtros.TokenFilter.TOKEN_INDEX);
+		String token = authorizationHeader.substring(TokenFilter.TOKEN_INDEX);
 
 		String subject = null;
 		try {
-			subject = Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody().getSubject();
+			subject = Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody().getSubject();
 		} catch (SignatureException e) {
 			throw new ServletException("Token invalido ou expirado!");
 		}
