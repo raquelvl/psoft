@@ -100,5 +100,15 @@ O tempo de expiração do token deve ser muito bem pensado e, claro, cada caso �
 
 Para ler mais: [esse material](https://developer.okta.com/blog/2018/06/20/what-happens-if-your-jwt-is-stolen) é bem legal, inclui informação sobre o que acontece se você tiver seu token roubado.
 
+## Mantendo a chave secreta realmente secreta
+
+Nos exemplos que veremos neste curso não temos os devidos cuidados para manter a chave secreta realmente secreta. Isso demanda um tempo para elaborar como mantê-la secreta e depois programar o que foi pensado. Algumas opções mais comumente seguidas nesse sentido são:
+
+* Ler a chave secreta de uma variável de ambiente
+* Ler a chave secreta de um arquivo que fica no servidor e apenas o usuário do serviço pode ter acesso (nem os programadores teriam)
+* Gerar a chave pública programaticamente com base em uma semente que pode vir de uma variável de ambiente ou arquivo secreto...
+
+Como este é um trabalho que não tem a ver com design da API nem sua construção propriamente dita (MVC) então deixamos a cargo de cada um, depois, brincar um pouco com isso.
+
 Você pode ler JWTs gerados usando [o JWT debugger](https://jwt.io/).
 
