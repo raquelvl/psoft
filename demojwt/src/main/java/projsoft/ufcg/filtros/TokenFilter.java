@@ -17,6 +17,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.PrematureJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import projsoft.ufcg.servicos.JWTService;
 
 public class TokenFilter extends GenericFilterBean {
 
@@ -40,7 +41,7 @@ public class TokenFilter extends GenericFilterBean {
 		// Extraindo apenas o token do cabecalho (removendo o prefixo "Bearer ").
 		String token = header.substring(TOKEN_INDEX);
 		try {
-			Jwts.parser().setSigningKey("login do batman").parseClaimsJws(token).getBody();
+			Jwts.parser().setSigningKey(JWTService.TOKEN_KEY).parseClaimsJws(token).getBody();
 		} catch (SignatureException | ExpiredJwtException | MalformedJwtException | PrematureJwtException
 				| UnsupportedJwtException | IllegalArgumentException e) {
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
