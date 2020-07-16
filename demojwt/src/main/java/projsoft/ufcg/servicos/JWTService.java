@@ -35,9 +35,9 @@ public class JWTService {
 				.setExpiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000)).compact();// 3 min
 	}
 
-	public String getSujeitoDoToken(String authorizationHeader) throws ServletException {
+	public String getSujeitoDoToken(String authorizationHeader) {
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-			throw new ServletException("Token inexistente ou mal formatado!");
+			throw new SecurityException("Token inexistente ou mal formatado!");
 		}
 
 		// Extraindo apenas o token do cabecalho.
@@ -47,7 +47,7 @@ public class JWTService {
 		try {
 			subject = Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody().getSubject();
 		} catch (SignatureException e) {
-			throw new ServletException("Token invalido ou expirado!");
+			throw new SecurityException("Token invalido ou expirado!");
 		}
 		return subject;
 	}
