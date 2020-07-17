@@ -29,47 +29,38 @@ Até agora, a versão da API ainda é muito reduzida, pois a idéia é ir aprend
 
 Use Spring Boot e java para desenvolver a seguinte API (por facilidade, vamos marcar o que já foi feito no lab 2):
 
-POST /usuarios 
+POST /usuarios <br>
 Adiciona um usuario com email, nome e senha. O email é o identificador único do usuario. 
 
-POST /auth/login 
+POST /auth/login  <br>
 Recebe email e senha de um usuário, verifica na base de dados de usuários se esse usuário existe, e se a senha está correta (autenticação). Se o usuário for autenticado gerar um JWT que deve ser retornado para o cliente. 
-
 * Informações adicionais sobre essa funcionalidade: o JWT gerado deve carregar a informação de subject (email do usuário), o tempo de expiração do token deve ser determinado por cada desenvolvedor (que deve saber justificar sua decisão). 
 
-
-DELETE /auth/usuarios/ 
+DELETE /auth/usuarios/  <br>
 Remove o usuário de quem está requisitando a deleção (esta identificação é feita através do token passado no authorization header da requisição HTTP). Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e recuperar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades de erro (ex. requisição sem JWT, com JWT inválido, ou com JWT de usuário inexistente).
 
-GET /api/disciplinas - funcionalidade já implementada
-
+GET /api/disciplinas - funcionalidade já implementada no lab anterior (lab2) <br>
 Retorna um JSON (com campos id, nome) com todas as disciplinas inseridas no sistema e código 200. 
 
-GET /api/disciplinas/{id} - funcionalidade já implementada
-
+GET /api/disciplinas/{id} - funcionalidade já implementada no lab anterior (lab2) <br>
 Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. 
 
-PUT /api/disciplinas/likes/{id} - funcionalidade já parcialmente implementada
-
+PUT /api/disciplinas/likes/{id} - funcionalidade parcialmente implementada no lab anterior (lab2) <br>
 **Esta funcionalidade só está autorizada para usuários previamente autenticados. Esta autorização deve ser realizada via avaliação de tokens JWT.** Para usuários autorizados, esta função incrementa em um o número de likes da disciplina cujo identificador é id. 
 Retorna a disciplina que foi atualizada (incluindo o id, nome e likes) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado e código 401 Unauthorized caso o cliente não tenha autorização.
 
-PUT /api/disciplinas/nota/{id} - funcionalidade já parcialmente implementada
-
+PUT /api/disciplinas/nota/{id} - funcionalidade parcialmente implementada no lab anterior (lab2) <br>
 **Esta funcionalidade só está autorizada para usuários previamente autenticados. Esta autorização deve ser realizada via avaliação de tokens JWT.** Para usuários autorizados, esta função atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com uma nova nota atribuída à disciplina. A nova nota da disciplina é a média aritmética da nota anterior da disciplina e da nova nota passada nesta chamada. Se for a primeira nota sendo adicionada então esta nota é a que vai valer para a disciplina. 
 Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado e código 401 Unauthorized caso o cliente não tenha autorização. 
 
-PUT /api/disciplinas/comentarios/{id} - funcionalidade já parcialmente implementada
-
+PUT /api/disciplinas/comentarios/{id} - funcionalidade parcialmente implementada no lab anterior (lab2) <br>
 **Esta funcionalidade só está autorizada para usuários previamente autenticados. Esta autorização deve ser realizada via avaliação de tokens JWT.** Para usuários autorizados, esta função insere um novo comentário na disciplina de identificador id. No corpo da requisição HTTP deve estar um JSON com o novo comentário (chave "comentario") a ser adicionado na disciplina a ser atualizada no sistema. 
 Retorna a disciplina que foi atualizada (incluindo o id, nome e os comentarios atualizados) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontradoe código 401 Unauthorized caso o cliente não tenha autorização.
 
-GET /api/disciplinas/ranking/notas - funcionalidade já implementada
-
+GET /api/disciplinas/ranking/notas - funcionalidade já implementada no lab anterior (lab2) <br>
 Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
 
-GET /api/disciplinas/ranking/likes - funcionalidade já implementada
-
+GET /api/disciplinas/ranking/likes - funcionalidade já implementada no lab anterior (lab2) <br>
 Retorna todas as disciplinas inseridas no sistema ordenadas pelo número de likes (da que tem mais likes para a que tem menos likes) e código 200.
 
 Seguem algumas dicas:
