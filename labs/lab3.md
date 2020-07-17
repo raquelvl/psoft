@@ -30,11 +30,9 @@ Até agora, a versão da API ainda é muito reduzida, pois a idéia é ir aprend
 Use Spring Boot e java para desenvolver a seguinte API (por facilidade, vamos marcar o que já foi feito no lab 2):
 
 POST /usuarios 
-
 Adiciona um usuario com email, nome e senha. O email é o identificador único do usuario. 
 
 POST /auth/login 
-
 Recebe email e senha de um usuário, verifica na base de dados de usuários se esse usuário existe, e se a senha está correta (autenticação). Se o usuário for autenticado gerar um JWT que deve ser retornado para o cliente. 
 
 * Informações adicionais sobre essa funcionalidade: o JWT gerado deve carregar a informação de subject (email do usuário), o tempo de expiração do token deve ser determinado por cada desenvolvedor (que deve saber justificar sua decisão). 
