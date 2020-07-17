@@ -15,10 +15,10 @@ Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferê
 
 ```xml
     <dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
-		</dependency>
+	<groupId>io.jsonwebtoken</groupId>
+	<artifactId>jjwt</artifactId>
+	<version>0.9.1</version>
+    </dependency>
 ```
 
 Neste terceiro lab iremos inserir um novo recurso ao código que já vínhamos desenvolvendo no lab 2. Agora vamos adicionar usuários, autenticação (via login), e autorização com JWT. 
