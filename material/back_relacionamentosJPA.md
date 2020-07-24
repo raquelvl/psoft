@@ -47,10 +47,16 @@ public class Produto {
 ````
 Esse primeiro trecho de código nos informa através da anotação @ManyToOne que aparece antes do atributo cesta que estamos configurando um relacionamento muitos para um que reflete a seguinte regra: muitos produtos podem estar associados à mesma cesta de compras, mas cada produto só pode estar associado a uma única cesta de compras. Faz sentido? Sim, é a regra de negócio comum: um usuário pode colocar quantos produtos desejar em sua cesta de compras e cada produto da loja não pode estar em mais de uma cesta de compras. Só com esta associação já temos uma relação definida, mesmo que nada seja configurado na cesta de compras. 
 
-Com esta anotação, o que acontece no banco de dados é que na tabela PRODUTO vai existir uma chave estrangeira que será o ID da cesta de compras associada ao produto. 
-@JoinColumn(name = "idCesta")
+Com esta anotação, o que acontece no banco de dados é que na tabela PRODUTO vai existir uma chave estrangeira que será o ID da cesta de compras associada ao produto. Em termos de configuração o que ocorre é que a seguinte anotação é configurada:
 
-Isto é informado através da anotação @JoinColumn, que identifica na classe Cesta o nome da coluna que deve servir de chave estrangeira. A entidade Produto será a entidade proprietária da relação, uma vez que é em sua tabela que está a chave estrangeira. 
+java```
+  @ManyToOne
+  @JoinColumn(name = "idCesta")
+  private CestaDeCompras cesta;
+  ...
+```
+
+Esta anotação @JoinColumn informa que na tabela PRODUTO existirá uma chave estrangeira que vem da tabela CESTA_DE_COMPRAS e que é a coluna identificada por *idCesta*. Em outras palavras, através da anotação @JoinColumn, informamos na classe Produto o nome da coluna da classe Cesta que deve servir de chave estrangeira. A entidade Produto será a entidade proprietária da relação, uma vez que é em sua tabela que está a chave estrangeira. 
 
 Dizemos que é uma relação **unidirecional**, pois só a entidade Produto sabe da existência dessa relação. Através desta relação conseguimos recuperar, apenas a partir da entidade produto, a cesta de compras relacionada. Isto significa que ao recuperar o ID de uma cesta de compras precisaremos de uma query extra para recuperar os produtos da cesta a partir da tabela de produtos. Para recuperar os produtos da cesta de compras teremos que pesquisar todos os produtos associados ao ID da cesta de interesse.
 
