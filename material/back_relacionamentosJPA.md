@@ -153,7 +153,14 @@ Nessa mesma configuração damos um nome à coluna que servirá de *join* para e
 
 Podemos brincar bastante gerando novos métodos no DAO (JpaRepository) só seguindo essas regras. Por exemplo, podemos recuperar uma coleção de objetos de forma ordenada, ou recuperar só os n primeiros, etc. Mais detalhes de como gerar os nomes dos métodos para derivar as consutas podem ser vistos [aqui](https://www.baeldung.com/spring-data-derived-queries), [aqui](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-creation) e [aqui](https://www.baeldung.com/spring-data-sorting).
 
-Este documento é uma breve introdução sobre como cofiguramos relacionamentos JPA mas está longe de ser completo ou exaustivo. É apenas um ponto de partida. À medida que você for praticando, isto é, programando, você provavelmente vai sentir necessidade de entender mais coisas. Entendimento/Estudo adicional deve vir sob demanda, à medida do que você for precisando, pois já entendeu a base. Abaixo estão várias documentações sobre este assundo e na Internet vai ter  muito mais.
+Para entender melhor tudo que foi discutido aqui, brinque com o código simples e veja como configurações diferentes vão funcionar. Para ajduar nessa brincadeira, temos exemplos de APIs muito simples que usam JPA e seus relacionamentos:
+* [exemplo 4](https://github.com/raquelvl/psoft/tree/master/exemplo4) - configuração de relação unidirecional em Usuario (cada usuário pode ter muitas saudações, e uma tabela de associação entre usuário e saudação deve ser criada).
+* [exemplo 4.v2](https://github.com/raquelvl/psoft/tree/master/exemplo4.v2) - configuração de relação unidirecional em Saudacao (cada saudação pertence a um único usuário, então na tabela de saudação deve ficar uma chave estrangeira de usuário. Saudação passa a ser a classe proprietária da relação)
+* [exemplo 4.v3](https://github.com/raquelvl/psoft/tree/master/exemplo4.v3) - configuração de relação bidirecional entre Saudacao e Usuario.
+
+Você também pode pegar o código da [demo de JPA](https://github.com/raquelvl/psoft/tree/master/demojpa) e adicionar a cesta de compras em um relacionamento com produto. Nesse caso deve pensar na API, como isso altera a API.
+
+Este documento é uma breve introdução sobre como cofiguramos relacionamentos JPA mas está longe de ser completo ou exaustivo. É apenas um ponto de partida. À medida que você for praticando, isto é, programando, você provavelmente vai sentir necessidade de entender mais coisas. Entendimento/Estudo adicional deve vir sob demanda, à medida do que você for precisando, pois já entendeu a base. Abaixo estão várias documentações sobre este assundo e na Internet vai ter muito mais.
 
 ## Documentação de referência
 
