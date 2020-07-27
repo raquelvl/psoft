@@ -176,3 +176,5 @@ Este documento é uma breve introdução sobre como cofiguramos relacionamentos 
 
 [Dicas para criação de queries a partir dos nomes dos métodos](https://www.baeldung.com/spring-data-derived-queries)
 
+[Curso da AlgaWorks só para aprender JPA](https://www.youtube.com/watch?v=MGWJbaYdy-Y&list=PLZTjHbp2Y7812axMiHkbXTYt9IDCSYgQz)
+
