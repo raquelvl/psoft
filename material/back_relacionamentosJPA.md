@@ -49,26 +49,26 @@ Esse primeiro trecho de código nos informa através da anotação @ManyToOne qu
 
 Com esta anotação, o que acontece no banco de dados é que na tabela PRODUTO vai existir uma chave estrangeira que será o ID da cesta de compras associada ao produto. Em termos de configuração o que ocorre é que a seguinte anotação é configurada pra nós na classe Protudo, mas fica transparente (isto é, não a vemos):
 
-java```
+````java
   @ManyToOne
   @JoinColumn(name = "idCesta")
   private CestaDeCompras cesta;
   ...
-```
+````
 
 Esta anotação @JoinColumn informa que na tabela PRODUTO existirá uma chave estrangeira que vem da tabela CESTA_DE_COMPRAS e que é a coluna identificada por *idCesta*. Em outras palavras, através da anotação @JoinColumn, informamos na classe Produto o nome da coluna da classe Cesta que deve servir de chave estrangeira. A entidade Produto será a entidade proprietária da relação, uma vez que é em sua tabela que está a chave estrangeira da associação com a classe Cesta. 
 
 Dizemos que é uma relação **unidirecional**, pois só a entidade Produto sabe da existência dessa relação. Através desta relação conseguimos recuperar, apenas a partir da entidade produto, a cesta de compras relacionada. Isto significa que ao recuperar o ID de uma cesta de compras precisaremos de uma query extra para recuperar os produtos da cesta a partir da tabela de produtos. Para recuperar os produtos da cesta de compras teremos que pesquisar todos os produtos associados ao ID da cesta de interesse. Esta é uma query muito básica, já que existe uma chave estrangeira de idCesta na tabela de produtos. Para que isso seja realizado de forma simples é preciso acrescentar no repositório de Produto um método que retorne todos os produtos associados a um dado ID de cesta de compras. Ao usar o JpaRepository podemos facilmente definir na interface do DAO de Produto o seguinte método:
 
-java```
-	List<Produto> findByCestaIdCesta(Long id);
-```
+````java
+  List<Produto> findByCestaIdCesta(Long id);
+````
 
 Este método informa que deve-se buscar o atributo cesta em Produto (que é do tipo CestaDeCompra) e usar o atributo idCesta dentro de CestaDeCompra para recuperar os registros desejados. Ele vai recuperar todos os produtos que estiverem associados ao id da cesta passado como parâmetro. 
 
 Uma opção de relação unidirecional diferente teria sido escolher a classe CestaDeCompras para conehcer o relacionamento e manter a classe Produto sem o conhecimento do relacionamento. Nesse caso a configuração realizada não seria na classe Produto, mas sim na classe CestaDeCompras como abaixo.
 
-java```
+````java
 @Entity
 public class CestaDeCompras {
   @Id
@@ -89,7 +89,7 @@ public class CestaDeCompras {
   }
   ...
  }
-```
+````
 
 Neste caso, estamos informando que podem haver vários produtos para cada cesta, mas cada produto está associado a apenas uma cesta. O id da cesta estará associado a vários ids de produtos (os produtos da cesta). Desta forma, não é possível ter uma chave estrangeira na tabela CestaDeCompras, como tínhamos em produto. Neste caso uma nova tabela de associação é criada, com o idCesta e idProduto. Quando recuperamos uma cesta de compras do banco de dados (via o DAO específico), poderemos chamar o método getProdutos() de CestaDeCompras. Neste momento a tabela de associação será usada para recuperar os produtos do banco, mas tudo isso é transparente pra nós. Mais adiante veremos configurações que poderemos usar para indicar se queremos já recuperar os produtos automaticamente quando acessamos a cesta, ou se a recuperação dos produtos do banco se dará apenas quando o método getProdutos() for chamado. Se a única forma de acesso de cestas e produtos for a partir do identificador da cesta, então essa relação unidirecional em que a cesta conhece a relação e sabe que tem associação com muitos produtos, é mais eficiente. Mas se o acesso da aplicação é encontrar um produto e dali identificar em que cesta de compras o produto está então nesse caso, a primeira configuração que usamos seria mais eficiente. Tudo depende de como é o acesso aos dados.
 
