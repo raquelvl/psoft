@@ -151,9 +151,9 @@ Este método irá recuperar todos os registros na tabela de produtos cujo atribu
 
 Nessa mesma configuração damos um nome à coluna que servirá de *join* para esta associação, o nome que demos foi idCesta. Então estamos dizendo que recuperamos a cesta de compras associada ao produto através do id da cesta. Em termos de banco de dados, o que acontece é que na tabela de PRODUTO vai haver uma coluna chamada ID_CESTA que é a chave estrangeira de CestaDeCompras na tabela PRODUTO (mas já falamos disso!). Se dentro da classe Cesta o atributo marcado com @Id já se chamar idCesta, o @JoinColumn não é necessário, o framework coloca pra nós por default. São essas configurações que usamos para gerar o nome do método e derivar a consulta ao banco automaticamente (sem precisar escrever uma @Query explícita). Se o atributo que chamamos cesta fosse chamado cestaDeCompras, então o nome do método na interface mudaria para findByCestaDeComprasIdCesta.
 
-Mais detalhes de como gerar os nomes dos métodos para derivar as consutas podem ser vistos [aqui](https://www.baeldung.com/spring-data-derived-queries), [aqui](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-creation) e [aqui](https://www.baeldung.com/spring-data-sorting).
+Podemos brincar bastante gerando novos métodos no DAO (JpaRepository) só seguindo essas regras. Por exemplo, podemos recuperar uma coleção de objetos de forma ordenada, ou recuperar só os n primeiros, etc. Mais detalhes de como gerar os nomes dos métodos para derivar as consutas podem ser vistos [aqui](https://www.baeldung.com/spring-data-derived-queries), [aqui](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-creation) e [aqui](https://www.baeldung.com/spring-data-sorting).
 
-Podemos brincar bastante gerando no
+Este documento é uma breve introdução sobre como cofiguramos relacionamentos JPA mas está longe de ser completo ou exaustivo. É apenas um ponto de partida. À medida que você for praticando, isto é, programando, você provavelmente vai sentir necessidade de entender mais coisas. Entendimento/Estudo adicional deve vir sob demanda, à medida do que você for precisando, pois já entendeu a base. Abaixo estão várias documentações sobre este assundo e na Internet vai ter  muito mais.
 
 ## Documentação de referência
 
