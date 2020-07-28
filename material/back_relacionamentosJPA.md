@@ -58,7 +58,7 @@ Esta é uma relação **unidirecional**, pois só a entidade Produto sabe da exi
   List<Produto> findByCestaId(Long id);
 ````
 
-Este método informa que deve-se buscar o atributo cesta em Produto (que é do tipo CestaDeCompra) e usar o atributo idC dentro de CestaDeCompra para recuperar os registros desejados. Ele vai recuperar todos os produtos que estiverem associados ao id da cesta passado como parâmetro. 
+Este método informa que deve-se buscar o atributo cesta em Produto (que é do tipo CestaDeCompra) e usar o atributo id dentro de Cesta para recuperar os registros desejados. Ele vai recuperar todos os produtos que estiverem associados ao id da cesta passado como parâmetro. 
 
 Uma relação muitos para um bem parecido com esta que configuramos, porém em outro contexto, pode ser vista neste [repositório](https://github.com/raquelvl/psoft/tree/master/exemplo4.v2).
 
@@ -74,7 +74,7 @@ public class Cesta {
   
   @OneToMany
   @JoinTable(name = "cesta_produtos",
-	     joinColumns = @JoinColumn(name = "cestaDeCompras_id"),
+	     joinColumns = @JoinColumn(name = "cesta_id"),
 	     inverseJoinColumns = @JoinColumn(name = "produtos_id"))
   private List<Produto> produtos;
   ...
@@ -90,18 +90,11 @@ public class Cesta {
  }
 ````
 
-Neste caso, estamos informando que podem haver vários produtos para cada cesta, mas cada produto está associado a apenas uma cesta. O id da cesta estará associado a vários ids de produtos (os produtos da cesta). Desta forma, não é possível ter uma chave estrangeira na tabela CESTA, como tínhamos em produto. Neste caso uma nova tabela de associação é criada, com o id da cesta e o id do produto. Esta configuração é realizada através da anotação @JoinTable. Esta anotação com a configuração associada diz que uma tabela de associação deve ser criada, esta tabela vai se chamar cesta_produtos (este nome é formado pegando o nome
-	 * da classe proprietária, que é usuario e concatenando com "_" e o nome
-	 * do atributo que referencia a classe não proprietária, nesse caso, 
-	 * saudacoes. A primeira coluna é composta pelo nome da classe 
-	 * proprietária concatenado com "_" e o nome da chave primária dessa
-	 * classe, que é email. Para a segunda coluna, que corresponde à classe 
-	 * nao proprietária, mais uma vez usamos o nome do atributo referente
-	 * a esta classe, que é saudações, concatenado com "_" e o nome do 
-	 * atributo que é a chave primária desta classe não proprietária, que
-	 * nesse caso é id. 
+Neste caso, estamos informando que podem haver vários produtos para cada cesta, mas cada produto está associado a apenas uma cesta. O id da cesta estará associado a vários ids de produtos (os produtos da cesta). Desta forma, não é possível ter uma chave estrangeira na tabela CESTA, como tínhamos em produto. Neste caso uma nova tabela de associação é criada, com o id da cesta e o id do produto. Esta configuração é realizada através da anotação @JoinTable. Esta anotação com a configuração associada diz que uma tabela de associação deve ser criada, esta tabela vai se chamar cesta_produtos (este nome é formado pegando o nome daonde a anotação é feita, que é cesta e concatenando com "\_" e o nome do atributo que referencia a outra classe do relacionamento, nesse caso, produtos). Dentro da configuração indicamos as colunas. A primeira coluna define a classe que será a proprietária da relação (joinColumn) e a outra a classe não proprietária (inverseJoinColumn). Os nomes das colunas também são formados seguindao algumas regras (por default): nome da classe proprietária concatenado com "\_" e o nome da chave primária dessa classe, que é id; e para a segunda coluna, que corresponde à classe nao proprietária, mais uma vez usamos o nome do atributo referente a esta classe, que é produtos, concatenado com "\_" e o nome do atributo que é a chave primária desta classe não proprietária, que nesse caso é id.  
 
-Quando recuperamos uma cesta de compras do banco de dados (via o DAO específico), poderemos chamar o método getProdutos() de Cesta. Neste momento a tabela de associação será usada para recuperar os produtos do banco, mas tudo isso é transparente pra nós. Mais adiante veremos configurações que poderemos usar para indicar se queremos já recuperar os produtos automaticamente quando acessamos a cesta, ou se a recuperação dos produtos do banco se dará apenas quando o método getProdutos() for chamado. Se a única forma de acesso de cestas e produtos for a partir do identificador da cesta, então essa relação unidirecional em que a cesta conhece a relação e sabe que tem associação com muitos produtos, é mais eficiente. Mas se o acesso da aplicação é encontrar um produto e dali identificar em que cesta de compras o produto está então nesse caso, a primeira configuração que usamos seria mais eficiente. Tudo depende de como é o acesso aos dados.
+Mais uma vez, se não indicarmos esta configuração explicitamente, o framework vai pôr pra nós. Mas, é importante saber que isto está ocorrendo e o que significa esta configuração. Seguir a padronização de nomenclatura é bom para manter coerência de nomes em toda a aplicação e até entre desenvolvedores diferentes programando.
+
+Quando recuperamos uma cesta de compras do banco de dados (via o DAO específico), poderemos chamar o método getProdutos() de Cesta. Neste momento a tabela de associação será usada para recuperar os produtos do banco, mas tudo isso é transparente pra nós, feito pelo hibernate/JPA. Mais adiante veremos configurações que poderemos usar para indicar se queremos já recuperar os produtos automaticamente quando acessamos a cesta, ou se a recuperação dos produtos do banco se dará apenas quando o método getProdutos() for chamado. Se a única forma de acesso de cestas e produtos for a partir do identificador da cesta, então essa relação unidirecional em que a cesta conhece a relação e sabe que tem associação com muitos produtos, é mais eficiente. Mas se o acesso da aplicação é encontrar um produto e dali identificar em que cesta de compras o produto está então nesse caso, a primeira configuração que usamos seria mais eficiente. Tudo depende de como é o acesso aos dados.
 
 Voltando para a primeira configuração, em que apenas a classe Produto conhece a relação... A coluna cesta_id na tabela PRODUTO seria suficiente para se recuperar os produtos de uma cesta. No entanto, até o momento, configuramos uma relação **unidirecional**, em qeu só uma entidade sabe que a relação existe. Até o momento, a entidade Cesta não sabe que tem uma relação com Produto. Assim, a cesta de compras não o método getProdutos(), pois ela desconhece a relação. 
 
