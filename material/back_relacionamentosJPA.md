@@ -129,41 +129,20 @@ A dica é entender a relação e definir a melhor configuração para cada caso.
 
 Uma configuração que anda perto da CascadeType.REMOVE é a orphanRemove = true. Esta opção marca a entidade filha a ser removida se ela não tiver mais referências a partir da entidade mãe. Por exemplo, no relacionamento entre Comentarios de uma Postagem e a Postagem, inserir esta configuração indica que se a Postagem deixar de existir ou se fizermos um postagem.setComentarios(null) todos os comentários da postagem devem ser removidos, pois não existe mais nenhuma referência a estes e eles podem deixar de existir. No nosso exemplo original de produto e cesta de compras, será que queremos que os produtos sejam removidos quando fizermos cesta.setProdutos(null)? Acredito que não... São ciclos de vida independentes.
 
-
+Em uma aplicação real, em especial quando o conteúdo do banco de dados é construído interativamente pelos usuários, como em uma rede social, por exemplo, é comum que as remoções sejam apenas lógicas. Isto significa que existe uma variável booleana, por exemplo, associada a Comentario, por exemplo, que vai ser Então quando removemos um comentário de uma postagem, esse comentário deixa de existir quando é solicitado 
 
 ## Modo de busca (FETCH)
 
-Uma outra configuração possível diz respeito à forma como os dados são recuperados do banco de dados. Ao contrário do cascade, que é uma configuração da classe mãe, o fetch é uma configuração da classe filha (a que está no lado Many e que geralmente possui a chave estrangeira na sua tabela). Esta configuração vem já como opção da definição do relacionamento, ex. @ManyToOne(fetch = FetchType.LAZY). Essa é a configuração *FETCH*. Existem duas estratégias para esta configuração:
+Uma outra configuração possível diz respeito à forma como os dados são recuperados do banco de dados. Esta configuração vem já como opção da definição do relacionamento, ex. @ManyToOne(fetch = FetchType.LAZY). Essa é a configuração *FETCH*. Existem duas estratégias para esta configuração:
 
-* A estratégia *EAGER* indica que em tempo de execução os dados devem ser recuperados em uma consulta de uma vez. Isto significa que se a estratégia EAGER for usada, o EntityManager vai recuperar os dados da entidade mãe e da entidade filha de uma só vez por uma consulta de forma automática pra nós. Ao usar a estratégia EAGER ao recuperar uma cesta de compras, os produtos associados já são também recuperados e quando fazemos cesta.getProdutos() nenhuma consulta precisa ser feita. Parece uma boa opção em se tratando de cesta de compras. Mas será que seria uma boa opção se estivéssemos tratando de universidade federal e seus alunos?
+* A estratégia *EAGER* indica que em tempo de execução os dados devem ser recuperados em uma consulta de uma vez. Isto significa que se a estratégia EAGER for usada, o EntityManager vai recuperar os dados da entidade em questão e da entidade relacionada de uma só vez por uma consulta de forma automática pra nós. Ao usar a estratégia EAGER ao recuperar uma cesta de compras, os produtos associados já são também recuperados e quando fazemos cesta.getProdutos() nenhuma consulta precisa ser feita ao banco. Parece uma boa opção em se tratando de cesta de compras. Mas será que seria uma boa opção se estivéssemos tratando de universidade federal e seus alunos? 
 * A estratégia *LAZY* indica que os dados serão obtidos de forma preguiçosa. Isto significa que eles devem ser recuperados apenas quando forem acessados pela primeira vez (ao chamar o método get específico, por exemplo, getProdutos() no caso de cesta de compras e seus produtos). Neste caso, os dados são recuperados quando necessário através de subconsultas após a chamada do método get. O EntityManager recupera os dados da entidade mãe primeiro e depois os dados da entidade filha sob demanda. Se a estratégia LAZY for usada, ao recuperar um produto apenas os atributos de produto específicos são recuperados. Apenas com uma chamada a cesta.getProdutos() que os produtos associados à cesta de compras seriam recuperados do banco de dados. 
 
-Claro que para o programador isso fica transparente. O programador não vai ter mais trabalho se escolher LAZY por conta das consultas extra ao banco. Quem faz tudo isso é o JPA pra nós. Esta é uma questão de pensar o que é mais eficiente para a aplicação. Em uma aplicação em que a entidade filha raramente será acessada, ou que seja muito caro acessar e nem sempre é acessada, LAZY é melhor. EAGER já se torna mais atrativo quando temos certeza que ao acessar a entidade mãe teremos necessariamente que acessar os filhos. 
+Por default, quando a entidade relacionada é na verdade uma coleção, então o tipo de recuperação será LAZY. Por exemplo, se não configuramos nada em Cesta, a coleção de produtos relacionada não será recuperada ao acessar a cesta do banco de dados. Claro que para o programador isso fica transparente. O programador não vai ter mais trabalho se escolher LAZY por conta das consultas extra ao banco. Quem faz tudo isso é o JPA pra nós. Esta é uma questão de pensar o que é mais eficiente para a aplicação. Em uma aplicação em que a entidade relacionada raramente será acessada, ou que seja muito caro acessar e nem sempre é acessada, LAZY é melhor. EAGER já se torna mais atrativo quando temos certeza que ao acessar uma entidade teremos necessariamente que acessar a entidade relacionada. 
 
 ## Sobre os repositórios
 
 É importante chamar atenção aqui para alguns métodos que adicionais podem ser úteis quando falamos de relacionamentos OneToMany e que não estão definidos por default por JpaRepository. Por exemplo, recuperar a partir da tabela de produtos todos os produtos de uma dada cesta de compras, como fizemos anteriormente (temos que conhecer o ID da cesta). Em se tratando da interface JPARepository, criamos novos métodos seguindo regras estritas para nomeação/assinatura do método novo. A consulta ao banco de dados será criada automaticamente ao seguir as regras para nomeação do método. 
-
-O código abaixo para a interface ProdutosDAO adiciona à interface um novo metodo que retorna todos os produtos que estão associados à cesta de compras com o ID passado como parâmetro.
-
-````java
-@Repository
-public interface ProdutosDAO<T, ID extends Serializable> extends JpaRepository<Produto, Long> {
-
-	List<Comentario> findByCestaCestaId(Long id);
-}
-````
-
-Este método irá recuperar todos os registros na tabela de produtos cujo atributo idCesta (que vem da associação cesta) seja igual ao ID passado. Para entender melhor: esse nome só funciona porque na classe Produto existe o atributo cesta definido como relação de muitos para um entre a classe Produto e a classe Cesta:
-
-````java
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "cesta_id")
-  @JsonIgnore
-  private Cesta cesta;
-````
-
-Nessa mesma configuração damos um nome à coluna que servirá de *join* para esta associação, o nome que demos foi idCesta. Então estamos dizendo que recuperamos a cesta de compras associada ao produto através do id da cesta. Em termos de banco de dados, o que acontece é que na tabela de PRODUTO vai haver uma coluna chamada ID_CESTA que é a chave estrangeira de Cesta na tabela PRODUTO (mas já falamos disso!). Se dentro da classe Cesta o atributo marcado com @Id já se chamar idCesta, o @JoinColumn não é necessário, o framework coloca pra nós por default. São essas configurações que usamos para gerar o nome do método e derivar a consulta ao banco automaticamente (sem precisar escrever uma @Query explícita). Se o atributo que chamamos cesta fosse chamado cestaDeCompras, então o nome do método na interface mudaria para findByCestaId.
 
 Podemos brincar bastante gerando novos métodos no DAO (JpaRepository) só seguindo essas regras. Por exemplo, podemos recuperar uma coleção de objetos de forma ordenada, ou recuperar só os n primeiros, etc. Mais detalhes de como gerar os nomes dos métodos para derivar as consutas podem ser vistos [aqui](https://www.baeldung.com/spring-data-derived-queries), [aqui](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-creation) e [aqui](https://www.baeldung.com/spring-data-sorting).
 
