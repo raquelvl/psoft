@@ -11,9 +11,6 @@ public class Saudacao {
 	private String nome;
 	private String saudacao;
 	
-//	@ManyToOne
-//	private Usuario usuario;
-
 	public Saudacao() {
 		this.saudacao = "Oi";
 	}
@@ -47,5 +44,12 @@ public class Saudacao {
 	public String getSaudacao() {
 		return saudacao;
 	}
+
+	@Override
+	public String toString() {
+		return "Saudacao [id=" + id + ", nome=" + nome + ", saudacao=" + saudacao + "]";
+	}
+	
+	
 
 }

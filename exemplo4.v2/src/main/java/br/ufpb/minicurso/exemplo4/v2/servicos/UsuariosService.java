@@ -60,13 +60,6 @@ public class UsuariosService {
 
 	}
 
-//	public void adicionaSaudacao(String email, Saudacao saudacao) {
-//		Usuario usuario = getUsuario(email);
-//		saudacao.setUsuario(usuario);
-//		usuario.adicionaSaudacao(saudacao);	
-//		usuariosDAO.save(usuario);
-//	}
-
 	public void salva(Usuario usuario) {
 		usuariosDAO.save(usuario);
 	}

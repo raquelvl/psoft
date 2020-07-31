@@ -1,4 +1,4 @@
-package br.ufpb.minicurso.exemplo4.v3.entidades;
+package br.ufpb.minicurso.exemplo4.v4.entidades;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class Usuario {
 	 * e ver como fica o banco de dados. Lembre de apagar os dados de uma
 	 * execução para a outra.
 	 */
-	@OneToMany(mappedBy = "usuario")
+	//@OneToMany(mappedBy = "usuario")
 	/*
 	 * Esta anotação JsonIgnore diz pra ignorar este atributo ao montar 
 	 * o json de usuario. Lembremos que agora temos uma relação bidirecional
@@ -40,7 +40,7 @@ public class Usuario {
 	 * saudação tem o usuário de novo, e entraríamos em loop.
 	 */
 	@JsonIgnore
-	//@OneToMany
+	@OneToMany
 	private List<Saudacao> saudacoes;
 	/* Quando um objeto usuário é recuperado do banco de dados, por default,
 	 * a lista de suas saudações não é recuperada automaticamente. Isso só

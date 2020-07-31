@@ -1,15 +1,16 @@
-package br.ufpb.minicurso.exemplo4.v3.services;
+package br.ufpb.minicurso.exemplo4.v4.servicos;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.ufpb.minicurso.exemplo4.v3.dtos.UsuarioDTO;
-import br.ufpb.minicurso.exemplo4.v3.entidades.Usuario;
-import br.ufpb.minicurso.exemplo4.v3.excecoes.UsuarioInvalidoException;
-import br.ufpb.minicurso.exemplo4.v3.excecoes.UsuarioJaExisteException;
-import br.ufpb.minicurso.exemplo4.v3.repositorios.UsuariosRepository;
+import br.ufpb.minicurso.exemplo4.v4.dtos.UsuarioDTO;
+import br.ufpb.minicurso.exemplo4.v4.entidades.Saudacao;
+import br.ufpb.minicurso.exemplo4.v4.entidades.Usuario;
+import br.ufpb.minicurso.exemplo4.v4.excecoes.UsuarioInvalidoException;
+import br.ufpb.minicurso.exemplo4.v4.excecoes.UsuarioJaExisteException;
+import br.ufpb.minicurso.exemplo4.v4.repositorios.UsuariosRepository;
 
 @Service
 public class UsuariosService {
@@ -60,8 +61,11 @@ public class UsuariosService {
 
 	}
 
-//	public void salva(Usuario usuario) {
+//	public Usuario adicionaSaudacao(String email, Saudacao saudacao) {
+//		Usuario usuario = getUsuario(email);
+//		usuario.adicionaSaudacao(saudacao);	
 //		usuariosDAO.save(usuario);
+//		return usuario;
 //	}
 
 }

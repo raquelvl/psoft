@@ -3,6 +3,9 @@ package br.ufpb.minicurso.exemplo4.v2.entidades;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/*
+ * esta classe não sabe que se relaciona com Saudacao.
+ */
 @Entity
 public class Usuario {
 
@@ -10,9 +13,6 @@ public class Usuario {
 	private String email;
 	private String nome;
 	private String senha;
-	
-//	@OneToMany
-//	private List<Saudacao> saudacoes;
 
 	public Usuario() {
 		super();
@@ -70,14 +70,6 @@ public class Usuario {
 	public boolean isValid() {
 		return !email.isBlank() && !nome.isBlank() && !senha.isBlank();
 	}
-	
-//	public void adicionaSaudacao(Saudacao saudacao) {
-//		saudacoes.add(saudacao);
-//	}
-//	
-//	public List<Saudacao> getSaudacoes() {
-//		return saudacoes;
-//	}
 
 }
 

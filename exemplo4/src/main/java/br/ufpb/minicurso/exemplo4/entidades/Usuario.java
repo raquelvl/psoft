@@ -2,8 +2,11 @@ package br.ufpb.minicurso.exemplo4.entidades;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -14,7 +17,26 @@ public class Usuario {
 	private String nome;
 	private String senha;
 	
+	/*
+	 * Rode esta aplicação com a configuração @JoinTable e veja o BD
+	 * Depois comente esta configuração, apague os dados e rode novamente
+	 * Você verá que o framework coloca pra nós exatamente esta configuração
+	 * Ela diz que uma tabela de associação deve ser criada, esta tabela
+	 * vai se chamar usuario_saudacoes (este nome é formado pegando o nome
+	 * da classe proprietária, que é usuario e concatenando com "_" e o nome
+	 * do atributo que referencia a classe não proprietária, nesse caso, 
+	 * saudacoes. A primeira coluna é composta pelo nome da classe 
+	 * proprietária concatenado com "_" e o nome da chave primária dessa
+	 * classe, que é email. Para a segunda coluna, que corresponde à classe 
+	 * nao proprietária, mais uma vez usamos o nome do atributo referente
+	 * a esta classe, que é saudações, concatenado com "_" e o nome do 
+	 * atributo que é a chave primária desta classe não proprietária, que
+	 * nesse caso é id. 
+	 */
 	@OneToMany
+	@JoinTable(name = "usuario_saudacoes",
+				joinColumns = @JoinColumn(name = "usuario_email"),
+				inverseJoinColumns = @JoinColumn(name = "saudacoes_id"))
 	private List<Saudacao> saudacoes;
 
 	public Usuario() {

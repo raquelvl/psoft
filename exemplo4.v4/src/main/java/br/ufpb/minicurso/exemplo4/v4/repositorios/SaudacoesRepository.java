@@ -1,4 +1,4 @@
-package br.ufpb.minicurso.exemplo4.v3.repositorios;
+package br.ufpb.minicurso.exemplo4.v4.repositorios;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import br.ufpb.minicurso.exemplo4.v3.entidades.Saudacao;
+import br.ufpb.minicurso.exemplo4.v4.entidades.Saudacao;
 
 @Repository
 public interface SaudacoesRepository<T, ID extends Serializable> extends JpaRepository<Saudacao, Integer> {

@@ -1,4 +1,4 @@
-package br.ufpb.minicurso.exemplo4.v3.entidades;
+package br.ufpb.minicurso.exemplo4.v4.entidades;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

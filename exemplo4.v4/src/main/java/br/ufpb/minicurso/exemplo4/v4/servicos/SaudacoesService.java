@@ -1,4 +1,4 @@
-package br.ufpb.minicurso.exemplo4.v3.services;
+package br.ufpb.minicurso.exemplo4.v4.servicos;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -7,10 +7,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.ufpb.minicurso.exemplo4.v3.dtos.SaudacaoDTO;
-import br.ufpb.minicurso.exemplo4.v3.entidades.Saudacao;
-import br.ufpb.minicurso.exemplo4.v3.entidades.SaudacaoTemporalFactory;
-import br.ufpb.minicurso.exemplo4.v3.repositorios.SaudacoesRepository;
+import br.ufpb.minicurso.exemplo4.v4.dtos.SaudacaoDTO;
+import br.ufpb.minicurso.exemplo4.v4.entidades.Saudacao;
+import br.ufpb.minicurso.exemplo4.v4.entidades.SaudacaoTemporalFactory;
+import br.ufpb.minicurso.exemplo4.v4.repositorios.SaudacoesRepository;
 
 @Service
 public class SaudacoesService {
@@ -36,6 +36,7 @@ public class SaudacoesService {
 	public Saudacao setNovaSaudacao(Saudacao novaSaudacao, String autorizacao) {
 		String email = jwtService.getUsuarioId(autorizacao);
 		novaSaudacao.setUsuario(usuarioService.getUsuario(email));
+		usuarioService.getUsuario(email).adicionaSaudacao(novaSaudacao);
 		saudacoesDAO.save(novaSaudacao);
 		return ultimaSaudacaoAlternativa();
 	}
