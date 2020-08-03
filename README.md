@@ -31,4 +31,4 @@
 
 ## Laboratórios para praticar
 
-[Aulas de laboratório e miniprojeto para praticar](aulas/labs.md)
+[Aulas de laboratório e miniprojeto para praticar](labs/labs.md)
