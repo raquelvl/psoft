@@ -37,7 +37,7 @@ Por questões de segurança, precisamos de configurações específicas para per
 
 ## Deliverable final
 Data de entrega 13/08/2020, até as 23:59h (mas se quiser usar a madrugada e entregar até as 8h da manhã do dia 14/08 também aceitamos): 
-* link para o README.md do repositório de backend. O README.md do backend deve explicar a API de backend desenvolvida; preferencialmente deve ter um link para a documentação da API gerada pelo swagger (que pode estar no proprio repositorio).
+* link para o README.md do repositório de backend. O README.md do backend deve explicar a API de backend desenvolvida; preferencialmente deve ter um link para a documentação da API gerada pelo swagger (que pode estar no proprio repositorio). [Sobre swagger](http://www.matera.com/blog/post/documentando-api-rest-com-swagger-contract-last).
 * [opcional - mas ajuda muito os professores]link do youtube para o vídeo de demonstração da aplicação (de 3 minutos no máximo)
 
 ## Casos de uso da API
