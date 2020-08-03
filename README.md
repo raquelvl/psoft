@@ -1,10 +1,5 @@
 # Material de apoio sobre desenvolvimento de backend de aplicações Web com APIs REST, Java e Spring Boot
-## Foco: backend development 
 ## Professora: Raquel Vigolvino Lopes
-
-[Slides de algumas aulas](aulas/)
-
-[Aulas de laboratório para praticar](aulas/labs.md)
 
 ## Material para estudo e prática
 
@@ -34,3 +29,6 @@
 
 [Introdução a relacionamentos JPA](material/back_relacionamentosJPA.md)
 
+## Laboratórios para praticar
+
+[Aulas de laboratório e miniprojeto para praticar](aulas/labs.md)
