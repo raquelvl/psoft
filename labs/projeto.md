@@ -32,7 +32,7 @@ O CRdb é uma API para classificação e reviews de disciplinas de um curso. Os 
 Por questões de segurança, precisamos de configurações específicas para permitir que um frontend em um domínio se comunique com um backend em outro domínio. Precisamos habilitar CORS - Cross Origin Resource Sharing. [Este artigo](https://spring.io/blog/2015/06/08/cors-support-in-spring-framework) é bem didático para quem quiser ler um pouco mais sobre isso. Uma forma de habilitar CORS é inserir um @Bean na aplicação com um filtro - [ver código exemplo aqui](https://drive.google.com/file/d/1ruk58z1qTtc07MCGmpwQFGOPNi3zTtec/view?usp=sharing). Outras formas de configuração no spring boot podem ser encontradas [aqui](https://spring.io/blog/2015/06/08/cors-support-in-spring-framework).
 
 ### Sobre deploy no heroku: 
-*[Vídeo tutorial](https://drive.google.com/file/d/1tbPf8rQY7EkCOyqxy2xNLsDa6aiLX0y2/view) feito pelo monitor Yuri da UFCG. 
+*[Vídeo tutorial](https://drive.google.com/file/d/17cbWhwMhyM6aoQ8Oyd2pf0IB-uCp3aPQ/view?usp=sharing) feito pelo monitor Yuri da UFCG. 
 *Se você seguir corretamente cada configuração do vídeo vai dar certo. Lembre de não usar palavras reservadas como USER, LIKE como nomes de entidades/tabelas. 
 
 ## Deliverable final
