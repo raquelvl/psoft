@@ -1,7 +1,7 @@
 # Material de apoio sobre desenvolvimento de backend de aplicações Web com APIs REST, Java e Spring Boot
 ## Professora: Raquel Vigolvino Lopes
 
-## Material para estudo e prática
+## Material para estudo
 
 [Sobre APIs](material/back_API.md)
 
