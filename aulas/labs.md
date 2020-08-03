@@ -1,11 +1,14 @@
-# Laboratórios - Backend development
+# Laboratórios e mini projeto - Backend development
 
-## [lab 1](https://docs.google.com/document/d/e/2PACX-1vQYsle9B363IU3oDw6hJxn9diVd9-yLOUfCLFQCQehRkf4195xmaY5wjWHOQXGHTRkiv_j0Kfc-qFQq/pub)
-* Data de início: 21/08
-* Data de término: 26/08
-* Data do miniteste: 26/08
+## [lab 1](lab1.md)
+Usar Spring Web e seguir padrão MVC.
 
-## [lab 2](lab2_backend.md)
-* Data de início: 16/09/2019
-* Data de término: 
-* Data do miniteste: 
+## [lab 2](lab2.md)
+Usar Spring Data JPA com Spring Web MVC. Seguir o padrão de projeto data access object (DAO) para acessar dados do banco de dados.
+
+## [lab 3](lab2.md)
+Usar Json Web Tokens (JWT) para autorização. Continuar usando Spring Data JPA com Spring Web MVC e o padrão DAO para acessar dados do banco de dados.
+
+## [miniprojeto](projeto.md)
+Praticar tudo que aprendemos em um miniprojeto.
+
