@@ -64,8 +64,8 @@ Você irá desenvolver as seguintes classes:
 Classe que será o controlador do recurso /disciplinas e será marcada com @RestController
 Classe de serviço (@Service) que oferece serviços ao controlador para gerenciar a coleção de disciplinas da API - o repositório das disciplinas aqui será o próprio serviço.
 Classe que representa a Disciplina. 
+Outras classes auxiliares para transferência, por exemplo, classe um DTO de disciplina sem o id (para quando a disciplina for ser adicionada)...
 
-Execute a sua aplicação no terminal, dentro do diretório raiz do seu projeto com o seguinte comando (caso não:
-Outras classes auxiliares para transferência, por exemplo, classe um DTO de disciplina sem o id (para quando a disciplina for ser adicionada)... esteja usando o DvTools)
+Execute a sua aplicação no terminal, dentro do diretório raiz do seu projeto com o seguinte comando (caso não esteja usando o DvTools)
 
 $ ./mvnw spring-boot:run
