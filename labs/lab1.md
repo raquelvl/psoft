@@ -4,17 +4,19 @@
 
 Faça o unzip do arquivo zip gerado para o seu workspace. Na sua IDE de preferência (eclipse, IntelliJ, etc.) importe o projeto criado como um **projeto maven já existente**. Agora você já pode desenvolver sua primeira aplicação. Lembre de organizar os pacotes de controladores, serviços e entidades abaixo do pacote raíz.
 
-Neste primeiro lab o design da API REST a ser desenvolvida será dado. Com o tempo o ideal é que cada um pense seu próprio design. Imagine que estamos criando o embrião de um sistema que é uma rede social de alunos para avaliar disciplinas de seu curso específico, por exemplo, computação. 
+Neste primeiro lab o design da API REST a ser desenvolvida será dado, exceto os [métodos HTTP](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Methods) a serem usados e os [códigos de retorno HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status). Com o tempo, o ideal é que cada um pense seu próprio *design* em termos de que recursos são exposts e quais as rotas para estes recursos. 
+
+Imagine que estamos criando o embrião de um sistema que é uma rede social de alunos para avaliar disciplinas de seu curso específico, por exemplo, computação. 
 
 No contexto da API abaixo uma Disciplina é uma classe que tem os seguintes atributos: **id:int**, **nome:String** e **nota:double**.
 
 Use spring boot/MVC e java para desenvolver a seguinte API (não usaremos banco de dados ainda, assim não haverá persistência de dados):
 
-**POST /v1/api/disciplinas**
+**\<METODO HTTP\> /v1/api/disciplinas**
 
 Adiciona a disciplina no sistema. A própria API deve se encarregar de gerar os identificadores únicos das disciplinas. No corpo da requisição HTTP deve estar um JSON com as informações de nome e nota da disciplina a ser adicionada no sistema.
 
-Retorna a disciplina que foi adicionada (incluindo o id) e código 200.
+Retorna a disciplina que foi adicionada (incluindo o id). Um  e \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)).
 
 
 **GET /v1/api/disciplinas (id numerico, nome, nota)**
