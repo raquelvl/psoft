@@ -16,41 +16,41 @@ Use spring boot/MVC e java para desenvolver a seguinte API (não usaremos banco 
 
 Adiciona a disciplina no sistema. A própria API deve se encarregar de gerar os identificadores únicos das disciplinas. No corpo da requisição HTTP deve estar um JSON com as informações de nome e nota da disciplina a ser adicionada no sistema.
 
-Retorna a disciplina que foi adicionada (incluindo o id). Um  e \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)).
+Retorna a disciplina que foi adicionada (incluindo o id) e o \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)).
 
 
-**GET /v1/api/disciplinas (id numerico, nome, nota)**
+**\<METODO HTTP\> /v1/api/disciplinas (id numerico, nome, nota)**
 
-Retorna um JSON com todas as disciplinas já inseridas no sistema e código 200.
-
-
-**GET /v1/api/disciplinas/{id}**
-
-Retorna um JSON que representa a disciplina cujo identificador único é id e código 200. Ou retorna JSON de disciplina nula e código 404 (not found) caso o id passado não tenha sido encontrado.
+Retorna um JSON com todas as disciplinas já inseridas no sistema e o \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)).
 
 
-**PUT /v1/api/disciplinas/{id}/nome**
+**\<METODO HTTP\> /v1/api/disciplinas/{id}**
+
+Retorna um JSON que representa a disciplina cujo identificador único é id e o \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)). Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
+
+
+**\<METODO HTTP\> /v1/api/disciplinas/{id}/nome**
 
 Atualiza o nome da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com o novo nome da disciplina a ser atualizado no sistema.
 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado.
+Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e o \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)). Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
 
 
-**PUT /v1/api/disciplinas/{id}/nota**
+**\<METODO HTTP\> /v1/api/disciplinas/{id}/nota**
 
 Atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com a nova nota da disciplina a ser atualizada no sistema.
 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado.
+Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e o \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)). Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
 
 
-**DELETE /v1/api/disciplinas/{id}**
+**\<METODO HTTP\> /v1/api/disciplinas/{id}**
 
-Remove a disciplina de identificador id do sistema e retorna a disciplina que foi removida (um JSON) e código 200. Ou não retorna JSON e retorna código 404 (para disciplina que não foi encontrada).
+Remove a disciplina de identificador id do sistema e retorna a disciplina que foi removida (um JSON) e o \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)). Pense em todas as possibilidades de erro e programe-se para elas com seus devidos códigos.
 
 
-**GET /v1/api/disciplinas/ranking**
+**\<METODO HTTP\> /v1/api/disciplinas/ranking**
 
-Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
+Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e o \<código de resposta HTTP\> (ver [https://developer.mozilla.org/en-US/docs/Web/HTTP/Status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)).
 
 
 **Seguem algumas dicas...**
