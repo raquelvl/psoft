@@ -42,17 +42,4 @@ Não há duplicidade de código | Repetição de código e de dados
 
 Aplicações monilíticas são muito mais simples de implantar e não há duplicidade de código; o que são caraterísticas positivas. Porém, é preciso escolher uma única tecnologia (linguagem de programação) para implementar a aplicação, a base de código é extensa porque os programadores precisam entender toda a aplicação de uma vez (em vez de entender módulos idolados). Além disso, a aplicação monolítica é um ponto único de falha (o que claro, pode ser resolvido com um cluster de _failover_).
 
-Como devidir entre estas duas opções arquiteturais? Deve ser levada em conta a experiência do arquiteto de software (se é inexperiente provavelmente melhor começar com algo monolítico que é mais simples). Também deve-se pesar vantagens e desvantagens de cada arquitetura considerando características da aplicação. Se é natural desacoplar módulos independentes ou se seria muito difícil dividir em módulos. Na dúvida, a dica é começar com monolítico e migrar microserviços que façam sentindo depois.
-
-## Padrão MVC 
-
-Praticamente todas as aplicações Web da atualidade seguem um padrão de projeto chamado **MVC - Model, View, Controller**. Considere que o backend é a API. Em se tratando de uma aplicação Web monolítica, que é nosso foco aqui, o cliente dessa API é o frontend. Esse padrão é importante porque mantém desacoplados os códigos do frontend (que é a parte View do padrão) e da API/backend que é a parte Model. Este padrão define claramente as responsabilidades do backend e do frontend e permite que um controlador seja capaz de orquestrar a comunicação entre estas partes. O controlador é desenvolvido pelos desenvolvedores do backend e executa junto da API. O controlador recebe as requisições dos usuários e sabe exatamente para que serviço delegar esta requisição.
-
-Em resumo: 
-* O que é o modelo? É quem sabe fazer o que precisa ser feito (backend - regras de negócio e dados)
-* O que é a visão? É quem apresenta informações para o usuário (frontend) - muitas views são possíveis para um mesmo Model
-* O que é o controlador? É quem roteia os pedidos dos usuários (View) para quem sabe fazer (Model)
-
-De forma simplificada, quando uma requisição chega na API ela vai ser processada primeiramente por um controlador, que vai identificar o recurso sendo solicitado, a ação, as informações passadas na requisição e vai repassar para o serviço adequado dentro do backend, que irá de fato processar o pedido. Apenas o controlador lida com requisições e respostas HTTP. Os outros componentes do backend (em OO) são de uma aplicação OO normal, objetos que se relacionam para gerar valor.
-
-Como criar APIs REST que seguem o padrão MVC usando Spring? Esse é o conteúdo [desse outro artigo](back_springMVC).
+Como decidir entre estas duas opções arquiteturais? Deve ser levada em conta a experiência do arquiteto de software (se é inexperiente provavelmente melhor começar com algo monolítico que é mais simples). Também deve-se pesar vantagens e desvantagens de cada arquitetura considerando características da aplicação. Se é natural desacoplar módulos independentes ou se seria muito difícil dividir em módulos. Na dúvida, a dica é começar com monolítico e migrar microserviços que façam sentindo depois.
