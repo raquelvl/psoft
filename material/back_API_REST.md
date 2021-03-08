@@ -30,17 +30,23 @@ Essa URI identifica o tipo de protocolo usado para a troca de informações, ind
 
 Uma API REST segue alguns princípios, um dos mais importantes é que a interação cliente/API é _stateless_,isto é, sem estado. Isto significa que cada requisição traz a informação necessária para que o servidor possa entendê-la e respondê-la. O estado das sessões fica sendo mantido apenas nos clientes, o que é bom para escalabilidade dos servidores. Por outro lado, esse tipo de interação usa mais mais rede já que certos dados precisam estar presentes em todas as requisições (como por exemplo, token de acesso do usuário). Para minimizar este problema alguns requisições podem usar cache no cliente. Estas requisições são  "cacheáveis". Poder ser mantida em cache no cliente pode não ser opção para as requisições que tem conteúdo muito dinâmico e requerem sempre a busca no servidor para receber dados atuais ou personalizados (requisições não "cacheáveis"). Usar cache melhora desempenho, mas pode prejudicar confiabilidade (dados velhos).
 
+A consequência da adoção de APIs REST é semelhante à adoção de padrões de projetos. Todas as APIs REST compartilham certas características (já comentadas antes) e assim, o desenvolvedor/projetista já tem uma boa noção do que se trata, e ao longo de sua carreira ganha experiência em projetar esse tipo de API. Em outras palavras, para cada sistema a ser desenvolvido, o projetista não precisa reinventar a roda, definindo todas as características de uma nova API, ao seguir o padrão REST o projetista só precisa se preocupar com a interface mesmo a ser oferecida.
+
 Vejamos com um exemplo simples um pouco do que é pensar no design de uma API: imagine que você está desenvolvendo uma API para um restaurante italiano que quer começar a fazer entregar. Um dos pratos a serem entregues é de parmegiana (que pode ser de filé, frango ou peixe), e que também inclui tamanhos variados. Existem várias formas de programar isso. Por exemplo, podemos pensar nas URIs GET /parmegiana-file-grande, GET /parmegiana-file-media, … e GET /parmegiana-peixe-pequena. Outra forma de pensar na API seria ter um recurso GET /parmegianas e passar informações específicas sobre o pedido na forma de dados em JSON no corpo da requisição. Qual dessas formas parece ser a mais simples e a mais indicada?
 
 ## Boas práticas para design de APIs REST
 
-O trabalho de um desenvolvedor de backend começa ao projetar a API que será desenvolvida. O projeto de APIs deve ser muito bem pensado, em termos dos caminhos (chamados rotas) a serem criados, dos verbos HTTP usados. Quanto mais bem pensado é o projeto, mais chances de sua API ser popular. 
+O trabalho de um desenvolvedor de backend começa ao projetar a API que será desenvolvida. O projeto de APIs deve ser muito bem pensado, em termos dos caminhos (chamados rotas) a serem criados, dos verbos HTTP usados e dos códigos de retorno. Esse trabalho começa quando o projetista da API para para identificar os recursos que quer expor, o que pode ser feito pensando na funcionalidade do sistema e identificando substantivos importantes nesse domínio. Quanto mais bem pensado é o projeto, mais chances de sua API ser popular. 
 
 Seguem algumas regras importantes ao projetar uma API Web (que pode ser uma API REST):
 * Use URIs legíveis, de fácil dedução (por humanos). Por que? Porque isso vai facilitar que os programadores de aplicações clientes de sua API usem a API de forma correta mesmo sem precisar estudar muito sua API.
 * Utilize o mesmo padrão de URI na identificação dos recursos. Por que? Porque aos poucos, os programadores de aplicações clientes de sua API vão entender até mesmo como acessar recursos recém desenvolvidos por você sem necessidade de levar muito tempo para entender as novidades.
-* Evite URI’s que contenham a operação a ser realizada em um recurso (/produto/excluir, /produto/adicionar). Na verdade devemos *evitar a todo custo* usar verbos nas rotas das APIs. Lembre que o protocolo usado para comunicação é o HTTP que já informa a ação a ser realizada com um verbo (GET, POST, PUT, DELETE...). O verbo que irá na requisição que vai chegar na sua aplicação é que vai indicar a ação a ser realizada. Portanto, usar verbos em sua URI seria redundante e em termos de estilo de projeto, errado!
+* Evite URI’s que contenham a operação a ser realizada em um recurso (/produto/excluir, /produto/adicionar). Na verdade devemos *evitar a todo custo* usar verbos nas rotas das APIs. Lembre que o protocolo usado para comunicação é o HTTP que já informa a ação a ser realizada com um verbo/método (GET, POST, PUT, DELETE...). O verbo que irá na requisição que vai chegar na sua aplicação é que vai indicar a ação a ser realizada. Portanto, usar verbos em sua URI seria redundante e em termos de estilo de projeto, errado!
 * Evite adicionar na URI o formato desejado da representação do recurso. Por exemplo, na URI constar a palavra json para informar que a resposta será um json, ou que a entrada é um json. Por que? Por isso engessa sua API. Se um dia você quiser mudar de JSON para um outro formato que acha mais adequado terá que mudar o caminho na API, quebrando todas as aplicações clientes que acessam essa rota.
+* Opte por nomear recursos no plural e seja sempre coerente ao nomear recursos (sempre no plural ou sempre no singular - mas sabendo que a boa prática é usar o plural). Usar plural é justificado pelo fato de que um GET na raiz de um recurso deve sempre retornar uma coleção.
+* Evite usar um "/" no fim da rota, isso pode causar erros.
+* Use hífen (-) para formar nomes compostos. Nunca use "\_" nas suas rotas.
+* Recursos podem relacionar-se entre si. O caminho/rota deve identificar este relacionamento, seja hierárquico, seja apenas uma relação, usando "/". Por exemplo, você pode ter uma rota /disciplinas/disciplinas-a-distancia para indicar uma relação hierárquica, ou uma rota /disciplinas/{id}/estudantes para indicar a relação entre uma disciplina e os seus estudantes.
 * Por fim, pense bem antes de definir as URIs (ou rotas) que compoem sua API e evite alterações nas URI’s. Por que? Acredito que a essa altura você já sabe responder esta pergunta.
 
 Ao definir a sua API assegure-se de estar usando o protocolo HTTP da forma correta. Os métodos do protocolo devem definir ações a serem executadas nos recursos expostos por sua API. Na tabela abaixo resumimos como usar esses verbos de forma adequada.
@@ -50,7 +56,8 @@ Método | URI | Utilização
 GET | /clientes | Recuperar dados de todos os clientes
 GET | /clientes/{id} | Recuperar dados de um cliente específico
 POST | /clientes | Criar um novo cliente
-PUT | /clientes/{id} | Atualizar dados de um determinado cliente
+PUT | /clientes/{id} | Atualizar todos os dados de um determinado cliente
+PATCH | /clientes/{id} | Atualizar um determinado cliente de forma parcial
 DELETE | /clientes/{id} | Excluir um determinado cliente
 
 Note que muitas URIs são exatamente iguais e o que vai diferenciar o que será realizado no servidor é exatamente o verbo HTTP associado à requisição HTTP que chega na API.
