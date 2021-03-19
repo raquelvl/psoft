@@ -32,9 +32,17 @@ public class RepositorioDeComentarios {
 
 	}
 
-	public void removeComentariosDaPergunta(int id) {
-		List
-		
+	public int removeComentariosDaPergunta(int id) {
+		int numComentariosApagados = 0;
+		for (Comentario comentario : comentarios) {
+			if (comentario.getTipo() == TipoDeComentario.COMENTARIO_DE_PERGUNTA
+					&& comentario.getIdEstrangeiro() == id) {
+				comentario.setApagado(true);
+				numComentariosApagados++;
+			}
+		}
+		return numComentariosApagados;
+
 	}
 
 }

@@ -5,6 +5,7 @@ public class Comentario {
 	private int id;
 	private TipoDeComentario tipo;
 	private String comentario;
+	private boolean apagado;
 
 	public Comentario(int idEstrangeiro, int id, TipoDeComentario tipo, String comentario) {
 		super();
@@ -12,6 +13,7 @@ public class Comentario {
 		this.id = id;
 		this.tipo = tipo;
 		this.comentario = comentario;
+		this.apagado = false;
 	}
 
 	public String getComentario() {
@@ -32,6 +34,14 @@ public class Comentario {
 
 	public TipoDeComentario getTipo() {
 		return tipo;
+	}
+
+	public boolean isApagado() {
+		return apagado;
+	}
+
+	public void setApagado(boolean apagado) {
+		this.apagado = apagado;
 	}
 
 	@Override

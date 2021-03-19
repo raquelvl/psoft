@@ -1,4 +1,4 @@
-package com.example.demo.construtores;
+package com.example.demo.controladores;
 
 import java.util.List;
 
@@ -111,6 +111,8 @@ public class PerguntasController {
 			return new ResponseEntity<Pergunta>(cee.getStatusCode());
 		}
 	}
+	
+	
 
 }
 
