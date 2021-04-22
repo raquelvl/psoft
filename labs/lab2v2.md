@@ -2,11 +2,11 @@
 
 
 ### Objetivos:
-* Aprender a escrever APIs com dados persistentes usando um esquema de dados relacional muito simples
+* Aprender a escrever APIs com dados persistentes usando um esquema de dados relacional e relacionamentos JPA
 
 ### Tecnologias envolvidas:
 * ORM - Mapeamento objeto relacional (Hibernate é a impementação por trás do que usaremos)
-* JPA - interface unificada para facilitar mapeamento de objetos para registros de tabelas
+* JPA - interface unificada para facilitar mapeamento de objetos para registros de tabelas e definir relações entre entidades
 * JWT - tokens para autorização de acesso a dados
 
 Lembrete: use o [spring initizlizr](https://start.spring.io) para criar seu projeto spring. Desas vez marque as dependências "_Spring Web Starter_", "_H2 Database_" e "_Spring Data JPA_" na configuração do seu projeto.
