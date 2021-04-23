@@ -3,7 +3,7 @@
 ## [lab 1](lab1.md)
 Usar Spring Web e seguir padrão MVC.
 
-## [lab 2 - semestre 2020.2]()
+## [lab 2 - semestre 2020.2](lab2-20202.md)
 Usar Spring Data JPA com Spring Web MVC. Seguir o padrão de projeto data access object (DAO) para acessar dados do banco de dados e configurar relacionamentos entre entidades Disciplina-Comentario e Disciplina-Nota.
 
 [comment]: <## [lab 2 - antigo](lab2.md)>
