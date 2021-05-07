@@ -9,7 +9,10 @@ Usar Spring Data JPA com Spring Web MVC. Seguir o padrão de projeto data access
 [comment]: <## [lab 2 - antigo](lab2.md)>
 [comment]: <Usar Spring Data JPA com Spring Web MVC. Seguir o padrão de projeto data access object (DAO) para acessar dados do banco de dados.>
 
-## [lab 3](lab3.md)
+[comment]: <## [lab 3](lab3.md)>
+[comment]: <Usar Json Web Tokens (JWT) para autorização. Continuar usando Spring Data JPA com Spring Web MVC e o padrão DAO para acessar dados do banco de dados.>
+
+## [lab 3](lab3-20202.md)
 Usar Json Web Tokens (JWT) para autorização. Continuar usando Spring Data JPA com Spring Web MVC e o padrão DAO para acessar dados do banco de dados.
 
 ## [miniprojeto](projeto.md)
