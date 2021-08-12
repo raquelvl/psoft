@@ -1,5 +1,8 @@
 # Laboratórios e mini projeto - Backend development
 
+## [lab 0](lab0.md)
+Usar Java com uma fachada de controle para desenvolver um sistema simples (sem interface gráfica).
+
 ## [lab 1](lab1.md)
 Usar Spring Web e seguir padrão MVC.
 
