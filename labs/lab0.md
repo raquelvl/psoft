@@ -1,4 +1,4 @@
-### Exercícios para exercitar Java OO
+### Exercício para exercitar Java OO
 Imagine que estamos criando o embrião de um sistema que é uma rede social de alunos para avaliar disciplinas de seu curso específico, por exemplo, computação.
 No contexto dessa aplicação, uma Disciplina é uma classe que tem pelo menos os seguintes atributos: id:int, nome:String, List<Comentario> comentarios, likes:int e nota:double.
 
