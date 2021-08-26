@@ -8,7 +8,7 @@ Neste primeiro lab o design da API REST a ser desenvolvida será dado, exceto os
 
 Imagine que estamos criando o embrião de um sistema que é uma rede social de alunos para avaliar disciplinas de seu curso específico, por exemplo, computação. 
 
-No contexto da API abaixo uma Disciplina é uma classe que tem os seguintes atributos: **id:int**, **nome:String** e **nota:double**.
+No contexto da API abaixo uma Disciplina é uma classe que tem os seguintes atributos: **id:int**, **nome:String**, **likes:int** e **notas:double[]**.A nota da disciplina vem de uma média de notas atribuídas à disciplina pelos alunos. As disciplinas do sistema não podem ter nomes repetidos. 
 
 Use spring boot/MVC e java para desenvolver a seguinte API (não usaremos banco de dados ainda, assim não haverá persistência de dados):
 
