@@ -37,7 +37,7 @@ public class EstoqueControlador {
 
 	@PostMapping("/v1/api/produtos")
 	public ResponseEntity<Produto> adicionaProdutosNoEstoque(@RequestBody ProdutoDTO produto) {
-		return new ResponseEntity<Produto>(servicoDeEstoque.adicionaProdutos(produto), HttpStatus.OK);
+		return new ResponseEntity<Produto>(servicoDeEstoque.adicionaProdutos(produto), HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/v1/api/produtos")
