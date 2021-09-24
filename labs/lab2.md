@@ -7,13 +7,12 @@
 ### Tecnologias envolvidas:
 * ORM - Mapeamento objeto relacional (Hibernate é a impementação por trás do que usaremos)
 * JPA - interface unificada para facilitar mapeamento de objetos para registros de tabelas e definir relações entre entidades
-* JWT - tokens para autorização de acesso a dados
 
 Lembrete: use o [spring initizlizr](https://start.spring.io) para criar seu projeto spring. Desas vez marque as dependências "_Spring Web Starter_", "_H2 Database_" e "_Spring Data JPA_" na configuração do seu projeto.
 
 Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferência (eclipse, IntelliJ, etc.) importe o projeto criado como um projeto maven já existente. Agora você já pode desenvolver sua aplicação. Lembre de organizar tudo em pacotes específicos.
 
-Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. Continuaremos o desenvolvimento do primeiro lab no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez. Relembrando, por enquanto, no contexto da nossa API, uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String**, **nota:double**, **comentarios:String** e **likes:int**.
+Neste segundo lab o design da API REST a ser desenvolvida será dado novamente, na verdade, é muito parecido com o primeiro. Continuaremos o desenvolvimento do primeiro lab no contexto de disciplinas. Mas agora vamos adicionar persistência, vamos iniciar todas as disciplinas de uma vez. Relembrando, por enquanto, no contexto da nossa API, uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String**, **nota:double**, **comentarios:List\<Comentario>** e **likes:int**.
 
 O objetivo desta API é permitir que alunos comentem e deem likes nas disciplinas do curso de Ciência da Computação. Mas essa versão da API ainda é muito reduzida. Quando um like é dado apenas incrementa o contador de likes da disciplina e quando um comentário é feito o novo comentário fica concatenado com os comentários anteriores com um newline entre eles. 
 
@@ -45,11 +44,11 @@ Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior 
 GET /api/disciplinas/ranking/likes
 Retorna todas as disciplinas inseridas no sistema ordenadas pelo número de likes (da que tem mais likes para a que tem menos likes) e código 200.
 
+Para todas as funcionalidades dessa API lembre de realizar o tratamento adequado de erros seguindo o que estudamos em sala (detalhes do problema - RFC 7807) e @RestControllerAdvice.
+
 Seguem algumas dicas:
 
 * Use o padrão DAO para acesso às bases de dados;
-* Desenvolva tudo sem a parte de autenticação/autorização, depois que estiver tudo testado adiciona a parte de JWT;
-* Use JWT para autenticação e autorização;
 * Siga boas práticas de design, buscando desacoplamento utilize corretamente controladores, serviços e repositórios;
 * Organize suas classes em packages com nomes significativos (xx.services, xx.controllers, xx.repositories, xx.entities, etc. - pode usar nomes em portugues também, mas mantenha a coerência, ou tudo em portugues ou tudo em ingles);
 * Para ordenação aprenda a definir um novo método no repositório de disciplina seguindo o padrão de nomes do método. Mais dicas [aqui](https://www.baeldung.com/spring-data-sorting).
