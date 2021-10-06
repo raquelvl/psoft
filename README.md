@@ -1,6 +1,9 @@
 # Material de apoio sobre desenvolvimento de backend de aplicações Web com APIs REST, Java e Spring Boot
 ## Professora: Raquel Vigolvino Lopes
 
+## Videoaulas
+[Semetre 2020.2 - UFPB](https://www.youtube.com/playlist?list=PL6NpDkOShJR5xL22qUQHKnGBlG13wKb8e)
+
 ## Material para estudo
 
 [Sobre APIs](material/back_API.md)
