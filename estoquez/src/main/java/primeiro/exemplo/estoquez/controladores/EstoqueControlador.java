@@ -24,11 +24,6 @@ public class EstoqueControlador {
 	@Autowired
 	private ServicoDeEstoque servicoDeEstoque;
 
-	public EstoqueControlador(ServicoDeEstoque servicoDeEstoque) {
-		super();
-		this.servicoDeEstoque = servicoDeEstoque;
-	}
-
 	/*
 	 * buscar produto pelo nome adicionar item de compra remover item de compra
 	 * atualizar quantidade de item de compra fechar pedido
