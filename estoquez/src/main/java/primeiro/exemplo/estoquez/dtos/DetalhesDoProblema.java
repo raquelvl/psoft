@@ -1,5 +1,8 @@
 package primeiro.exemplo.estoquez.dtos;
 
+import lombok.Builder;
+
+@Builder
 public class DetalhesDoProblema {
 	private int status;
 	private String type;

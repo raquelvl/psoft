@@ -12,16 +12,29 @@ public class HandlerDeExcecoes {
 
 	private static String ADICIONA_PRODUTO_URI = "https://servidor:8080/v1/api/produtos";
 
+//	@ExceptionHandler(ProdutoInvalidoException.class)
+//	public ResponseEntity<DetalhesDoProblema> lidaComProdutoInvalidoException(ProdutoInvalidoException pie) {
+//		// System.out.println(pie.getMessage());
+//		DetalhesDoProblema problema = new DetalhesDoProblema();
+//		problema.setStatus(HttpStatus.BAD_REQUEST.value());
+//		problema.setTitle(pie.getTitulo());
+//		problema.setType(ADICIONA_PRODUTO_URI);
+//		problema.setDetail(pie.getDetalhes());
+//		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problema);
+//	}
+
 	@ExceptionHandler(ProdutoInvalidoException.class)
 	public ResponseEntity<DetalhesDoProblema> lidaComProdutoInvalidoException(ProdutoInvalidoException pie) {
-		// System.out.println(pie.getMessage());
-		DetalhesDoProblema problema = new DetalhesDoProblema();
-		problema.setStatus(HttpStatus.BAD_REQUEST.value());
-		problema.setTitle(pie.getTitulo());
-		problema.setType(ADICIONA_PRODUTO_URI);
-		problema.setDetail(pie.getDetalhes());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problema);
+		DetalhesDoProblema problema = DetalhesDoProblema
+				.builder()
+				.status(HttpStatus.BAD_REQUEST.value())
+				.type(ADICIONA_PRODUTO_URI)
+				.title(pie.getTitulo())
+				.detail(pie.getDetalhes())
+				.build();
+		return new ResponseEntity<>(problema, HttpStatus.BAD_REQUEST);
 	}
+
 
 	@ExceptionHandler(ProdutoJaExisteException.class)
 	public ResponseEntity<DetalhesDoProblema> lidaComProdutoJaExisteException(ProdutoJaExisteException pjee) {
