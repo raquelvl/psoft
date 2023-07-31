@@ -12,19 +12,9 @@ public class HandlerDeExcecoes {
 
 	private static String ADICIONA_PRODUTO_URI = "https://servidor:8080/v1/api/produtos";
 
-//	@ExceptionHandler(ProdutoInvalidoException.class)
-//	public ResponseEntity<DetalhesDoProblema> lidaComProdutoInvalidoException(ProdutoInvalidoException pie) {
-//		// System.out.println(pie.getMessage());
-//		DetalhesDoProblema problema = new DetalhesDoProblema();
-//		problema.setStatus(HttpStatus.BAD_REQUEST.value());
-//		problema.setTitle(pie.getTitulo());
-//		problema.setType(ADICIONA_PRODUTO_URI);
-//		problema.setDetail(pie.getDetalhes());
-//		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problema);
-//	}
-
 	@ExceptionHandler(ProdutoInvalidoException.class)
 	public ResponseEntity<DetalhesDoProblema> lidaComProdutoInvalidoException(ProdutoInvalidoException pie) {
+		System.out.println("1");
 		DetalhesDoProblema problema = DetalhesDoProblema
 				.builder()
 				.status(HttpStatus.BAD_REQUEST.value())
@@ -38,18 +28,20 @@ public class HandlerDeExcecoes {
 
 	@ExceptionHandler(ProdutoJaExisteException.class)
 	public ResponseEntity<DetalhesDoProblema> lidaComProdutoJaExisteException(ProdutoJaExisteException pjee) {
-		// System.out.println(pjee.getMessage());
-		DetalhesDoProblema problema = new DetalhesDoProblema();
-		problema.setStatus(HttpStatus.BAD_REQUEST.value());
-		problema.setTitle(pjee.getTitulo());
-		problema.setType(ADICIONA_PRODUTO_URI);
-		problema.setDetail(pjee.getDetalhes());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problema);
+		System.out.println("2");
+		DetalhesDoProblema problema = DetalhesDoProblema
+				.builder()
+				.status(HttpStatus.BAD_REQUEST.value())
+				.type(ADICIONA_PRODUTO_URI)
+				.title(pjee.getTitulo())
+				.detail(pjee.getDetalhes())
+				.build();
+		return new ResponseEntity<>(problema, HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(CampoInvalidoException.class)
 	public ResponseEntity<DetalhesDoProblema> lidaComCampoInvalidoException(CampoInvalidoException cie) {
-		// System.out.println(pie.getMessage());
+		System.out.println("3");
 		DetalhesDoProblema problema = new DetalhesDoProblema();
 		problema.setStatus(HttpStatus.BAD_REQUEST.value());
 		problema.setTitle(cie.getTitulo());
@@ -60,7 +52,7 @@ public class HandlerDeExcecoes {
 	
 	@ExceptionHandler(ProdutoNaoEncontradoException.class)
 	public ResponseEntity<DetalhesDoProblema> lidaComProdutoNaoEncontradoException(ProdutoNaoEncontradoException pnee) {
-		// System.out.println(pie.getMessage());
+		System.out.println("4");
 		DetalhesDoProblema problema = new DetalhesDoProblema();
 		problema.setStatus(HttpStatus.NOT_FOUND.value());
 		problema.setTitle(pnee.getTitulo());
@@ -71,7 +63,7 @@ public class HandlerDeExcecoes {
 	
 	@ExceptionHandler(NovoValorInvalidoException.class)
 	public ResponseEntity<DetalhesDoProblema> lidaComNovoValorInvalidoException(NovoValorInvalidoException nvie) {
-		// System.out.println(pie.getMessage());
+		System.out.println("5");
 		DetalhesDoProblema problema = new DetalhesDoProblema();
 		problema.setStatus(HttpStatus.BAD_REQUEST.value());
 		problema.setTitle(nvie.getTitulo());
