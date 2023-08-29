@@ -11,7 +11,7 @@ public class Resposta {
 	@Id @GeneratedValue
 	private long id;
 	
-	@ManyToOne @JoinColumn(name="id_pergunta")
+	@ManyToOne @JoinColumn(name="pergunta_id")
 	private Pergunta pergunta;
 	
 	private String texto;

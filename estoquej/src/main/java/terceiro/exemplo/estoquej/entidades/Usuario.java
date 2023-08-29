@@ -15,16 +15,19 @@ public class Usuario {
 
 	private String senha;
 
+	private Papel papel = Papel.REGULAR;
+
 	public Usuario() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Usuario(String email, String nomeCompleto, String senha) {
+	public Usuario(String email, String nomeCompleto, String senha, Papel papel) {
 		super();
 		this.email = email;
 		this.nomeCompleto = nomeCompleto;
 		this.senha = senha;
+		this.papel = papel;
 	}
 
 	public String getEmail() {
@@ -49,6 +52,14 @@ public class Usuario {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+
+	public Papel getPapel() {
+		return papel;
+	}
+
+	public void setPapel(Papel role) {
+		this.papel = role;
 	}
 
 	@Override

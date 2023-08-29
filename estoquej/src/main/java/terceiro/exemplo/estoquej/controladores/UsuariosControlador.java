@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import terceiro.exemplo.estoquej.dtos.UsuarioDTO;
 import terceiro.exemplo.estoquej.entidades.Usuario;
 import terceiro.exemplo.estoquej.servicos.ServicoDeUsuarios;
 
@@ -22,19 +23,19 @@ public class UsuariosControlador {
 	private ServicoDeUsuarios usuariosService;
 
 	@PostMapping("v1/api/usuarios")
-	public ResponseEntity<Usuario> cadastraUsuario(@RequestBody Usuario usuario) {
-		return new ResponseEntity<Usuario>(this.usuariosService.adicionaUsuario(usuario), HttpStatus.OK);
+	public ResponseEntity<UsuarioDTO> cadastraUsuario(@RequestBody Usuario usuario) {
+		return new ResponseEntity<>(this.usuariosService.adicionaUsuario(usuario), HttpStatus.OK);
 	}
 
 	@GetMapping("/auth/usuarios/{email}")
-	public ResponseEntity<Usuario> recuperaUsuario(@PathVariable String email,
-			@RequestHeader("Authorization") String header) {
-		return new ResponseEntity<Usuario>(usuariosService.getUsuario(email, header), HttpStatus.OK);
+	public ResponseEntity<UsuarioDTO> recuperaUsuario(@PathVariable String email,
+													  @RequestHeader("Authorization") String header) {
+		return new ResponseEntity<>(usuariosService.recuperaUsuario(email, header), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/auth/usuarios/{email}")
-	public ResponseEntity<Usuario> removeUsuario(@PathVariable String email,
+	public ResponseEntity<UsuarioDTO> removeUsuario(@PathVariable String email,
 			@RequestHeader("Authorization") String header) {
-		return new ResponseEntity<Usuario>(usuariosService.removeUsuario(email, header), HttpStatus.OK);
+		return new ResponseEntity<>(usuariosService.removeUsuario(email, header), HttpStatus.OK);
 	}
 }
