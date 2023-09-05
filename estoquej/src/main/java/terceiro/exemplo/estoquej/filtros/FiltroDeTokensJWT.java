@@ -42,7 +42,7 @@ public class FiltroDeTokensJWT extends GenericFilterBean {
 			parser.parseClaimsJws(token).getBody();
 
 			//Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody();
-		} catch (  io.jsonwebtoken.security.SignatureException | ExpiredJwtException | MalformedJwtException | PrematureJwtException
+		} catch (io.jsonwebtoken.security.SignatureException | ExpiredJwtException | MalformedJwtException | PrematureJwtException
 				| UnsupportedJwtException | IllegalArgumentException e) {
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 			return;// a requisição nem precisa passar adiante, retornar já para o cliente pois não
