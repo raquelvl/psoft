@@ -1,17 +1,15 @@
 package terceiro.exemplo.estoquej.servicos;
 
+import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import terceiro.exemplo.estoquej.dtos.LoginDeUsuarioDTO;
 import terceiro.exemplo.estoquej.dtos.RespostaDeLogin;
-import terceiro.exemplo.estoquej.entidades.Usuario;
 import terceiro.exemplo.estoquej.excecoes.LoginInvalidoException;
 import terceiro.exemplo.estoquej.filtros.FiltroDeTokensJWT;
 
@@ -19,7 +17,7 @@ import terceiro.exemplo.estoquej.filtros.FiltroDeTokensJWT;
 public class ServicoJWT {
 	@Autowired
 	private ServicoDeUsuarios usuariosService;
-	public static final String TOKEN_KEY = "wdsjfhkwbfdgwuierhweij";
+	public static final Key TOKEN_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
 	public RespostaDeLogin autentica(LoginDeUsuarioDTO usuario) {
 		if (!usuariosService.validaUsuarioSenha(usuario)) {
@@ -31,11 +29,15 @@ public class ServicoJWT {
 		return new RespostaDeLogin(token);
 	}
 
+
+
 	private String geraToken(String email) {
-		return Jwts.builder().setHeaderParam("typ", "JWT")
+		return Jwts.builder()
+				.setHeaderParam("typ", "JWT")
 				.setSubject(email)
-				.signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
-				.setExpiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000)).compact();// 3 min
+				.signWith(TOKEN_KEY, SignatureAlgorithm.HS512)
+				.setExpiration(new Date(System.currentTimeMillis() + 3 * 60 * 1000))
+				.compact();// 3 min
 	}
 
 	public String getSujeitoDoToken(String authorizationHeader) {
@@ -48,7 +50,8 @@ public class ServicoJWT {
 
 		String subject = null;
 		try {
-			subject = Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody().getSubject();
+			JwtParser parser = Jwts.parserBuilder().setSigningKey(TOKEN_KEY).build();
+			subject = parser.parseClaimsJws(token).getBody().getSubject();
 		} catch (SignatureException e) {
 			throw new SecurityException("Token invalido ou expirado!");
 		}

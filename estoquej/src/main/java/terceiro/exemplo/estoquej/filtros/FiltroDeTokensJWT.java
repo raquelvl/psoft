@@ -47,7 +47,7 @@ public class FiltroDeTokensJWT extends GenericFilterBean {
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 			return;// a requisição nem precisa passar adiante, retornar já para o cliente pois não
 					// pode prosseguir daqui pra frente
-			// por falta de autorização
+					// por falta de autorização
 		}
 
 		chain.doFilter(request, response);
