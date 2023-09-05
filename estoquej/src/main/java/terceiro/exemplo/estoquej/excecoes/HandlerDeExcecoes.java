@@ -92,4 +92,16 @@ public class HandlerDeExcecoes {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(problema);
 	}
 
+	@ExceptionHandler(SecurityException.class)
+	public ResponseEntity<DetalhesDoProblema> lidaComTokenInvalido(
+			SecurityException se) {
+		// System.out.println(pie.getMessage());
+		DetalhesDoProblema problema = new DetalhesDoProblema();
+		problema.setStatus(HttpStatus.FORBIDDEN.value());
+		problema.setTitle("Token invalido, inexistente ou expirado");
+		problema.setType(GERENCIA_DE_USUARIOS_URI);
+		problema.setDetail("O token passado é inválido e a funcionalidade precisa de autenticacao/autorização.");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problema);
+	}
+
 }

@@ -9,15 +9,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.jsonwebtoken.*;
 import org.springframework.web.filter.GenericFilterBean;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.PrematureJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import terceiro.exemplo.estoquej.servicos.ServicoJWT;
+
+import static terceiro.exemplo.estoquej.servicos.ServicoJWT.TOKEN_KEY;
 
 public class FiltroDeTokensJWT extends GenericFilterBean {
 
@@ -41,8 +38,11 @@ public class FiltroDeTokensJWT extends GenericFilterBean {
 		// Extraindo apenas o token do cabecalho (removendo o prefixo "Bearer ").
 		String token = header.substring(TOKEN_INDEX);
 		try {
-			Jwts.parser().setSigningKey(ServicoJWT.TOKEN_KEY).parseClaimsJws(token).getBody();
-		} catch ( SignatureException | ExpiredJwtException | MalformedJwtException | PrematureJwtException
+			JwtParser parser = Jwts.parserBuilder().setSigningKey(TOKEN_KEY).build();
+			parser.parseClaimsJws(token).getBody();
+
+			//Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody();
+		} catch (  io.jsonwebtoken.security.SignatureException | ExpiredJwtException | MalformedJwtException | PrematureJwtException
 				| UnsupportedJwtException | IllegalArgumentException e) {
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 			return;// a requisição nem precisa passar adiante, retornar já para o cliente pois não
