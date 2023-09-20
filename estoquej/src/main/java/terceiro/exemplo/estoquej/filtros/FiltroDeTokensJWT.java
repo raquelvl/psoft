@@ -27,6 +27,10 @@ public class FiltroDeTokensJWT extends GenericFilterBean {
 
 		HttpServletRequest req = (HttpServletRequest) request;
 
+		//if(req.getMethod().equals("GET")) {
+		//	chain.doFilter(request, response);
+		//}
+
 		String header = req.getHeader("Authorization");
 
 		if (header == null || !header.startsWith("Bearer ")) {
