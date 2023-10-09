@@ -1,17 +1,21 @@
-# Laboratório - roteiro 3
+# :wave: Laboratório - roteiro 3 - API com autenticação e autorização Bearer Tokens JWT
 
+## 🤓 O que vamos aprender? 
 
-### Objetivos:
-* Inserir alguma segurança em nossa API usando json web tokens (jwt)
+Aprender a escrever APIs REST com java/spring boot com rotas privadas usando Bearer Tokens do tipo JWT.
 
 ### Tecnologias envolvidas:
-* ORM - Mapeamento objeto relacional (Hibernate é a impementação por trás do que usaremos)
-* JPA - interface unificada para facilitar mapeamento de objetos para registros de tabelas
-* JWT - tokens para autorização de acesso a dados
+* JWT - Json Web Token (é a lib que lida com bearer tokens desse tipo) - tokens de autorização de acesso a dados
+* ORM - Mapeamento objeto relacional (Hibernate é a implementação por trás do que usaremos)
+* JPA - interface unificada para facilitar mapeamento de objetos para registros de tabelas e definir relações entre entidades
 
-Lembrete: use o [spring initizlizr](https://start.spring.io) para criar seu projeto spring. Desas vez marque as dependências "_Spring Web Starter_", "_H2 Database_" e "_Spring Data JPA_" na configuração do seu projeto. Você também pode inserir a dependência do Lombok caso queira usar suas facilidades para o desenvolvimento dos DTOs (data transfer objects).
+Lembrete: ao usar o [spring initizlizr](https://start.spring.io) para criar seu projeto spring marque as dependências:
+* "_Spring Web Starter_",
+* "_H2 Database_" e
+* "_Spring Data JPA_"
+* lombok e devtools opcional
 
-Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferência (eclipse, IntelliJ, etc.) importe o projeto criado como um projeto maven já existente. Agora você já pode desenvolver sua aplicação. Lembre de organizar tudo em pacotes específicos. Antes de continuar é preciso adicionar no pom.xml a dependência do JWT:
+Na configuração do maven (pom.xml) você também deve inserir a dependência do JWT:
 
 ```xml
     <dependency>
@@ -21,60 +25,80 @@ Faça o unzip do arquivo zip criado para o seu workspace. Na sua IDE de preferê
     </dependency>
 ```
 
-Neste terceiro lab iremos inserir um novo recurso ao código que já vínhamos desenvolvendo no lab 2. Agora vamos adicionar usuários, autenticação (via login), e autorização com JWT. 
+Neste terceiro lab iremos inserir um novo recurso ao código que já vínhamos desenvolvendo no lab 2: usuários. Agora vamos adicionar usuários e, consequentemente, precisamos lidar com autenticação (via login) e autorização usando JWT. Até agora, a versão da API ainda é muito reduzida, pois a idéia de usuário ainda não tinha sido introduzida. Com a introdução do usuário vamos precisar modificar algumas entidades e estabelecer novas relações JPA. Seguem exemplos:
+* A entidade usuário precisa ser criada, e com isso várias outras classes são demandadas, como por exemplo DTOs para esta entidade, DAO, serviço
+* É preciso agora ter algumas operações da API que lidam com o CRUD desse novo recurso que é a entidade Usuário, e assim precisamos de controlador e serviço
+* Até o lab 2 quando um like era dado apenas incrementava o contador de likes da disciplina, mas agora vamos precisar de uma tabela separada para os likes, pois um like associa um usuário a uma disciplina
+* Quando um comentário era feito o novo comentário não estava associado a usuários
 
-Relembrando, por enquanto, no contexto da nossa API, uma **Disciplina** é uma classe que tem os seguintes atributos: **id:long**, **nome:String**, **nota:double**, **comentarios:String** e **likes:int**. O objetivo desta API é permitir que alunos comentem e deem likes nas disciplinas do curso de Ciência da Computação. 
+As funcionalidades programadas no lab 2 devem continuar existindo, com as mudanças necessárias para manter a API segura.
 
-Até agora, a versão da API ainda é muito reduzida, pois a idéia é ir aprendendo com problemas simples e solidificando conceitos. Quando um like é dado apenas incrementa o contador de likes da disciplina e quando um comentário é feito o novo comentário fica concatenado com os comentários anteriores com um newline entre eles. Neste terceiro roteiro de laboratório vamos continuar a partir do código do lab2. 
+### Projeto de segurança
+Para cada operação da sua API decida que tipo de proteção ela deve ter. Em termos de proteção vamos considerar 4 possibilidades
+* rotas públicas - não requerem usuário autenticado/logado
+* rotas privadas genéricas - requerem autenticação (tem que ver um token válido no authorization header) mas não precisa checar quem é o usuário logado (usuário representado pelo token)
+* rotas privadas dependentes do usuário - precisa checar quem é o usuário logado e a depender disso autoriza ou não a operação (ex. deleção de conteúdo criado pelo usuário)
+* rotas privadas dependentes de papel do usuário - precisa checar se o usuário logado tem um determinado papel. Por exemplo, um usuário com papel de admin poderia deletar contas de usuários (além do próprio usuário dono da conta).
 
-Use Spring Boot e java para desenvolver a seguinte API (por facilidade, vamos marcar o que já foi feito no lab 2):
+Então o primeiro passo é decidir que tipo de proteção as operações que já existem devem ter.
 
-POST /usuarios <br>
-Adiciona um usuario com email, nome e senha. O email é o identificador único do usuario. 
+### Inserindo usuários
+* Crie a classe usuário (pode usar email como id). Tenha também um atributo que indica o papel do usuário (ou uma lista de papéis, de acordo com seu projeto)
+* Crie o DAO de usuário
+* Crie o controlador de usuário para fazer CRUD de usuário, assim como os DTOs necessários e o serviço.
+* Configure os relacionamentos entre usuário e as classes que já existem
+	* Ex. cada comentário deve estar associado a um unico usuário, mas cada usuário pode ter muitos comentários
+ 	* Os likes devem passar a ser um recurso que associa disciplinas a usuários (será uma relação de muitos para muitos pois cada usuário pode dar muitos likes e cada disciplina também pode ter muitos likes)
+ 
+### Inserindo autenticacao com JWT
+* Crie um controlador de login com a rota POST para login
+* Crie o serviço JWT que sabe gerar tokens JWT. Lembre de manter a claim sub que informa o id do usuário e a claim exp que traz a data de expiração do token
 
-POST /auth/login  <br>
-Recebe email e senha de um usuário, verifica na base de dados de usuários se esse usuário existe, e se a senha está correta (autenticação). Se o usuário for autenticado gerar um JWT que deve ser retornado para o cliente. 
+### Inserindo autorização
+Para cada operação da API que você projetou para ser protegida, implemente esta proteção. A proteção mais genérica é resolvida pelo filtro, mas as outras dependentes do usuário e do papel requerem que o controlador receba o token. O serviço JWT deve realizar todo o parsing necessários ao esquema de segurança que vc polanejar. Então, nesta etapa você deve precisar:
+* Configure a aplicação indicando que rotas serão privadas e configure um filtro para analisar token JWT de rotas privadas
+* Implemente o filtro que sabe avaliar Bearer token do tipo JWT (o filtro que será chamado toda vez que chegar uma requisição para rotas não públicas)
+* modificar alguns métodos nos controladores para receber o authorization header
+* modificar serviços para receber authorization header e chamar o serviço JWT para realizar o que for necessário
+* adicionar métodos no serviço JWT para receber o authorization header e saber extrair dele as informações que forem necessárias (em geral será o sub e a partir do id do usuário recupera o usuário para tomar as decisões de autorização)
+
+Detalhes sobre novas rotas a serem desenvolvidas (além de atualizar as que já existe com o projeot de segurança para elas):
+
+**<MÉTODO HTTP> /api/usuarios**<br>
+Adiciona um usuario com email, nome e senha (outros atributos podem ser inseridos se desejar). O email é o identificador único do usuario. Retorna um JSON que representa o usuário inserido (claro que sem a senha) e código <código de resposta HTTP>. Ou não retorna JSON e <código de resposta HTTP> caso o identificador de usuário passado já exista na base de dados.
+
+**<MÉTODO HTTP> /api/login** <br>
+Recebe email e senha de um usuário, verifica na base de dados de usuários se esse usuário existe, e se a senha está correta para realizar a autenticação. Se o usuário for autenticado este recurso deve gerar um JWT que deve ser retornado para o cliente. Retorna um JSON que representa o usuário inserido (claro que sem a senha) e código <código de resposta HTTP>.
 * Informações adicionais sobre essa funcionalidade: o JWT gerado deve carregar a informação de subject (email do usuário), o tempo de expiração do token deve ser determinado por cada desenvolvedor (que deve saber justificar sua decisão). 
 
-DELETE /auth/usuarios/  <br>
-Remove o usuário de quem está requisitando a deleção (esta identificação é feita através do token passado no authorization header da requisição HTTP). Retorna informação do usuário removido (em um JSON no corpo da resposta) e código 200. Esta ação só pode ser realizada pelo próprio usuário que quer se remover, assim é preciso receber um JWT na requisição e recuperar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades de erro (ex. requisição sem JWT, com JWT inválido, ou com JWT de usuário inexistente).
+**<MÉTODO HTTP>  /auth/usuarios/{email}**  <br>
+Remove o usuário cujo identificador é passado ({email}). É preciso garantir que o usuário requisitando este recurso é o mesmo usuário do {email} passado (esta identificação é feita através do token passado no authorization header da requisição HTTP). Só o próprio usuário ou um usuário com papel de admin pode remover sua conta. Retorna informação do usuário removido (em um JSON no corpo da resposta) e código <código de resposta HTTP>. 
+* Detalhes: Esta ação só pode ser realizada pelo próprio usuário dono da conta ou um usuário com papel de admin, assim é preciso receber um JWT na requisição e recuperar credenciais do usuário. Retornar código HTTP adequado para as possíveis possibilidades de erro (ex. requisição sem JWT, com JWT inválido, ou com JWT de usuário inexistente).
 
-GET /api/disciplinas - funcionalidade já implementada no lab anterior (lab2) <br>
-Retorna um JSON (com campos id, nome) com todas as disciplinas inseridas no sistema e código 200. 
+**<MÉTODO HTTP>  /auth/usuarios/{email}**  <br>
+Recupera informações do usuário cujo identificador é passado ({email}). É preciso garantir que o usuário requisitando este recurso é o mesmo usuário do {email} passado (esta identificação é feita através do token passado no authorization header da requisição HTTP). Só o próprio usuário pode receber informações sobre sua conta. Retorna informação do usuário (em um JSON no corpo da resposta) e código <código de resposta HTTP>. 
 
-GET /api/disciplinas/{id} - funcionalidade já implementada no lab anterior (lab2) <br>
-Retorna um JSON que representa a disciplina completa (id, nome, nota, likes e comentarios) cujo identificador único é id e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado. 
+**Reavaliando as rotas anteriores**
 
-PUT /api/disciplinas/likes/{id} - funcionalidade parcialmente implementada no lab anterior (lab2) <br>
-**Esta funcionalidade só está autorizada para usuários previamente autenticados. Esta autorização deve ser realizada via avaliação de tokens JWT.** Para usuários autorizados, esta função incrementa em um o número de likes da disciplina cujo identificador é id. 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e likes) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado e código 401 Unauthorized caso o cliente não tenha autorização.
+Agora que temos o conceito de usuários, é importante que eles estejam associados a suas ações na API. Então vamos realizar as seguintes configurações/mudanças no código:
 
-PUT /api/disciplinas/nota/{id} - funcionalidade parcialmente implementada no lab anterior (lab2) <br>
-**Esta funcionalidade só está autorizada para usuários previamente autenticados. Esta autorização deve ser realizada via avaliação de tokens JWT.** Para usuários autorizados, esta função atualiza a nota da disciplina de identificador id no sistema. No corpo da requisição HTTP deve estar um JSON com uma nova nota atribuída à disciplina. A nova nota da disciplina é a média aritmética da nota anterior da disciplina e da nova nota passada nesta chamada. Se for a primeira nota sendo adicionada então esta nota é a que vai valer para a disciplina. 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e nota) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontrado e código 401 Unauthorized caso o cliente não tenha autorização. 
+1. Apenas usuários cadastrados podem dar likes nas disciplinas, e é preciso associar cada like ao respectivo usuário. Pense assim: se a gente for desenvolver o frontend é preciso ter essa informação pra quando for mostrar a disciplina o frontend saber se o símbolo de loke fica marcado ou não para o usuário logado.
 
-PUT /api/disciplinas/comentarios/{id} - funcionalidade parcialmente implementada no lab anterior (lab2) <br>
-**Esta funcionalidade só está autorizada para usuários previamente autenticados. Esta autorização deve ser realizada via avaliação de tokens JWT.** Para usuários autorizados, esta função insere um novo comentário na disciplina de identificador id. No corpo da requisição HTTP deve estar um JSON com o novo comentário (chave "comentario") a ser adicionado na disciplina a ser atualizada no sistema. 
-Retorna a disciplina que foi atualizada (incluindo o id, nome e os comentarios atualizados) e código 200. Ou não retorna JSON e código 404 (not found) caso o id passado não tenha sido encontradoe código 401 Unauthorized caso o cliente não tenha autorização.
+2. Apenas usuarios cadastrados podem comentar as disciplinas e os comentários devem ficar associados aos usuários que os escreverm. Apenas o dono de um comentário pode apagar o comentário.
 
-GET /api/disciplinas/ranking/notas - funcionalidade já implementada no lab anterior (lab2) <br>
-Retorna todas as disciplinas inseridas no sistema ordenadas pela nota (da maior para a menor) e código 200.
-
-GET /api/disciplinas/ranking/likes - funcionalidade já implementada no lab anterior (lab2) <br>
-Retorna todas as disciplinas inseridas no sistema ordenadas pelo número de likes (da que tem mais likes para a que tem menos likes) e código 200.
+3. Apenas usuários cadastrados podem dar notas às disciplinas, mas não é preciso associar cada nota ao respectivo usuário. 
 
 Seguem algumas dicas:
 
 * Use o padrão DAO para acesso às bases de dados;
-* Use DTOs para a comunicação entre cliente e servidor e Lombok para agilizar o desenvolvimento;
-* Use JWT para autenticação e autorização;
 * Siga boas práticas de design, buscando desacoplamento utilize corretamente controladores, serviços e repositórios;
 * Organize suas classes em packages com nomes significativos (xx.services, xx.controllers, xx.repositories, xx.entities, etc. - pode usar nomes em portugues também, mas mantenha a coerência, ou tudo em portugues ou tudo em ingles);
 * Para ordenação aprenda a definir um novo método no repositório de disciplina seguindo o padrão de nomes do método. Mais dicas [aqui](https://www.baeldung.com/spring-data-sorting).
+* Use o que aprendemos sobre relacionamentos JPA para relacionar entidades.
 
 Execute a sua aplicação no terminal, dentro do diretório raiz do seu projeto com o seguinte comando: 
 $ ./mvnw spring-boot:run
 
-Use Curl ou Postman para testar sua API. 
+Use Curl ou Postman ou Insomnia para testar sua API. 
 
-**Não faça tudo de uma vez**. Desenvolva uma funcionalidade, teste, vá para a próxima…
+**Não faça tudo de uma vez**. Desenvolva uma funcionalidade, teste, vá para a próxima… 🚀
